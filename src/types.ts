@@ -1,5 +1,4 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { Router } from './router';
 
 export interface ParamsDictionary {
   [key: string]: string;
@@ -45,17 +44,25 @@ export interface Layer {
   path: string;
   regex: RegExp;
   keys: string[];
-  handler: RequestHandler | Router;
+  handler: RequestHandler | IRouter;
   isRouter: boolean;
 }
-
-export interface Router {
-  use(handler: RequestHandler | Router): void;
-  use(path: string, handler: RequestHandler | Router): void;
+export interface IRouter {
+  // A propriedade stack é necessária para a lógica interna
+  stack: Layer[];
+  
+  // Métodos principais
+  handle(req: Request, res: Response, next: NextFunction): Promise<void>;
+  
+  // Métodos de registro
+  use(handler: RequestHandler | IRouter): void;
+  use(path: string, handler: RequestHandler | IRouter): void;
+  
   get(path: string, handler: RequestHandler): void;
   post(path: string, handler: RequestHandler): void;
   put(path: string, handler: RequestHandler): void;
   delete(path: string, handler: RequestHandler): void;
   patch(path: string, handler: RequestHandler): void;
-  all(path: string, handler: RequestHandler): void;
+  // Se quiser ser compatível com o erro 'all', adicione aqui ou implemente na classe:
+  // all(path: string, handler: RequestHandler): void; 
 }

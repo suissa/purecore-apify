@@ -1,14 +1,14 @@
-import { Layer, Request, Response, NextFunction, RequestHandler } from './types';
+import { Layer, Request, Response, NextFunction, RequestHandler, IRouter } from './types';
 
-export class Router {
+export class Router implements IRouter {
   // O stack substitui o antigo "private routes: Route[]"
-  protected stack: Layer[] = [];
+  public stack: Layer[] = [];
 
   // --- Métodos de Registro (Igual ao seu antigo register) ---
 
-  use(path: string, handler: RequestHandler | Router): void;
-  use(handler: RequestHandler | Router): void;
-  use(arg1: string | RequestHandler | Router, arg2?: RequestHandler | Router): void {
+  use(path: string, handler: RequestHandler | IRouter): void;
+  use(handler: RequestHandler | IRouter): void;
+  use(arg1: string | RequestHandler | IRouter, arg2?: RequestHandler | IRouter): void {
     let path = '/';
     let handler = arg1;
 
@@ -17,7 +17,7 @@ export class Router {
       handler = arg2!;
     }
 
-    this.addLayer('ALL', path, handler as RequestHandler | Router);
+    this.addLayer('ALL', path, handler as RequestHandler | IRouter);
   }
 
   get(path: string, handler: RequestHandler) { this.addLayer('GET', path, handler); }
@@ -89,7 +89,7 @@ export class Router {
   /**
    * O antigo método "register", agora mais inteligente para suportar middlewares
    */
-  private addLayer(method: string, path: string, handler: RequestHandler | Router) {
+  private addLayer(method: string, path: string, handler: RequestHandler | IRouter) {
     const keys: string[] = [];
     
     // Converte :param em regex group
@@ -121,7 +121,7 @@ export class Router {
       path,
       regex,
       keys,
-      handler: handler as RequestHandler | Router,
+      handler,
       isRouter
     });
   }

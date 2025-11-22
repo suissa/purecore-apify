@@ -8,21 +8,17 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/suissa/purecore-api"
+    "url": "https://github.com/suissa/purecore-apify"
   },
   "keywords": [
     "api",
     "purecore"
   ],
-  "dependencies": {
-    "@purecore/http": "0.1.0"
-  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "typescript": "^5.5.3"
   }
