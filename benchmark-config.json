@@ -1,0 +1,31 @@
+{
+  "global": {
+    "duration": 10,
+    "connections": 100
+  },
+  "scenarios": [
+    {
+      "name": "🔥 Raw Speed (Baseline)",
+      "url": "http://localhost:3344/api/fast"
+    },
+    {
+      "name": "📦 JSON Serialization",
+      "url": "http://localhost:3344/api/json"
+    },
+    {
+      "name": "🐢 IO Database Sim (50ms)",
+      "url": "http://localhost:3344/api/io-wait",
+      "connections": 500 
+    },
+    {
+      "name": "🧠 URL Params Parsing",
+      "url": "http://localhost:3344/api/products/tech/123"
+    },
+    {
+      "name": "📡 POST Payload Echo",
+      "url": "http://localhost:3344/api/echo",
+      "method": "POST",
+      "body": "{\"test\": \"payload data\", \"benchmark\": true}"
+    }
+  ]
+}

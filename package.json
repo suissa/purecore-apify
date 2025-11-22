@@ -1,0 +1,29 @@
+{
+  "name": "@purecore/apify",
+  "version": "0.2.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Suissa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suissa/purecore-api"
+  },
+  "keywords": [
+    "api",
+    "purecore"
+  ],
+  "dependencies": {
+    "@purecore/http": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.5.3"
+  }
+}

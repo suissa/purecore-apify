@@ -1,0 +1,18 @@
+{
+  "config": {
+    "url": "http://localhost:3000/api/v1/settings",
+    "method": "GET",
+    "durationSeconds": 10,
+    "concurrency": 50,
+    "outputFile": "benchmark-results.json"
+  },
+  "results": {
+    "durationSeconds": 10.117,
+    "totalRequests": 34242,
+    "success": 0,
+    "errors": 34242,
+    "avgRps": 3384.600177918355,
+    "avgLatencyMs": 14.609295356287538,
+    "timestamp": "2025-11-22T15:28:32.519Z"
+  }
+}
