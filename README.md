@@ -8,9 +8,21 @@ Você monta sua aplicação exatamente como faria com `{ express: () => app }`: 
 
 Os objetos `Request` e `Response` carregam `params`, `query`, `body`, `baseUrl`, `originalUrl` e helpers `status`, `json`, `send`, permitindo migrar handlers Express com mínimo esforço.
 
-> Acho que essa lib não precisa de muita explicação.
+> **Acho que essa lib não precisa de muita explicação.**
 
 ### Uso básico (igualzinho ao Express)
+
+Instalação:
+
+```sh
+npm i @purecore/apify
+
+yarn add @purecore/apify
+
+bun add @purecore/apify
+
+pnpm add @purecore/apify
+```
 
 ```ts
 import { Apify, jsonBodyParser } from '@purecore/apify';
