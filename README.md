@@ -2,14 +2,18 @@
 
 ## Visão geral
 
-`@purecore/apify` expõe a classe `Apify`, que herda de um roteador compatível com Express. Você monta sua aplicação exatamente como faria com `{ express: () => app }`: registra middlewares com `app.use(...)`, define `app.get/post/put/delete/patch(...)` e finaliza com `app.listen(...)`. Os objetos `Request` e `Response` carregam `params`, `query`, `body`, `baseUrl`, `originalUrl` e helpers `status`, `json`, `send`, permitindo migrar handlers Express com mínimo esforço.
+`@purecore/apify` expõe a classe `Apify`, que herda de um roteador compatível com Express.
 
-Acho que essa lib não precisa de muita explicação.
+Você monta sua aplicação exatamente como faria com `{ express: () => app }`: registra middlewares com `app.use(...)`, define `app.get/post/put/delete/patch(...)` e finaliza com `app.listen(...)`.
+
+Os objetos `Request` e `Response` carregam `params`, `query`, `body`, `baseUrl`, `originalUrl` e helpers `status`, `json`, `send`, permitindo migrar handlers Express com mínimo esforço.
+
+> Acho que essa lib não precisa de muita explicação.
 
 ### Uso básico (igualzinho ao Express)
 
 ```ts
-import { Apify, jsonBodyParser } from '@open-source/@purecore/apify';
+import { Apify, jsonBodyParser } from '@purecore/apify';
 
 const app = new Apify();
 
@@ -28,5 +32,5 @@ const apiRouter = new Apify();
 apiRouter.get('/status', (req, res) => res.json({ status: 'ok' }));
 app.use('/api', apiRouter);
 
-app.listen(3000, () => console.log('Core PureAPI rodando na porta 3000'));
+app.listen(3344, () => console.log('@purecore/apify rodando na porta 3344'));
 ```
