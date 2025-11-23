@@ -1,4 +1,5 @@
 import { Layer, Request, Response, NextFunction, RequestHandler, IRouter } from './types';
+import { bodyParserMiddleware } from './middlewares';
 
 export class Router implements IRouter {
   // O stack substitui o antigo "private routes: Route[]"
@@ -75,7 +76,21 @@ export class Router implements IRouter {
             next(subErr);
           });
         } else {
-          // Handler normal
+          // Handler normal - aplica bodyParser automaticamente se não for GET
+          const isNonGetMethod = req.method && req.method !== 'GET' && layer.method !== 'ALL';
+
+          if (isNonGetMethod) {
+            // Aplica bodyParser automaticamente antes do handler
+            await new Promise<void>((resolve, reject) => {
+              const originalNext = next;
+              bodyParserMiddleware(req, res, (err?: any) => {
+                if (err) reject(err);
+                else resolve();
+              });
+            });
+          }
+
+          // Executa o handler da rota
           await (layer.handler as RequestHandler)(req, res, next);
         }
       } catch (error) {

@@ -212,7 +212,7 @@ export class Apify extends Router {
     req.baseUrl = '';
     req.params = {};
     req.query = {};
-    if (!req.body) req.body = {}; // Será preenchido pelo body parser depois
+    // req.body será preenchido automaticamente pelo bodyParserMiddleware quando necessário
 
     // Parse Query String
     const urlObj = new URL((req as any).url || '/', `http://${(req as any).headers.host}`);
@@ -305,3 +305,7 @@ export * from './decorators';
 export * from './errors';
 export * from './i18n';
 export * from './healer';
+
+// Inicializa o sistema de decorators
+import { initializeDecorators } from './decorators/config.js';
+initializeDecorators();

@@ -2,6 +2,82 @@ import { Request, Response, NextFunction, RequestHandler } from './types';
 import * as jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
 import { randomUUID } from 'node:crypto';
+
+// --- 0. Transparent Body Parser Middleware ---
+// Aplica automaticamente parsing de body em todas as rotas não-GET
+
+export const bodyParserMiddleware: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  // Só faz parsing para métodos que podem ter body
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'DELETE') {
+    return next();
+  }
+
+  const contentType = req.headers['content-type'] || '';
+  const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+
+  // Limite de 10MB por padrão
+  const maxBodySize = parseInt(process.env.MAX_BODY_SIZE || '10485760');
+
+  if (contentLength > maxBodySize) {
+    res.status(413).json({
+      error: 'Payload muito grande',
+      maxAllowed: maxBodySize,
+      received: contentLength
+    });
+    return;
+  }
+
+  let body = '';
+
+  try {
+    for await (const chunk of req) {
+      body += chunk.toString();
+
+      // Proteção contra payloads muito grandes durante streaming
+      if (body.length > maxBodySize) {
+        res.status(413).json({
+          error: 'Payload muito grande durante processamento',
+          maxAllowed: maxBodySize
+        });
+        return;
+      }
+    }
+
+    // Parse baseado no Content-Type
+    if (contentType.includes('application/json')) {
+      req.body = body ? JSON.parse(body) : {};
+    } else if (contentType.includes('application/x-www-form-urlencoded')) {
+      const params = new URLSearchParams(body);
+      req.body = Object.fromEntries(params);
+    } else if (contentType.includes('text/plain')) {
+      req.body = body;
+    } else if (contentType.includes('multipart/form-data')) {
+      // Para multipart, mantém como string por enquanto
+      // Pode ser extendido futuramente com bibliotecas como multer
+      req.body = { raw: body, contentType };
+    } else {
+      // Default: tenta JSON, se falhar mantém como string
+      try {
+        req.body = body ? JSON.parse(body) : {};
+      } catch {
+        req.body = body;
+      }
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      res.status(400).json({
+        error: 'JSON malformado no corpo da requisição',
+        details: error.message
+      });
+    } else {
+      res.status(500).json({
+        error: 'Erro interno no processamento do body'
+      });
+    }
+  }
+};
 import {
   HttpError,
   isHttpError,
