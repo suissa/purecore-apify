@@ -232,6 +232,45 @@ Caso seu arquivo principal esteja em outro caminho, passe `--entry`:
 npx @purecore/apify create crud billing --entry apps/api/src/main.ts
 ```
 
+## Configuração de Ambiente
+
+Para usar a **configuração padrão completa**, crie um arquivo `.env` baseado no template:
+
+```bash
+# Copie o template de configuração
+cp src/env-config.ts .env
+
+# Ou crie manualmente com:
+cat > .env << 'EOF'
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+NO_AUTH="GET /health, POST /login, GET /status"
+CIRCUIT_BREAKER_FAILURE_THRESHOLD=5
+CIRCUIT_BREAKER_RESET_TIMEOUT=10000
+TIMEOUT_DEFAULT_MS=30000
+TIMEOUT_MAX_MS=60000
+TIMEOUT_RETRY_ATTEMPTS=3
+CACHE_DEFAULT_TTL=300
+ENABLE_DETAILED_LOGS=true
+ENABLE_METRICS=true
+ENABLE_TRACES=true
+ENABLE_XSS_PROTECTION=true
+ENABLE_WS_RETRY_CHANNEL=true
+NODE_ENV=development
+PORT=3344
+API_PREFIX=/api/v1
+EOF
+```
+
+### Variáveis de Ambiente Principais
+
+| Variável | Descrição | Padrão |
+|----------|-----------|---------|
+| `JWT_SECRET` | Segredo para tokens JWT | `your-super-secret-jwt-key-change-this-in-production` |
+| `NO_AUTH` | Rotas sem autenticação | `GET /health, POST /login, GET /status` |
+| `TIMEOUT_DEFAULT_MS` | Timeout padrão (ms) | `30000` (30s) |
+| `CIRCUIT_BREAKER_FAILURE_THRESHOLD` | Limite de falhas | `5` |
+| `ENABLE_WS_RETRY_CHANNEL` | Canal WS para retries | `true` |
+
 ## Auto-Carregamento de Módulos
 
 O `@purecore/apify` detecta automaticamente todas as pastas dentro de `src/modules` e carrega suas rotas com o prefixo padrão `/api/v1`.
@@ -364,9 +403,51 @@ O sistema automaticamente detecta e trata:
 - **Problemas de conectividade**: `ENOTFOUND` → 503
 - **Erros inesperados**: Qualquer erro → 500
 
-## Decorators disponíveis
+## Configuração Padrão Completa ⭐
 
-Você pode usar os decorators para aplicar resiliência, observabilidade, segurança e performance em controladores class-based (igual ao Nest):
+O `@purecore/apify` agora vem com uma **configuração padrão completa** que ativa **TODOS** os decorators automaticamente! Basta usar o `ApifyCompleteSentinel` e sua API estará completamente equipada com resiliência, observabilidade, segurança e performance.
+
+### ApifyCompleteSentinel - Tudo Incluído
+
+```ts
+import { ApifyCompleteSentinel } from '@purecore/apify';
+
+class UsersController {
+  @ApifyCompleteSentinel
+  async list(req, res) {
+    // ✨ Circuit Breaker + Timeout 30s + WS Retry Channel
+    // 📊 Logger + Metrics + TraceSpan
+    // 🔐 JWT Auth + XSS Protection
+    // 🚀 Smart Cache (5min TTL)
+    res.json({ ok: true });
+  }
+}
+```
+
+**O que vem ativado por padrão:**
+- 🔄 **Circuit Breaker** (5 falhas, reset 10s)
+- ⏱️ **Timeout** (30s, max 60s, 3 retries)
+- 🔗 **WS Retry Channel** para processamento paralelo
+- 📝 **Logger**, 📊 **Metrics**, 🔍 **TraceSpan**
+- 🔐 **JWT Auth** (com suporte NO_AUTH)
+- 🛡️ **XSS Protection**
+- 🛡️ **Helmet Security Headers** (CSP, HSTS, X-Frame-Options, etc.)
+- 🚀 **Smart Cache** (5min TTL)
+
+### Sistema NO_AUTH
+
+Configure rotas que **não precisam** de autenticação via `.env`:
+
+```bash
+# .env
+NO_AUTH="GET /health, POST /login, GET /status, GET /api/v1/public/info"
+```
+
+Rotas como `/health` e `/login` já são excluídas automaticamente.
+
+## Decorators Individuais
+
+Você também pode usar os decorators individualmente para controle fino:
 
 ```ts
 import {
@@ -408,3 +489,146 @@ class UsersController {
 
 ### Performance
 - `@SmartCache`, `@CQRS`
+
+## Helmet.js - Segurança HTTP Nativa
+
+O `@purecore/apify` inclui uma implementação **nativa e completa** de todos os headers de segurança HTTP do [Helmet.js](https://github.com/helmetjs/helmet), sem dependências externas. Todos os headers estão disponíveis como decorators individuais ou através do `HelmetGuard` que combina tudo automaticamente.
+
+### Headers de Segurança Incluídos
+
+| Header | Decorator | Descrição |
+|--------|-----------|-----------|
+| `Content-Security-Policy` | `@CSPGuard` | Controla recursos que o navegador pode carregar |
+| `Strict-Transport-Security` | `@HSTSGuard` | Força conexões HTTPS |
+| `X-Frame-Options` | `@XFrameOptionsGuard` | Previne clickjacking |
+| `X-Content-Type-Options` | `@XContentTypeOptionsGuard` | Previne MIME sniffing |
+| `X-XSS-Protection` | `@XXSSProtectionGuard` | Desabilita filtro XSS do navegador |
+| `Referrer-Policy` | `@ReferrerPolicyGuard` | Controla envio de referrer |
+| `Cross-Origin-Embedder-Policy` | `@COEPGuard` | Previne carregamento cross-origin |
+| `Cross-Origin-Opener-Policy` | `@COOPGuard` | Isola janelas cross-origin |
+| `Cross-Origin-Resource-Policy` | `@CORPGuard` | Controla compartilhamento cross-origin |
+| `X-Powered-By` | `@XPoweredByGuard` | Remove header X-Powered-By |
+| `Origin-Agent-Cluster` | `@OriginAgentClusterGuard` | Melhora isolamento de processos |
+
+### Uso do HelmetGuard Completo
+
+```ts
+import { HelmetGuard } from '@purecore/apify';
+
+class SecureController {
+  @HelmetGuard({
+    contentSecurityPolicy: {
+      directives: {
+        'default-src': ["'self'"],
+        'script-src': ["'self'", 'https://trusted.cdn.com'],
+        'style-src': ["'self'", "'unsafe-inline'"]
+      }
+    },
+    strictTransportSecurity: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    },
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+  })
+  async secureEndpoint(req, res) {
+    res.json({ secure: true });
+  }
+}
+```
+
+### Decorators Individuais
+
+```ts
+import {
+  CSPGuard,
+  HSTSGuard,
+  XFrameOptionsGuard,
+  ReferrerPolicyGuard
+} from '@purecore/apify';
+
+class ApiController {
+  // Content Security Policy personalizado
+  @CSPGuard({
+    directives: {
+      'default-src': ["'self'"],
+      'img-src': ["'self'", 'data:', 'https:'],
+      'script-src': ["'self'", "'unsafe-inline'"]
+    }
+  })
+  async getContent(req, res) {
+    res.json({ content: 'CSP protected' });
+  }
+
+  // HSTS com preload
+  @HSTSGuard({
+    maxAge: 63072000, // 2 anos
+    includeSubDomains: true,
+    preload: true
+  })
+  async secureConnection(req, res) {
+    res.json({ hsts: 'enabled' });
+  }
+
+  // Anti-clickjacking
+  @XFrameOptionsGuard({ action: 'DENY' })
+  async noFrames(req, res) {
+    res.json({ frames: 'denied' });
+  }
+
+  // Referrer Policy rigorosa
+  @ReferrerPolicyGuard({ policy: 'no-referrer' })
+  async privateData(req, res) {
+    res.json({ referrer: 'hidden' });
+  }
+}
+```
+
+### Uso como Middleware
+
+```ts
+import { helmet } from '@purecore/apify';
+
+// Middleware completo
+app.use(helmet());
+
+// Middleware personalizado
+app.use(helmet({
+  contentSecurityPolicy: false, // Desabilitar CSP
+  strictTransportSecurity: {
+    maxAge: 31536000
+  }
+}));
+```
+
+### Headers Aplicados Automaticamente
+
+Quando você usa `@HelmetGuard()` ou `helmet()`, os seguintes headers são aplicados:
+
+```
+Content-Security-Policy: default-src 'self'; base-uri 'self'; font-src 'self' https: data:; form-action 'self'; frame-ancestors 'self'; img-src 'self' data: https:; object-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self' https: 'unsafe-inline'; upgrade-insecure-requests
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Referrer-Policy: strict-origin-when-cross-origin
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+X-Powered-By: (removido)
+```
+
+### Configuração via Ambiente
+
+```bash
+# .env
+ENABLE_CSP=true
+ENABLE_HSTS=true
+HSTS_MAX_AGE=31536000
+HSTS_INCLUDE_SUBDOMAINS=true
+REFERRER_POLICY=strict-origin-when-cross-origin
+X_FRAME_OPTIONS=SAMEORIGIN
+COEP_POLICY=require-corp
+COOP_POLICY=same-origin
+CORP_POLICY=same-origin
+```
