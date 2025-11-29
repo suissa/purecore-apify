@@ -15,6 +15,17 @@ import {
 } from '../src/errors.js';
 import { errorHandler, authMiddleware, error, validationError, databaseError, externalApiError } from '../src/middlewares.js';
 import { ResilientConfig } from '../src/healer.js';
+import {
+  AutoescaleSentinel,
+  ApiSentinel,
+  DatabaseSentinel,
+  RateLimitGuard,
+  SchemaValidator,
+  Memoization,
+  Inject,
+  Catch,
+  registerDependency
+} from '../src/decorators/config.js';
 
 // Configuração do sistema resiliente
 const resilientConfig: ResilientConfig = {
@@ -268,6 +279,142 @@ app.get('/product/:id', (req: Request, res: Response) => {
   res.json({ message: 'Esta rota nunca executa' });
 });
 
+// =========================================
+// EXEMPLOS COM DECORATORS AVANÇADOS
+// =========================================
+
+// Exemplo 15: Usando AutoescaleSentinel (como no código do usuário)
+class UserController {
+
+  @AutoescaleSentinel
+  async getProfile(req: Request, res: Response) {
+    // Este método tem TODOS os decorators aplicados automaticamente:
+    // Logs, Metrics, TraceSpan, SmartCache, CircuitBreaker, Timeout, Failover, AuthExpressGuard
+    return res.json({
+      id: req.params.id,
+      name: 'João Silva',
+      email: 'joao@example.com'
+    });
+  }
+
+  @ApiSentinel
+  @SchemaValidator({
+    type: 'zod',
+    schema: { /* schema de validação */ },
+    field: 'body'
+  })
+  @Memoization({ ttl: 300 })
+  async createUser(req: Request, res: Response) {
+    // Validação automática + cache + rate limit + error handling
+    const user = req.body;
+    return res.status(201).json({ id: Date.now(), ...user });
+  }
+
+  @DatabaseSentinel
+  @Catch({
+    handler: (error, context) => {
+      console.log(`Database error in ${context.method}:`, error.message);
+      return { error: 'Database temporarily unavailable', retry: true };
+    }
+  })
+  async getUserFromDB(userId: string) {
+    // Circuit breaker + retry automático + error handling graceful
+    if (userId === 'error') {
+      throw new Error('Database connection failed');
+    }
+    return { id: userId, name: 'User from DB' };
+  }
+}
+
+// Exemplo 16: Usando injeção de dependência
+class ServiceWithDependencies {
+
+  @Inject('database')
+  private db: any;
+
+  @Inject('logger')
+  private logger: any;
+
+  @LazyInject('cache')
+  private cache: any;
+
+  @Catch({ logError: false })
+  async processData(data: any) {
+    this.logger.info('Processing data:', data);
+    // Usa this.db, this.cache automaticamente injetados
+    return this.db.save(data);
+  }
+}
+
+// Registrar dependências
+registerDependency('database', {
+  save: (data: any) => Promise.resolve({ id: 1, ...data })
+});
+
+registerDependency('cache', {
+  get: (key: string) => null,
+  set: (key: string, value: any) => console.log(`Cached ${key}`)
+});
+
+registerDependency('logger', {
+  info: (msg: string, ...args: any[]) => console.log(`ℹ️ ${msg}`, ...args),
+  error: (msg: string, ...args: any[]) => console.error(`❌ ${msg}`, ...args)
+});
+
+// Instancia com injeção automática
+const service = new ServiceWithDependencies();
+
+// Exemplo 17: Rate Limiting personalizado
+class ApiController {
+
+  @RateLimitGuard({
+    maxRequests: 10,
+    windowSeconds: 60,
+    keyGenerator: (target, args) => {
+      const req = args[0];
+      return req?.user?.id || req?.ip || 'anonymous';
+    }
+  })
+  async sensitiveOperation(req: Request, res: Response) {
+    return res.json({ message: 'Operação sensível executada' });
+  }
+
+  @Memoization({
+    ttl: 300, // 5 minutos
+    keyGenerator: (...args) => {
+      const req = args[0];
+      return `${req.method}:${req.url}:${JSON.stringify(req.query)}`;
+    }
+  })
+  async cachedApiCall(req: Request, res: Response) {
+    // Resultado cacheado por 5 minutos
+    return res.json({
+      data: `Dados cacheados até ${new Date(Date.now() + 300000).toISOString()}`,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+// Registrar rotas com decorators
+const userController = new UserController();
+const apiController = new ApiController();
+
+// Rotas usando os controllers com decorators
+app.get('/profile/:id', userController.getProfile.bind(userController));
+app.post('/users', userController.createUser.bind(userController));
+app.get('/sensitive', apiController.sensitiveOperation.bind(apiController));
+app.get('/cached', apiController.cachedApiCall.bind(apiController));
+
+// Exemplo 18: Teste da injeção de dependência
+app.get('/inject-test', async (req: Request, res: Response) => {
+  try {
+    const result = await service.processData({ test: 'data' });
+    return res.json({ success: true, result });
+  } catch (error) {
+    return res.json({ success: false, error: (error as Error).message });
+  }
+});
+
 // Middleware para simular erro inesperado
 app.get('/unexpected-error', (req: Request, res: Response) => {
   // Simula um erro não tratado (será capturado pelo errorHandler)
@@ -314,6 +461,13 @@ app.listen(3344, () => {
   console.log('  GET /user/123            → 200 OK (auto-corrigido de /user para /users)');
   console.log('  GET /product/laptop      → 200 OK (auto-corrigido de /product para /products)');
 
+  console.log('\n🎨 Exemplos com Decorators Avançados:');
+  console.log('  GET /profile/123         → AutoescaleSentinel (todos os decorators aplicados)');
+  console.log('  POST /users              → ApiSentinel + SchemaValidator + Memoization');
+  console.log('  GET /sensitive           → RateLimitGuard (10 req/min)');
+  console.log('  GET /cached              → Memoization (cache de 5 min)');
+  console.log('  GET /inject-test         → @Inject funcionando');
+
   console.log('\n🌐 Exemplos com httpErrors (compatível com Fastify):');
   console.log('  GET /http-errors/400     → 400 Bad Request');
   console.log('  GET /http-errors/401     → 401 Unauthorized');
@@ -327,5 +481,6 @@ app.listen(3344, () => {
   console.log('  GET /maintenance         → 503 Service Unavailable (manutenção)');
 
   console.log('\n🔍 Verifique os headers das respostas auto-corrigidas!');
+  console.log('🎨 Teste os decorators avançados!');
   console.log('🔄 O sistema aprende e mapeia rotas automaticamente!');
 });

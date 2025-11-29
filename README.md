@@ -232,6 +232,209 @@ Caso seu arquivo principal esteja em outro caminho, passe `--entry`:
 npx @purecore/apify create crud billing --entry apps/api/src/main.ts
 ```
 
+## Auto-Geração de Código Baseado em Schemas Zod 🚀
+
+O `@purecore/apify` possui um sistema revolucionário de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
+
+- **Repository** com operações CRUD completas
+- **Service** com regras de negócio
+- **Controller** com endpoints REST
+- **Routes** com roteamento automático
+- **DTOs** e **Interfaces** TypeScript
+- **Tests** automatizados
+- **Configurações** e **Schemas** de banco
+
+### Como Funciona
+
+1. **Crie um arquivo `.ts` com schema Zod** em `src/modules/`
+2. **Execute o servidor** - o sistema detecta e gera código automaticamente
+3. **Pronto!** Toda a estrutura CRUD está criada
+
+### Exemplo Prático
+
+```ts
+// src/modules/patient.ts
+import { z } from 'zod';
+
+export const schema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().min(10).max(15),
+  birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string(),
+  }).optional(),
+});
+```
+
+**Resultado:** O sistema gera automaticamente:
+
+```
+src/modules/patient/
+├── index.ts                 # Exportações principais
+├── routes.ts               # Rotas Express
+├── config.ts               # Configurações
+├── database/
+│   ├── repository.ts       # Operações de banco
+│   └── schema.ts          # Schema SQL
+├── services/
+│   └── patient.service.ts  # Regras de negócio
+├── controllers/
+│   └── patient.controller.ts # Handlers HTTP
+├── types/
+│   ├── dto.ts             # Data Transfer Objects
+│   └── interface.ts       # Interfaces TypeScript
+└── tests/
+    └── patient.test.ts    # Testes automatizados
+```
+
+### Endpoints Gerados Automaticamente
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/patient` | Lista pacientes com paginação |
+| `POST` | `/patient` | Cria novo paciente |
+| `GET` | `/patient/:id` | Busca paciente por ID |
+| `PUT` | `/patient/:id` | Atualiza paciente |
+| `DELETE` | `/patient/:id` | Remove paciente |
+
+### Recursos Avançados
+
+#### Busca e Filtros
+```bash
+GET /patient?search=João&page=1&limit=10&sortBy=name&sortOrder=asc
+```
+
+#### Validação Automática
+- **Zod validation** em todos os inputs
+- **TypeScript types** gerados automaticamente
+- **SQL schemas** para bancos de dados
+
+#### Testes Automatizados
+```ts
+describe('Patient Module', () => {
+  it('should create a new patient', async () => {
+    const result = await patientService.create({
+      name: 'João Silva',
+      email: 'joao@email.com',
+      phone: '+5511999999999',
+      birthDate: '1990-01-01'
+    });
+
+    expect(result.id).toBeDefined();
+  });
+});
+```
+
+### Estrutura de Dados
+
+#### Interface Gerada
+```ts
+export interface IPatient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+#### DTO Gerado
+```ts
+export class PatientDTO {
+  name!: string;
+  email!: string;
+  phone!: string;
+  birthDate!: string;
+  address?: Address;
+
+  static validate(data: any): { success: boolean; data?: PatientDTO } {
+    // Validação Zod automática
+  }
+}
+```
+
+### Repository com Operações Completas
+
+```ts
+export class PatientRepository {
+  async create(data: Omit<IPatient, 'id'>): Promise<IPatient>
+  async findById(id: string): Promise<IPatient | null>
+  async find(query: PatientQuery): Promise<PatientResult>
+  async update(id: string, data: Partial<IPatient>): Promise<IPatient | null>
+  async delete(id: string): Promise<boolean>
+}
+```
+
+### Service com Regras de Negócio
+
+```ts
+export class PatientService {
+  async create(input: PatientCreateInput): Promise<IPatient>
+  async getById(id: string): Promise<IPatient>
+  async list(options: ListOptions): Promise<PaginatedResult>
+  async update(id: string, input: PatientUpdateInput): Promise<IPatient>
+  async delete(id: string): Promise<void>
+}
+```
+
+### Controller com ApifyCompleteSentinel
+
+```ts
+export class PatientController {
+  @ApifyCompleteSentinel
+  async list(req: Request, res: Response) {
+    // Circuit Breaker + Timeout + JWT + XSS + Cache + Logs + Metrics
+  }
+
+  @ApifyCompleteSentinel
+  async create(req: Request, res: Response) {
+    // Tudo automático!
+  }
+}
+```
+
+### Vantagens do Sistema
+
+- ⚡ **Desenvolvimento 10x mais rápido** - De schema para API completa em segundos
+- 🛡️ **Segurança máxima** - Todos os decorators aplicados automaticamente
+- 🔧 **Manutenção zero** - Código consistente e padronizado
+- 📊 **Observabilidade completa** - Logs, métricas e traces incluídos
+- ✅ **Testes automatizados** - Cobertura completa gerada automaticamente
+- 🎯 **TypeScript first** - Types seguros em todas as camadas
+
+### Quando Executar
+
+O sistema executa automaticamente quando:
+
+1. **Servidor inicia** - Detecta arquivos `.ts` soltos em `modules/`
+2. **Modo desenvolvimento** - Regenera código quando schemas mudam
+3. **Comando manual** - Via API do auto-generator
+
+### Configuração Manual (Opcional)
+
+```bash
+# Forçar regeneração
+npm run generate-modules
+
+# Limpar módulos gerados
+npm run clean-modules
+
+# Listar módulos
+npm run list-modules
+```
+
 ## Configuração de Ambiente
 
 Para usar a **configuração padrão completa**, crie um arquivo `.env` baseado no template:

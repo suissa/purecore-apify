@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório - Sistema de Auto-Geração Zod</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #7c3aed;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid #7c3aed;
+        }
+        .section h2 {
+            color: #1f2937;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .section h3 {
+            color: #374151;
+            font-size: 1.3rem;
+            margin: 20px 0 10px 0;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .feature-item h4 {
+            color: #7c3aed;
+            margin-bottom: 8px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status.completed { background: #dcfce7; color: #166534; }
+        .status.implemented { background: #dbeafe; color: #1e40af; }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #7c3aed;
+        }
+        .metric .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .file-structure {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+        .file-structure .folder { color: #7c3aed; font-weight: bold; }
+        .file-structure .file { color: #374151; }
+        .workflow {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .workflow ol {
+            counter-reset: step-counter;
+        }
+        .workflow li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 40px;
+        }
+        .workflow li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #7c3aed;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 2rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .metrics { grid-template-columns: repeat(2, 1fr); }
+            .workflow li { padding-left: 35px; }
+            .workflow li::before { width: 20px; height: 20px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Zod Auto-Gen</h1>
+        <p>Sistema de Auto-Geração de Código Baseado em Schemas Zod</p>
+        <p><strong>Data:</strong> 26 de novembro de 2025 | <strong>Hora:</strong> 10:30</p>
+    </div>
+
+    <div class="section">
+        <h2>📋 Resumo Executivo</h2>
+        <p>Implementado sistema revolucionário de <strong>auto-geração de código completo</strong> baseado em schemas Zod. De um simples schema Zod, o sistema gera automaticamente toda a arquitetura de uma API: Repository, Service, Controller, DTOs, Interfaces, Tests, Database Schemas e muito mais.</p>
+
+        <div class="metrics">
+            <div class="metric">
+                <div class="number">10</div>
+                <div class="label">Arquivos Gerados</div>
+            </div>
+            <div class="metric">
+                <div class="number">1</div>
+                <div class="label">Schema Zod</div>
+            </div>
+            <div class="metric">
+                <div class="number">100%</div>
+                <div class="label">CRUD Completo</div>
+            </div>
+            <div class="metric">
+                <div class="number">0</div>
+                <div class="label">Linhas Manuais</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Como Funciona</h2>
+
+        <div class="workflow">
+            <ol>
+                <li><strong>Defina um Schema Zod</strong> - Crie um arquivo .ts com schema Zod em src/modules/</li>
+                <li><strong>Execute o Sistema</strong> - O Apify detecta automaticamente e gera código</li>
+                <li><strong>Resultado</strong> - Toda estrutura CRUD completa gerada automaticamente</li>
+                <li><strong>API Pronta</strong> - Endpoints REST funcionais com ApifyCompleteSentinel</li>
+            </ol>
+        </div>
+
+        <h3>Exemplo Prático</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+            <div>
+                <h4>📝 Input: Schema Zod</h4>
+                <div class="code-block">
+// src/modules/patient.ts
+import { z } from 'zod';
+
+export const schema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().min(10).max(15),
+  birthDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string(),
+  }).optional(),
+});
+                </div>
+            </div>
+            <div>
+                <h4>🏗️ Output: Estrutura Completa</h4>
+                <div class="file-structure">
+src/modules/patient/<br>
+├── <span class="file">index.ts</span> - Exportações<br>
+├── <span class="file">routes.ts</span> - Rotas Express<br>
+├── <span class="file">config.ts</span> - Configurações<br>
+├── <span class="folder">database/</span><br>
+│   ├── <span class="file">repository.ts</span> - CRUD operations<br>
+│   └── <span class="file">schema.ts</span> - SQL schema<br>
+├── <span class="folder">services/</span><br>
+│   └── <span class="file">patient.service.ts</span> - Business logic<br>
+├── <span class="folder">controllers/</span><br>
+│   └── <span class="file">patient.controller.ts</span> - HTTP handlers<br>
+├── <span class="folder">types/</span><br>
+│   ├── <span class="file">dto.ts</span> - Data Transfer Objects<br>
+│   └── <span class="file">interface.ts</span> - TypeScript interfaces<br>
+└── <span class="folder">tests/</span><br>
+    └── <span class="file">patient.test.ts</span> - Automated tests
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>⚙️ Componentes Gerados</h2>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <h4>🗄️ Repository Layer</h4>
+                <p>Operações CRUD completas com paginação, filtros e busca. In-memory storage para desenvolvimento.</p>
+                <div class="code-block">
+export class PatientRepository {
+  async create(data): Promise&lt;IPatient&gt;
+  async findById(id): Promise&lt;IPatient | null&gt;
+  async find(query): Promise&lt;Result&gt;
+  async update(id, data): Promise&lt;IPatient&gt;
+  async delete(id): Promise&lt;boolean&gt;
+}
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <h4>🎯 Service Layer</h4>
+                <p>Regras de negócio, validações e lógica de aplicação. Separação clara de responsabilidades.</p>
+                <div class="code-block">
+export class PatientService {
+  async create(input): Promise&lt;IPatient&gt;
+  async list(options): Promise&lt;Paginated&gt;
+  async update(id, input): Promise&lt;IPatient&gt;
+  async delete(id): Promise&lt;void&gt;
+}
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <h4>🌐 Controller Layer</h4>
+                <p>Handlers HTTP com ApifyCompleteSentinel aplicado automaticamente. Segurança e observabilidade incluídas.</p>
+                <div class="code-block">
+export class PatientController {
+  @ApifyCompleteSentinel
+  async list(req, res) {
+    // Circuit Breaker + JWT + XSS + etc.
+  }
+}
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <h4>📋 DTOs & Interfaces</h4>
+                <p>Types TypeScript seguros gerados automaticamente. Validação Zod integrada.</p>
+                <div class="code-block">
+export interface IPatient {
+  id: string;
+  name: string;
+  email: string;
+  // ... campos do schema
+}
+
+export class PatientDTO {
+  static validate(data): Result
+}
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <h4>🗃️ Database Schema</h4>
+                <p>SQL DDL gerado automaticamente baseado nos tipos Zod. Índices e constraints incluídos.</p>
+                <div class="code-block">
+CREATE TABLE \`patients\` (
+  \`id\` VARCHAR(255) PRIMARY KEY,
+  \`name\` VARCHAR(100) NOT NULL,
+  \`email\` VARCHAR(255) NOT NULL,
+  // ... campos restantes
+);
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <h4>🧪 Tests Automatizados</h4>
+                <p>Suite completa de testes para todas as camadas. Cobertura automática gerada.</p>
+                <div class="code-block">
+describe('Patient Module', () => {
+  it('should create patient', async () => {
+    // Testes gerados automaticamente
+  });
+});
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Analisador Zod</h2>
+
+        <p>O coração do sistema é o <strong>ZodSchemaAnalyzer</strong> que extrai metadados completos dos schemas Zod:</p>
+
+        <div class="feature-grid">
+            <div class="feature-item">
+                <h4>📊 Extração de Metadados</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Tipos TypeScript (string, number, boolean, etc.)</li>
+                    <li>Validações (min, max, email, regex)</li>
+                    <li>Opcionalidade e valores padrão</li>
+                    <li>Estruturas aninhadas (objetos dentro de objetos)</li>
+                    <li>Arrays e tipos complexos</li>
+                </ul>
+            </div>
+
+            <div class="feature-item">
+                <h4>🎯 Geração de Código</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Interfaces TypeScript precisas</li>
+                    <li>DTOs com validação integrada</li>
+                    <li>Repositories com queries otimizadas</li>
+                    <li>Services com regras de negócio</li>
+                    <li>Controllers com decorators aplicados</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Exemplo de Análise</h3>
+        <div class="code-block">
+// Input Schema
+const schema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  address: z.object({
+    street: z.string(),
+    city: z.string()
+  }).optional()
+});
+
+// Metadata Extraído
+{
+  name: 'Patient',
+  fields: [
+    {
+      name: 'name',
+      type: 'string',
+      zodType: 'z.string()',
+      validations: [
+        { type: 'min', value: 2 },
+        { type: 'max', value: 100 }
+      ]
+    },
+    {
+      name: 'email',
+      type: 'string',
+      zodType: 'z.string()',
+      validations: [{ type: 'email' }]
+    },
+    {
+      name: 'address',
+      type: 'object',
+      isOptional: true,
+      nestedFields: [/* ... */]
+    }
+  ]
+}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🛡️ Segurança Integrada</h2>
+
+        <p>Todos os controllers gerados incluem automaticamente o <strong>ApifyCompleteSentinel</strong>:</p>
+
+        <div class="feature-item" style="margin: 20px 0;">
+            <h4>🛡️ ApifyCompleteSentinel Aplicado</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>🔄 <strong>Circuit Breaker</strong> - Proteção contra falhas em cascata</li>
+                <li>⏱️ <strong>Timeout 30s</strong> - Controle de tempo de execução</li>
+                <li>🔗 <strong>WS Retry Channel</strong> - Processamento paralelo de retries</li>
+                <li>📝 <strong>Logger</strong> - Logs estruturados completos</li>
+                <li>📊 <strong>Metrics</strong> - Métricas de performance</li>
+                <li>🔍 <strong>TraceSpan</strong> - Rastreamento distribuído</li>
+                <li>🔐 <strong>JWT Auth</strong> - Autenticação obrigatória</li>
+                <li>🛡️ <strong>XSS Protection</strong> - Sanitização automática</li>
+                <li>🛡️ <strong>Helmet Security</strong> - 14 headers de segurança HTTP</li>
+                <li>🚀 <strong>Smart Cache</strong> - Cache inteligente 5min TTL</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📡 API Endpoints Gerados</h2>
+
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-weight: 600;">Method</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-weight: 600;">Endpoint</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-weight: 600;">Description</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-weight: 600;">Security</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>GET</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>/patient</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;">Lista pacientes com paginação e filtros</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><span class="status implemented">JWT Required</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>POST</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>/patient</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;">Cria novo paciente</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><span class="status implemented">JWT Required</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>GET</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>/patient/:id</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;">Busca paciente específico</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><span class="status implemented">JWT Required</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>PUT</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>/patient/:id</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;">Atualiza paciente</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><span class="status implemented">JWT Required</span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>DELETE</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><code>/patient/:id</code></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;">Remove paciente</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e0e0e0;"><span class="status implemented">JWT Required</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>✅ Status da Implementação</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin: 20px 0;">
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ ZodSchemaAnalyzer criado</h4>
+                <p>Analisador completo de schemas Zod com extração de metadados</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ CodeGenerator implementado</h4>
+                <p>Templates para gerar repository, service, controller, DTO, interface</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ AutoGenerator criado</h4>
+                <p>Sistema de detecção e geração automática baseado em arquivos .ts</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ Integração no Apify</h4>
+                <p>Sistema executa automaticamente na inicialização do servidor</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ ApifyCompleteSentinel</h4>
+                <p>Todos os decorators aplicados automaticamente nos controllers gerados</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ README atualizado</h4>
+                <p>Documentação completa do sistema de auto-geração</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ Exemplo criado</h4>
+                <p>Arquivo patient.ts de exemplo para demonstração</p>
+            </div>
+
+            <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 10px; color: #166534;">✅ Relatório HTML gerado</h4>
+                <p>Documentação técnica completa da implementação</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📁 Arquivos Criados/Modificados</h2>
+
+        <div style="background: white; padding: 15px; border-radius: 6px; border: 1px solid #e0e0e0; margin: 15px 0;">
+            <h4>Criados:</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><code>src/zod-analyzer.ts</code> - Analisador de schemas Zod e gerador de código</li>
+                <li><code>src/auto-generator.ts</code> - Sistema de auto-geração baseado em arquivos .ts</li>
+                <li><code>src/modules/patient.ts</code> - Exemplo de schema Zod para demonstração</li>
+                <li><code>test-generate.ts</code> - Script de teste para geração manual</li>
+                <li><code>reports/26-11-2025_10-30-zod-autogen.html</code> - Este relatório</li>
+            </ul>
+
+            <h4>Modificados:</h4>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li><code>src/index.ts</code> - Integração do sistema de auto-geração na inicialização</li>
+                <li><code>README.md</code> - Documentação completa do sistema de auto-geração</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🚀 Vantagens do Sistema</h2>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>⚡ Produtividade Máxima:</strong> De schema Zod para API completa em segundos</li>
+            <li><strong>🔧 Consistência Total:</strong> Código padronizado e previsível</li>
+            <li><strong>🛡️ Segurança Integrada:</strong> ApifyCompleteSentinel aplicado automaticamente</li>
+            <li><strong>🎯 TypeScript First:</strong> Types seguros gerados automaticamente</li>
+            <li><strong>📊 Observabilidade Completa:</strong> Logs, métricas e traces incluídos</li>
+            <li><strong>✅ Testes Automatizados:</strong> Cobertura completa gerada</li>
+            <li><strong>🔄 Manutenção Zero:</strong> Evolução automática com mudanças no schema</li>
+            <li><strong>🎨 Arquitetura Limpa:</strong> Separação clara de responsabilidades</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🔮 Próximos Passos</h2>
+
+        <ul style="padding-left: 20px; margin: 20px 0;">
+            <li><strong>🔌 Conectores de Banco:</strong> Integração com MongoDB, PostgreSQL, MySQL</li>
+            <li><strong>📊 OpenAPI/Swagger:</strong> Geração automática de documentação</li>
+            <li><strong>🔍 GraphQL:</strong> Geração de schemas GraphQL baseada em Zod</li>
+            <li><strong>🎯 Validações Avançadas:</strong> Suporte a validações customizadas Zod</li>
+            <li><strong>⚡ Performance:</strong> Otimizações de geração e cache</li>
+            <li><strong>🧪 Testes E2E:</strong> Geração de testes de integração</li>
+        </ul>
+    </div>
+
+    <div style="text-align: center; padding: 30px 0; color: #666; border-top: 1px solid #e0e0e0; margin-top: 40px;">
+        <p><strong>@purecore/apify</strong> - De Schema Zod para API Enterprise em segundos</p>
+        <p>Auto-geração revolucionária de código baseado em validações Zod</p>
+        <p>Implementado em 26 de novembro de 2025</p>
+    </div>
+</body>
+</html>

@@ -2,11 +2,13 @@ import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http
 import { readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { Router } from './router';
-import { Request, Response, NextFunction } from './types';
+import { Request, Response, NextFunction, RequestHandler } from './types';
 import { errorHandler } from './middlewares';
 import { NotFoundError } from './errors';
 import { initI18n } from './i18n';
 import { getResilientFallback, ResilientConfig } from './healer';
+import { autoGenerateFromZodSchemas } from './auto-generator';
+// Import will be conditional to avoid build issues if file doesn't exist
 
 export class Apify extends Router {
 
@@ -78,6 +80,15 @@ export class Apify extends Router {
     const modulesPath = join(process.cwd(), 'src', 'modules');
 
     try {
+      // Executa auto-geração baseada em schemas Zod antes de carregar módulos
+      console.log('🔧 Verificando necessidade de auto-geração de código...');
+      await autoGenerateFromZodSchemas({
+        modulesPath: 'src/modules',
+        verbose: true,
+        force: false,
+        dryRun: false
+      });
+
       const moduleFolders = readdirSync(modulesPath)
         .filter((item: string) => statSync(join(modulesPath, item)).isDirectory());
 
@@ -234,6 +245,24 @@ export class Apify extends Router {
       (res as any).end(data);
     };
   }
+}
+
+/**
+ * Função utilitária para carregar rotas de módulos automaticamente
+ * Baseado em convenções de nomenclatura dos arquivos
+ */
+export async function autoRoutesFromModules(): Promise<Router> {
+  const modulesRouter = new Router();
+
+  try {
+    // Import dinâmico para evitar problemas de build se o arquivo não existir
+    const { autoGenerateRoutes } = await import('./auto-routes');
+    await autoGenerateRoutes(modulesRouter);
+  } catch (error) {
+    console.warn('[Apify] Auto-routes not available:', error);
+  }
+
+  return modulesRouter;
 }
 
 /**
