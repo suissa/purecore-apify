@@ -1,6 +1,6 @@
 {
   "name": "@purecore/apify",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,7 +26,7 @@
     "@types/cookie": "^0.5.1",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^24.10.1",
-    "typescript": "^5.5.3"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@purecore/reqify": "latest",

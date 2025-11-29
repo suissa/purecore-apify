@@ -5,12 +5,12 @@
 
 // Imports de decorators existentes
 import { Logs, Metrics, TraceSpan } from './observability.js';
-import { SmartCache, CircuitBreaker, Timeout, Failover } from './resilience.js';
-import { AuthExpressGuard } from './security.js';
+import { CircuitBreaker, Timeout, Failover } from './resilience.js';
+import { AuthExpressGuard, XSSGuard as XSSGuardSecurity, CSRFGuard as CSRFGuardSecurity, AuthJWTGuard, IdempotentGuard as IdempotentGuardSecurity } from './security.js';
+import { CQRS as CQRSPerformance } from './performance.js';
 
 // Imports dos novos decorators
 import { PresetDecoratorFactory } from './preset.js';
-import { RateLimitGuard } from './rate-limit.js';
 import { SchemaValidator, ZodValidator, JoiValidator, YupValidator, AjvValidator } from './schema-validator.js';
 import { Memoization, SmartCache as MemoCache, ApiCache } from './memoization.js';
 import { Inject, LazyInject, InjectMethod, registerDependency, resolveDependency } from './injection.js';
@@ -25,7 +25,7 @@ import {
   CORPGuard,
   OriginAgentClusterGuard,
   ReferrerPolicyGuard,
-  HSTSGuard,
+  HSTSGuard as HSTSGuardHelmet,
   XContentTypeOptionsGuard,
   XDNSPrefetchControlGuard,
   XDownloadOptionsGuard,
@@ -36,13 +36,126 @@ import {
   helmet
 } from './helmet.js';
 
+// Imports de tipos e JWT
+import { Request, Response, NextFunction, RequestHandler } from '../types';
+import { createHandlerDecorator } from './base';
+import * as jwt from 'jsonwebtoken';
+
+// =========================================
+// INTERFACES E TIPOS
+// =========================================
+
+interface AuthRequest extends Request {
+  user?: unknown;
+}
+
+interface AuthJWTGuardOptions {
+  headerName?: string;
+  secret?: string;
+}
+
+interface CORSOptions {
+  origin?: string | string[] | ((origin: string | undefined) => boolean);
+  methods?: string[];
+  allowedHeaders?: string[];
+  exposedHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
+  optionsSuccessStatus?: number;
+}
+
+// =========================================
+// IMPLEMENTAÇÕES DE DECORATORS
+// =========================================
+
+// CQRS - Reutiliza implementação do performance.ts
+export const CQRS = CQRSPerformance;
+
+// CORS Guard - Implementação completa de CORS
+export const CORSGuard = (options: CORSOptions = {}): MethodDecorator => {
+  const {
+    origin = '*',
+    methods = ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders = [],
+    credentials = false,
+    maxAge = 86400, // 24 hours
+    optionsSuccessStatus = 204
+  } = options;
+
+  return createHandlerDecorator((handler) => {
+    const execute = async (req: Request, res: Response, next: NextFunction) => {
+      // Set CORS headers
+      const requestOrigin = req.headers.origin;
+
+      // Handle origin
+      if (origin === '*') {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      } else if (typeof origin === 'string') {
+        if (origin === requestOrigin) {
+          res.setHeader('Access-Control-Allow-Origin', origin);
+        }
+      } else if (Array.isArray(origin)) {
+        if (requestOrigin && origin.includes(requestOrigin)) {
+          res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+        }
+      } else if (typeof origin === 'function') {
+        if (origin(requestOrigin)) {
+          res.setHeader('Access-Control-Allow-Origin', requestOrigin || '*');
+        }
+      }
+
+      // Set other CORS headers
+      if (credentials && res.getHeader('Access-Control-Allow-Origin') !== '*') {
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+
+      res.setHeader('Access-Control-Allow-Methods', methods.join(', '));
+      res.setHeader('Access-Control-Allow-Headers', allowedHeaders.join(', '));
+
+      if (exposedHeaders.length > 0) {
+        res.setHeader('Access-Control-Expose-Headers', exposedHeaders.join(', '));
+      }
+
+      res.setHeader('Access-Control-Max-Age', maxAge.toString());
+
+      // Handle preflight requests
+      if (req.method === 'OPTIONS') {
+        res.status(optionsSuccessStatus).end();
+        return;
+      }
+
+      return handler(req, res, next);
+    };
+
+    return execute;
+  });
+};
+
+// HSTS Guard - Reutiliza implementação do helmet.ts
+export const HSTSGuard = HSTSGuardHelmet;
+
+// XSS Guard - Reutiliza implementação do security.ts
+export const XSSGuard = XSSGuardSecurity;
+
+// CSRF Guard - Reutiliza implementação do security.ts
+export const CSRFGuard = CSRFGuardSecurity;
+
+// Auth Guards - Reutiliza implementação do security.ts
+export const AuthJwtGuard = AuthJWTGuard;
+
+// Idempotent Guard - Reutiliza implementação do security.ts
+export const IdempotentGuard = IdempotentGuardSecurity;
+
+// =========================================
+// EXPORTS ORGANIZADOS POR CATEGORIA
+// =========================================
+
 // Performance & Optimization
 export {
-  RateLimitGuard,
   Memoization,
   MemoCache,
-  ApiCache,
-  SmartCache as SmartCacheDecorator
+  ApiCache
 };
 
 // Validation
@@ -80,7 +193,6 @@ export {
 
 // Resilience (existentes)
 export {
-  SmartCache,
   CircuitBreaker,
   Timeout,
   Failover
@@ -97,7 +209,6 @@ export {
   CORPGuard,
   OriginAgentClusterGuard,
   ReferrerPolicyGuard,
-  HSTSGuard,
   XContentTypeOptionsGuard,
   XDNSPrefetchControlGuard,
   XDownloadOptionsGuard,
@@ -106,66 +217,6 @@ export {
   XPoweredByGuard,
   XXSSProtectionGuard,
   helmet // Função helper para middleware
-};
-
-// CQRS (placeholder - pode ser implementado depois)
-export const CQRS = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    // Placeholder - implementar CQRS pattern
-    console.log(`🏗️ CQRS aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-// CORS Guard (placeholder)
-export const CORSGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    // Placeholder - implementar CORS validation
-    console.log(`🌐 CORS Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-// HSTS Guard (placeholder)
-export const HSTSGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    // Placeholder - implementar HSTS headers
-    console.log(`🔒 HSTS Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-// XSS Guard (placeholder - pode reutilizar do security.ts)
-export const XSSGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    // Placeholder - implementar XSS protection
-    console.log(`🛡️ XSS Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-// CSRF Guard (placeholder - pode reutilizar do security.ts)
-export const CSRFGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    // Placeholder - implementar CSRF protection
-    console.log(`🔐 CSRF Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-// Auth Guards (placeholders)
-export const AuthJwtGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    console.log(`🔑 JWT Auth Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
-};
-
-export const IdempotentGuard = () => {
-  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    console.log(`🔄 Idempotent Guard aplicado em ${target.constructor.name}.${propertyKey}`);
-    return descriptor;
-  };
 };
 
 // =========================================
@@ -179,7 +230,7 @@ export const AutoescaleSentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   TraceSpan,
-  SmartCache,
+  MemoCache({ ttl: 300 }),
   CircuitBreaker,
   Timeout,
   Failover,
@@ -193,17 +244,15 @@ export const SecuritySentinel = PresetDecoratorFactory([
   CSRFGuard,
   AuthJwtGuard,
   IdempotentGuard,
-  XSSGuard,
-  RateLimitGuard({ maxRequests: 10, windowSeconds: 60 }) // Rate limit rigoroso
+  XSSGuard
 ]);
 
 /**
  * Performance Sentinel - Otimizado para performance
  */
 export const PerformanceSentinel = PresetDecoratorFactory([
-  RateLimitGuard({ maxRequests: 100, windowSeconds: 60 }),
   CQRS,
-  SmartCacheDecorator({ ttl: 300 }),
+  MemoCache({ ttl: 300 }),
   CORSGuard,
   HSTSGuard,
   XSSGuard
@@ -216,7 +265,7 @@ export const ApifySentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   TraceSpan,
-  SmartCache,
+  MemoCache({ ttl: 300 }),
   CircuitBreaker,
   Timeout,
   Failover,
@@ -247,22 +296,22 @@ export const ApifyCompleteSentinel = PresetDecoratorFactory([
   Failover,
 
   // Segurança (usando guards condicionais que respeitam NO_AUTH)
-  ConditionalJWTGuard({ secret: process.env.JWT_SECRET }),
+  AuthJwtGuard({ secret: process.env.JWT_SECRET }),
   XSSGuard,
 
   // Helmet.js - Headers de segurança HTTP completos
   HelmetGuard({
-    contentSecurityPolicy: true, // CSP ativado
-    strictTransportSecurity: true, // HSTS ativado
-    xFrameOptions: true, // Anti-clickjacking
-    xContentTypeOptions: true, // Anti-MIME sniffing
+    contentSecurityPolicy: true,
+    strictTransportSecurity: true,
+    xFrameOptions: true,
+    xContentTypeOptions: true,
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-    xXssProtection: true, // Desabilita filtro XSS do navegador
-    xPoweredBy: true // Remove X-Powered-By
+    xXssProtection: true,
+    xPoweredBy: true
   }),
 
   // Performance
-  SmartCache({ ttl: 300 })
+  MemoCache({ ttl: 300 })
 ]);
 
 /**
@@ -271,7 +320,6 @@ export const ApifyCompleteSentinel = PresetDecoratorFactory([
 export const ApiSentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
-  RateLimitGuard({ maxRequests: 50, windowSeconds: 60 }),
   ApiCache(300), // 5 minutos de cache
   CatchHttpErrors({ logError: true }),
   AuthExpressGuard
@@ -285,8 +333,7 @@ export const DatabaseSentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Memoization({ ttl: 60 }), // Cache por 1 minuto
-  CatchWithRetry(3, 1000), // 3 tentativas com 1s de delay
-  CatchDatabaseErrors()
+  CatchWithRetry(3, 1000) // 3 tentativas com 1s de delay
 ]);
 
 /**
@@ -297,8 +344,7 @@ export const ExternalApiSentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Memoization({ ttl: 300 }), // Cache por 5 minutos
-  CatchWithRetry(2, 2000), // 2 tentativas com 2s de delay
-  CatchApiErrors()
+  CatchWithRetry(2, 2000) // 2 tentativas com 2s de delay
 ]);
 
 // =========================================
@@ -353,30 +399,32 @@ export const noAuthManager = new NoAuthManager();
  * Sistema de canal WS para retry de processamento em paralelo
  */
 class WSRetryChannel {
-  private wsConnections = new Map<string, WebSocket>();
+  private wsConnections = new Map<string, any>();
   private retryQueues = new Map<string, any[]>();
   private processingChannels = new Map<string, boolean>();
 
   /**
    * Registra uma conexão WebSocket para uma rota específica
    */
-  registerConnection(routeKey: string, ws: WebSocket) {
+  registerConnection(routeKey: string, ws: any) {
     this.wsConnections.set(routeKey, ws);
     console.log(`🔗 WS Retry Channel registrado para ${routeKey}`);
 
-    ws.on('message', (data) => {
-      try {
-        const message = JSON.parse(data.toString());
-        this.handleWSMessage(routeKey, message);
-      } catch (error) {
-        console.error(`❌ Erro ao processar mensagem WS para ${routeKey}:`, error);
-      }
-    });
+    if (ws.on) {
+      ws.on('message', (data: any) => {
+        try {
+          const message = JSON.parse(data.toString());
+          this.handleWSMessage(routeKey, message);
+        } catch (error) {
+          console.error(`❌ Erro ao processar mensagem WS para ${routeKey}:`, error);
+        }
+      });
 
-    ws.on('close', () => {
-      this.wsConnections.delete(routeKey);
-      console.log(`🔌 WS Retry Channel desconectado para ${routeKey}`);
-    });
+      ws.on('close', () => {
+        this.wsConnections.delete(routeKey);
+        console.log(`🔌 WS Retry Channel desconectado para ${routeKey}`);
+      });
+    }
   }
 
   /**
@@ -494,7 +542,7 @@ class WSRetryChannel {
    */
   private notifyWSClients(routeKey: string, message: any) {
     const ws = this.wsConnections.get(routeKey);
-    if (ws && ws.readyState === WebSocket.OPEN) {
+    if (ws && ws.readyState === 1) { // OPEN state
       ws.send(JSON.stringify(message));
     }
   }
@@ -516,23 +564,25 @@ class WSRetryChannel {
 
 export const wsRetryChannel = new WSRetryChannel();
 
+
 /**
  * Auth Guard condicional que respeita NO_AUTH
  */
 export const ConditionalAuthGuard = (): MethodDecorator => {
-  return createHandlerDecorator((handler, meta) => {
+  return createHandlerDecorator((handler) => {
     const execute = async (req: Request, res: Response, next: NextFunction) => {
       // Verifica se a rota deve ser excluída da autenticação
-      const routePath = (req as any).route?.path || req.originalUrl || req.url;
-      if (noAuthManager.shouldSkipAuth(req.method, routePath)) {
+      const routePath = (req as any).route?.path || req.originalUrl || req.url || '';
+      if (noAuthManager.shouldSkipAuth(req.method || '', routePath)) {
         // Pula autenticação para rotas excluídas
         console.log(`🔓 Auth skipped for ${req.method} ${routePath} (NO_AUTH)`);
         return handler(req, res, next);
       }
 
       // Aplica autenticação normal
-      if (!req.user) {
-        return res.status(401).json({ error: 'Usuário não autenticado' });
+      if (!(req as AuthRequest).user) {
+        res.status(401).json({ error: 'Usuário não autenticado' });
+        return;
       }
       return handler(req, res, next);
     };
@@ -541,41 +591,6 @@ export const ConditionalAuthGuard = (): MethodDecorator => {
   });
 };
 
-/**
- * JWT Auth Guard condicional que respeita NO_AUTH
- */
-export const ConditionalJWTGuard = (options: AuthJWTGuardOptions = {}): MethodDecorator => {
-  const header = options.headerName ?? 'authorization';
-  const secret = options.secret ?? process.env.JWT_SECRET ?? 'fallback-secret';
-
-  return createHandlerDecorator((handler) => {
-    const execute: RequestHandler = async (req, res, next) => {
-      // Verifica se a rota deve ser excluída da autenticação
-      const routePath = (req as any).route?.path || req.originalUrl || req.url;
-      if (noAuthManager.shouldSkipAuth(req.method, routePath)) {
-        // Pula autenticação para rotas excluídas
-        console.log(`🔓 JWT Auth skipped for ${req.method} ${routePath} (NO_AUTH)`);
-        return handler(req, res, next);
-      }
-
-      // Aplica JWT auth
-      const tokenHeader = req.headers[header] as string | undefined;
-      if (!tokenHeader) {
-        return res.status(401).json({ error: 'Token não informado' });
-      }
-      const [, token] = tokenHeader.split(' ');
-      try {
-        const payload = jwt.verify(token ?? tokenHeader, secret);
-        (req as AuthRequest).user = payload;
-      } catch (_err) {
-        return res.status(403).json({ error: 'Token inválido' });
-      }
-      return handler(req, res, next);
-    };
-
-    return execute;
-  });
-};
 
 // =========================================
 // UTILITÁRIOS
@@ -645,3 +660,5 @@ export function initializeDecorators() {
   console.log('  • JWT_SECRET - Segredo para tokens JWT');
   console.log('  • Exemplo: NO_AUTH="GET /health, POST /login, GET /status"');
 }
+
+

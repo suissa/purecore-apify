@@ -170,7 +170,7 @@
 
     <div class="section">
         <h2>📋 Resumo Executivo</h2>
-        <p>Implementado sistema revolucionário de <strong>auto-geração de código completo</strong> baseado em schemas Zod. De um simples schema Zod, o sistema gera automaticamente toda a arquitetura de uma API: Repository, Service, Controller, DTOs, Interfaces, Tests, Database Schemas e muito mais.</p>
+        <p>Implementado sistema moderno de <strong>auto-geração de código completo</strong> baseado em schemas Zod. De um simples schema Zod, o sistema gera automaticamente toda a arquitetura de uma API: Repository, Service, Controller, DTOs, Interfaces, Tests, Database Schemas e muito mais.</p>
 
         <div class="metrics">
             <div class="metric">
@@ -209,21 +209,21 @@
             <div>
                 <h4>📝 Input: Schema Zod</h4>
                 <div class="code-block">
-// src/modules/patient.ts
-import { z } from 'zod';
-
-export const schema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  phone: z.string().min(10).max(15),
+// src/modules/patient.ts<br>
+import { z } from 'zod';<br>
+<br>
+export const schema = z.object({<br>
+  name: z.string().min(2).max(100),<br>
+  email: z.string().email(),<br>
+  phone: z.string().min(10).max(15),<br>
   birthDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
-  address: z.object({
-    street: z.string(),
-    city: z.string(),
-    state: z.string(),
-    zipCode: z.string(),
-  }).optional(),
-});
+  address: z.object({<br>
+    street: z.string(),<br>
+    city: z.string(),<br>
+    state: z.string(),<br>
+    zipCode: z.string(),<br>
+  }).optional(),<br>
+});<br>
                 </div>
             </div>
             <div>
@@ -258,13 +258,13 @@ src/modules/patient/<br>
                 <h4>🗄️ Repository Layer</h4>
                 <p>Operações CRUD completas com paginação, filtros e busca. In-memory storage para desenvolvimento.</p>
                 <div class="code-block">
-export class PatientRepository {
-  async create(data): Promise&lt;IPatient&gt;
-  async findById(id): Promise&lt;IPatient | null&gt;
-  async find(query): Promise&lt;Result&gt;
-  async update(id, data): Promise&lt;IPatient&gt;
-  async delete(id): Promise&lt;boolean&gt;
-}
+export class PatientRepository {<br>
+  async create(data): Promise&lt;IPatient&gt;<br>
+  async findById(id): Promise&lt;IPatient | null&gt;<br>
+  async find(query): Promise&lt;Result&gt;<br>
+  async update(id, data): Promise&lt;IPatient&gt;<br>
+  async delete(id): Promise&lt;boolean&gt;<br>
+}<br>
                 </div>
             </div>
 
@@ -272,12 +272,12 @@ export class PatientRepository {
                 <h4>🎯 Service Layer</h4>
                 <p>Regras de negócio, validações e lógica de aplicação. Separação clara de responsabilidades.</p>
                 <div class="code-block">
-export class PatientService {
-  async create(input): Promise&lt;IPatient&gt;
-  async list(options): Promise&lt;Paginated&gt;
-  async update(id, input): Promise&lt;IPatient&gt;
-  async delete(id): Promise&lt;void&gt;
-}
+export class PatientService {<br>   
+  async create(input): Promise&lt;IPatient&gt;<br>
+  async list(options): Promise&lt;Paginated&gt;<br>
+  async update(id, input): Promise&lt;IPatient&gt;<br>
+  async delete(id): Promise&lt;void&gt;<br>
+}<br>
                 </div>
             </div>
 
@@ -285,12 +285,12 @@ export class PatientService {
                 <h4>🌐 Controller Layer</h4>
                 <p>Handlers HTTP com ApifyCompleteSentinel aplicado automaticamente. Segurança e observabilidade incluídas.</p>
                 <div class="code-block">
-export class PatientController {
+export class PatientController {<br>
   @ApifyCompleteSentinel
-  async list(req, res) {
-    // Circuit Breaker + JWT + XSS + etc.
-  }
-}
+  async list(req, res) {<br>
+    // Circuit Breaker + JWT + XSS + etc.<br>
+  }<br>
+}<br>
                 </div>
             </div>
 
@@ -298,16 +298,16 @@ export class PatientController {
                 <h4>📋 DTOs & Interfaces</h4>
                 <p>Types TypeScript seguros gerados automaticamente. Validação Zod integrada.</p>
                 <div class="code-block">
-export interface IPatient {
-  id: string;
-  name: string;
-  email: string;
-  // ... campos do schema
-}
+export interface IPatient {<br> 
+  id: string;<br>
+  name: string;<br>
+  email: string;<br>
+  // ... campos do schema<br>
+}<br>
 
-export class PatientDTO {
-  static validate(data): Result
-}
+export class PatientDTO {<br>
+  static validate(data): Result<br>
+}<br>
                 </div>
             </div>
 
@@ -315,12 +315,12 @@ export class PatientDTO {
                 <h4>🗃️ Database Schema</h4>
                 <p>SQL DDL gerado automaticamente baseado nos tipos Zod. Índices e constraints incluídos.</p>
                 <div class="code-block">
-CREATE TABLE \`patients\` (
-  \`id\` VARCHAR(255) PRIMARY KEY,
-  \`name\` VARCHAR(100) NOT NULL,
-  \`email\` VARCHAR(255) NOT NULL,
-  // ... campos restantes
-);
+CREATE TABLE \`patients\` (<br>
+  \`id\` VARCHAR(255) PRIMARY KEY,<br>
+  \`name\` VARCHAR(100) NOT NULL,<br>
+  \`email\` VARCHAR(255) NOT NULL,<br>
+  // ... campos restantes<br>
+);<br>
                 </div>
             </div>
 
@@ -328,11 +328,11 @@ CREATE TABLE \`patients\` (
                 <h4>🧪 Tests Automatizados</h4>
                 <p>Suite completa de testes para todas as camadas. Cobertura automática gerada.</p>
                 <div class="code-block">
-describe('Patient Module', () => {
-  it('should create patient', async () => {
-    // Testes gerados automaticamente
-  });
-});
+describe('Patient Module', () => {<br>
+  it('should create patient', async () => {<br>
+    // Testes gerados automaticamente<br>
+  });<br>
+});<br>
                 </div>
             </div>
         </div>
@@ -370,41 +370,41 @@ describe('Patient Module', () => {
         <h3>Exemplo de Análise</h3>
         <div class="code-block">
 // Input Schema
-const schema = z.object({
-  name: z.string().min(2).max(100),
-  email: z.string().email(),
-  address: z.object({
-    street: z.string(),
-    city: z.string()
-  }).optional()
-});
+const schema = z.object({<br>
+  name: z.string().min(2).max(100),<br>
+  email: z.string().email(),<br>
+  address: z.object({<br>
+    street: z.string(),<br>
+    city: z.string()<br>
+  }).optional()<br>
+});<br>
 
 // Metadata Extraído
-{
-  name: 'Patient',
-  fields: [
-    {
-      name: 'name',
-      type: 'string',
-      zodType: 'z.string()',
-      validations: [
-        { type: 'min', value: 2 },
-        { type: 'max', value: 100 }
-      ]
-    },
-    {
-      name: 'email',
-      type: 'string',
-      zodType: 'z.string()',
+{<br>
+  name: 'Patient',<br>
+  fields: [<br>
+    {<br>
+      name: 'name',<br>
+      type: 'string',<br>
+      zodType: 'z.string()',<br>
+      validations: [<br>
+        { type: 'min', value: 2 },<br>
+        { type: 'max', value: 100 }<br>
+      ]<br>
+    },<br>
+    {<br>
+      name: 'email',<br>
+      type: 'string',<br>
+      zodType: 'z.string()',<br>
       validations: [{ type: 'email' }]
-    },
-    {
-      name: 'address',
-      type: 'object',
-      isOptional: true,
-      nestedFields: [/* ... */]
-    }
-  ]
+    },<br>
+    {<br>
+      name: 'address',<br>
+      type: 'object',<br>
+      isOptional: true,<br>
+      nestedFields: [/* ... */]<br>
+    }<br>
+  ]<br>
 }
         </div>
     </div>
