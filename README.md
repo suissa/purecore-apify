@@ -1,9 +1,9 @@
-<div align="center" style="background-color: #9556ff">
+<div align="center" style="background-color: #000">
 
-<img src="https://i.imgur.com/o1Uet34.png" style="display:block; margin: 0 auto; margint-top: 20px">
+<img src="https://i.imgur.com/dLJkRYi.png" style="display:block; margin: 0 auto; margint-top: 20px">
 
 <div align="left">
-<h2 style="color: #ffff00; font-size: 48px; text-align: center; font-weight: bold;">Visão geral</h2>
+<h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Visão geral</h2>
 
 <p><code>@purecore/apify</code> expõe a classe <code>Apify</code>, que herda de um roteador compatível com Express.</p>
 
@@ -54,7 +54,7 @@ app.use('/api', apiRouter);
 app.listen(3344, () =&gt; console.log('@purecore/apify rodando na porta 3344'));
 </code></pre>
 
-<h2 style="color: #ffff00; font-size: 48px; text-align: center; font-weight: bold;">Template</h2>
+<h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Template</h2>
 
 <code>modules/&lt;resource&gt;/routes.ts</code>
 <p>O gerador cria um sub-roteador completo com todas as operações CRUD:</p>
@@ -75,7 +75,7 @@ app.listen(3344, () =&gt; console.log('@purecore/apify rodando na porta 3344'));
 app.use('/users', usersRouter);
 </code></pre>
 
-<h2 style="color: #ffff00; font-size: 48px; text-align: center; font-weight: bold;">Gerador de CRUD via CLI</h2>
+<h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Gerador de CRUD via CLI</h2>
 
 <p>Você pode criar módulos automaticamente com:</p>
 
@@ -94,7 +94,7 @@ app.use('/users', usersRouter);
 <pre><code>npx @purecore/apify create crud billing --entry apps/api/src/main.ts
 </code></pre>
 
-<h2 style="color: #ffff00; font-size: 48px; text-align: center; font-weight: bold;">Decorators disponíveis</h2>
+<h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Decorators disponíveis</h2>
 
 <p>Você pode usar os decorators para aplicar resiliência, observabilidade, segurança e performance em controladores class-based (igual ao Nest):</p>
 
