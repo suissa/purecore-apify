@@ -14,7 +14,8 @@ export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecor
     resetTimeoutMs: options.resetTimeoutMs ?? 10000,
   };
 
-  return createHandlerDecorator((handler) => {
+  return createHandlerDecorator((handler, meta) => {
+    const routeKey = String(meta.propertyKey);
     let failures = 0;
     let nextAttempt = 0;
     let state: 'closed' | 'open' | 'half-open' = 'closed';
@@ -25,9 +26,8 @@ export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecor
         if (now >= nextAttempt) {
           state = 'half-open';
         } else {
-          return res
-            .status(503)
-            .json({ error: 'Circuit breaker aberto, tente novamente mais tarde.' });
+          res.status(503).json({ error: 'Circuit breaker aberto, tente novamente mais tarde.', route: routeKey });
+          return;
         }
       }
 
@@ -40,8 +40,11 @@ export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecor
         if (failures >= config.failureThreshold) {
           state = 'open';
           nextAttempt = Date.now() + config.resetTimeoutMs;
+          res.status(503).json({ error: 'Circuit breaker aberto, tente novamente mais tarde.', route: routeKey });
+          return;
         }
-        next(error);
+        res.status(500).json({ error: 'Erro interno do servidor.', route: routeKey });
+        return;
       }
     };
 

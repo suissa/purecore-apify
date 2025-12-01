@@ -20,7 +20,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "create:crud": "node dist/cli.js create crud"
+    "create:crud": "node dist/cli.js create crud",
+    "example:ddd": "bun run examples/run-ddd-generator.ts",
+    "example:ddd:test": "bun run examples/test-ddd-generator.ts"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
