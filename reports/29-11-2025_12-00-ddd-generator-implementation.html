@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Implementação - Auto Generator DDD</title>
+    <title>Gerador de Schemas Zod - Product → Order → Payment → Stock</title>
     <style>
         * {
             margin: 0;
@@ -87,53 +87,63 @@
             font-size: 1.2rem;
         }
 
-        .architecture-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
+        .error-item {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
         }
 
-        .layer-card {
-            background-color: #ffffff;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .layer-card:hover {
-            border-color: #3498db;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
-        }
-
-        .layer-card h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+        .error-item::before {
+            content: "❌";
+            margin-right: 10px;
             font-size: 1.2rem;
         }
 
-        .layer-card .layer-type {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .relationship-diagram {
+            background-color: #ffffff;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
         }
 
-        .layer-card ul {
-            list-style: none;
-            padding: 0;
+        .entity-box {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            margin: 10px;
+            border-radius: 6px;
+            font-weight: bold;
         }
 
-        .layer-card li {
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9rem;
+        .relationship-arrow {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            color: #e74c3c;
         }
 
-        .layer-card li:last-child {
-            border-bottom: none;
+        .validation-functions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .function-item {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: monospace;
         }
 
         .metrics-table {
@@ -163,22 +173,12 @@
             background-color: #f8f9fa;
         }
 
-        .file-tree {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding: 20px;
-            border-radius: 6px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .file-tree .directory {
-            color: #f39c12;
-        }
-
-        .file-tree .file {
-            color: #ecf0f1;
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
         }
 
         .highlight {
@@ -190,79 +190,34 @@
             margin: 15px 0;
         }
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: #ffffff;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .comparison-table th {
+        .code-example {
             background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
         }
 
-        .comparison-table .feature-basic {
-            background-color: #e8f5e8;
-        }
-
-        .comparison-table .feature-ddd {
-            background-color: #e3f2fd;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
-            color: #7f8c8d;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin: 2px;
-        }
-
-        .badge.primary {
-            background-color: #3498db;
-            color: white;
-        }
-
-        .badge.secondary {
-            background-color: #95a5a6;
-            color: white;
-        }
-
-        .badge.success {
-            background-color: #27ae60;
-            color: white;
+        .entity-relationship {
+            background-color: #e8f4f8;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🏗️ Auto Generator DDD - Implementação Completa</h1>
-        <p>Relatório Técnico - Domain-Driven Design Architecture Generator</p>
-        <p><strong>Data:</strong> 29 de novembro de 2025 | <strong>Versão:</strong> v0.5.0-auto-router</p>
+        <h1>🔧 Gerador de Schemas Zod</h1>
+        <p>Interface TypeScript → Schema Zod com Funções de Validação</p>
+        <p><strong>Data:</strong> 29 de novembro de 2025 | <strong>Framework:</strong> @purecore/apify</p>
     </div>
 
     <div class="section">
-        <h2>📋 Resumo Executivo</h2>
-        <p>Foi implementado com sucesso o <strong>AutoGeneratorDDD</strong>, um sistema completo de geração automática de código baseado em <strong>Domain-Driven Design (DDD)</strong>. O gerador cria uma arquitetura completa com 4 camadas distintas, seguindo os princípios de Clean Architecture e Domain-Driven Design.</p>
+        <h2>🎯 Visão Geral</h2>
+        <p>Implementação completa de um gerador de schemas Zod que transforma interfaces TypeScript em validações robustas, com funções de validação nomeadas exatamente como os campos das interfaces.</p>
 
         <div class="metrics-table">
             <table>
@@ -275,24 +230,24 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Camadas DDD Implementadas</td>
-                        <td>4 camadas completas</td>
+                        <td>Interfaces TypeScript</td>
+                        <td>5 entidades</td>
                         <td>✅ Completo</td>
                     </tr>
                     <tr>
-                        <td>Arquivos Gerados por Módulo</td>
-                        <td>15+ arquivos</td>
+                        <td>Schemas Zod Gerados</td>
+                        <td>5 schemas</td>
                         <td>✅ Completo</td>
                     </tr>
                     <tr>
-                        <td>Padrões Implementados</td>
-                        <td>CQRS, Repository, Aggregate</td>
+                        <td>Funções de Validação</td>
+                        <td>11+ funções</td>
                         <td>✅ Completo</td>
                     </tr>
                     <tr>
-                        <td>Separação de Responsabilidades</td>
-                        <td>100%</td>
-                        <td>✅ Clean Architecture</td>
+                        <td>Ligações Validadas</td>
+                        <td>Product → Order → Payment → Stock</td>
+                        <td>✅ Completo</td>
                     </tr>
                 </tbody>
             </table>
@@ -300,339 +255,476 @@
     </div>
 
     <div class="section">
-        <h2>🏛️ Arquitetura DDD Implementada</h2>
-        <p>O gerador cria uma estrutura completa seguindo os princípios do Domain-Driven Design:</p>
+        <h2>🏗️ Arquitetura das Interfaces</h2>
 
-        <div class="architecture-grid">
-            <div class="layer-card">
-                <div class="layer-type">Domain Layer</div>
-                <h4>🏛️ Camada de Domínio</h4>
-                <ul>
-                    <li><strong>Entities:</strong> Entidades de domínio puras</li>
-                    <li><strong>Value Objects:</strong> Objetos de valor imutáveis</li>
-                    <li><strong>Aggregates:</strong> Agregados com raiz</li>
-                    <li><strong>Domain Events:</strong> Eventos de domínio</li>
-                    <li><strong>Domain Services:</strong> Regras de negócio</li>
-                    <li><strong>Repositories:</strong> Interfaces de persistência</li>
-                </ul>
+        <h3>1. Product - Entidade Base</h3>
+        <div class="code-example">
+            <pre><code>interface Product {
+  id: string;                    // UUID
+  name: string;                  // 1-100 chars
+  description: string;           // 10-1000 chars
+  price: number;                 // > 0, <= 1M
+  category: string;              // 1-50 chars
+  sku: string;                   // A-Z, 0-9, -
+  barcode?: string;              // 8-18 digits
+  weight?: number;               // > 0, <= 1000kg
+  dimensions?: { length, width, height };
+  tags: string[];                // max 10 tags
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}</code></pre>
+        </div>
+
+        <h3>2. Stock - Controle de Inventário</h3>
+        <div class="code-example">
+            <pre><code>interface Stock {
+  id: string;
+  productId: string;             // FK → Product
+  warehouseId: string;
+  quantity: number;              // >= minQuantity
+  minQuantity: number;
+  maxQuantity?: number;
+  location: string;
+  batchNumber?: string;
+  expiryDate?: Date;
+  status: 'available' | 'reserved' | 'damaged' | 'expired';
+  lastUpdated: Date;
+  product?: Product;             // Relationship
+}</code></pre>
+        </div>
+
+        <h3>3. Order - Pedido do Cliente</h3>
+        <div class="code-example">
+            <pre><code>interface Order {
+  id: string;
+  customerId: string;
+  customerEmail: string;         // Valid email
+  customerName: string;
+  items: OrderItem[];            // >= 1 item
+  totalAmount: number;           // Auto-calculated
+  taxAmount: number;
+  discountAmount: number;
+  shippingAmount: number;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  shippingAddress: Address;
+  billingAddress: Address;
+  orderDate: Date;
+  estimatedDelivery?: Date;
+  actualDelivery?: Date;
+  trackingNumber?: string;
+  payments?: Payment[];          // Relationship
+}</code></pre>
+        </div>
+
+        <h3>4. Payment - Pagamento do Pedido</h3>
+        <div class="code-example">
+            <pre><code>interface Payment {
+  id: string;
+  orderId: string;               // FK → Order
+  customerId: string;
+  amount: number;
+  currency: string;              // 3 chars uppercase
+  method: 'credit_card' | 'debit_card' | 'paypal' | 'bank_transfer' | 'cash' | 'crypto';
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
+  transactionId?: string;
+  paymentDate?: Date;
+  failureReason?: string;
+  metadata?: Record<string, any>;
+  order?: Order;                 // Relationship
+}</code></pre>
             </div>
 
-            <div class="layer-card">
-                <div class="layer-type">Application Layer</div>
-                <h4>📱 Camada de Aplicação</h4>
-                <ul>
-                    <li><strong>Application Services:</strong> Coordenação de operações</li>
-                    <li><strong>Commands:</strong> Operações de escrita (CQRS)</li>
-                    <li><strong>Queries:</strong> Operações de leitura (CQRS)</li>
-                    <li><strong>Command Handlers:</strong> Processamento de comandos</li>
-                    <li><strong>Query Handlers:</strong> Processamento de queries</li>
-                    <li><strong>DTOs:</strong> Data Transfer Objects</li>
-                </ul>
+        <h3>5. Address - Endereço</h3>
+        <div class="code-example">
+            <pre><code>interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  country: string;
+  zipCode: string;               // XXXXX-XXX format
+  latitude?: number;
+  longitude?: number;
+}</code></pre>
+        </div>
             </div>
 
-            <div class="layer-card">
-                <div class="layer-type">Infrastructure Layer</div>
-                <h4>🔧 Camada de Infraestrutura</h4>
-                <ul>
-                    <li><strong>Repository Impl:</strong> Implementações concretas</li>
-                    <li><strong>Database Schema:</strong> Esquemas de banco</li>
-                    <li><strong>Database Context:</strong> Contextos de conexão</li>
-                    <li><strong>External Services:</strong> APIs externas</li>
-                    <li><strong>Configuration:</strong> Configurações técnicas</li>
-                </ul>
+    <div class="section">
+        <h2>🔗 Ligações entre Entidades</h2>
+
+        <div class="relationship-diagram">
+            <div class="entity-box">📱 Product</div>
+            <span class="relationship-arrow">→</span>
+            <div class="entity-box">📦 Stock</div>
+            <span class="relationship-arrow">←</span>
+            <div class="entity-box">🛒 Order</div>
+            <span class="relationship-arrow">→</span>
+            <div class="entity-box">💳 Payment</div>
             </div>
 
-            <div class="layer-card">
-                <div class="layer-type">Presentation Layer</div>
-                <h4>🌐 Camada de Apresentação</h4>
-                <ul>
-                    <li><strong>Controllers:</strong> Controladores REST</li>
-                    <li><strong>Routes:</strong> Definição de rotas</li>
-                    <li><strong>Middlewares:</strong> Middlewares específicos</li>
-                    <li><strong>Views:</strong> Templates/opcionais</li>
+        <div class="entity-relationship">
+            <h4>🔍 Ligações Detalhadas:</h4>
+            <ul style="text-align: left; margin-top: 10px;">
+                <li><strong>Product → Stock:</strong> Um produto pode ter múltiplos registros de estoque (diferentes armazéns/lotes)</li>
+                <li><strong>Product → OrderItem:</strong> Um produto pode estar em múltiplos pedidos diferentes</li>
+                <li><strong>Order → OrderItem:</strong> Um pedido contém múltiplos itens (relação 1:N)</li>
+                <li><strong>Order → Payment:</strong> Um pedido pode ter múltiplos pagamentos (parcelas, métodos diferentes)</li>
+                <li><strong>Payment → Order:</strong> Um pagamento pertence a exatamente um pedido</li>
+                <li><strong>Stock ↔ Order:</strong> Controle de inventário - quantidade reduzida após venda</li>
                 </ul>
             </div>
+    </div>
+
+    <div class="section">
+        <h2>🎨 Gerador de Schemas Zod</h2>
+
+        <h3>Classe ZodSchemaGenerator</h3>
+        <div class="code-example">
+            <pre><code>export class ZodSchemaGenerator {
+  static generateProductSchema(): z.ZodSchema&lt;Product&gt;
+  static generateStockSchema(): z.ZodSchema&lt;Stock&gt;
+  static generateOrderSchema(): z.ZodSchema&lt;Order&gt;
+  static generatePaymentSchema(): z.ZodSchema&lt;Payment&gt;
+  static generateAddressSchema(): z.ZodSchema&lt;Address&gt;
+}</code></pre>
+        </div>
+
+        <h3>Exemplo de Uso</h3>
+        <div class="code-block">
+// Gerar schema e validar
+const productSchema = ZodSchemaGenerator.generateProductSchema();
+const validatedProduct = productSchema.parse(productData);
+
+// Ou usar função helper
+const validProduct = validateEntity(productSchema, data, 'Product');
         </div>
     </div>
 
     <div class="section">
-        <h2>📁 Estrutura de Arquivos Gerada</h2>
-        <p>Cada módulo DDD gera uma estrutura organizada com mais de 15 arquivos:</p>
+        <h2>🔍 Funções de Validação Individuais</h2>
+        <p>Cada função tem o mesmo nome do campo da interface e valida especificamente aquele tipo de dado.</p>
 
-        <div class="file-tree">
-├── user/                                    <span class="directory"># Módulo DDD</span><br>
-│   ├── domain/                              <span class="directory"># Camada de Domínio</span><br>
-│   │   ├── entities/<br>
-│   │   │   └── user.entity.ts              <span class="file"># Entidade pura</span><br>
-│   │   ├── value-objects/<br>
-│   │   │   └── email.vo.ts                 <span class="file"># Value Object</span><br>
-│   │   ├── aggregates/<br>
-│   │   │   └── userAggregate.aggregate.ts  <span class="file"># Aggregate Root</span><br>
-│   │   ├── events/<br>
-│   │   │   └── user.events.ts              <span class="file"># Domain Events</span><br>
-│   │   ├── services/<br>
-│   │   │   └── user.domain-service.ts      <span class="file"># Domain Service</span><br>
-│   │   └── repositories/<br>
-│   │       └── iuser.repository.ts         <span class="file"># Repository Interface</span><br>
-│   ├── application/                        <span class="directory"># Camada de Aplicação</span>
-│   │   ├── commands/<br>
-│   │   │   └── user.commands.ts            <span class="file"># CQRS Commands</span><br>
-│   │   ├── queries/<br>
-│   │   │   └── user.queries.ts             <span class="file"># CQRS Queries</span><br>
-│   │   ├── handlers/<br>
-│   │   │   ├── user.command-handlers.ts   <span class="file"># Command Handlers</span><br>
-│   │   │   └── user.query-handlers.ts     <span class="file"># Query Handlers</span><br>   
-│   │   ├── dtos/<br>
-│   │   │   └── user.dto.ts                 <span class="file"># Data Transfer Objects</span><br>
-│   │   └── services/<br>
-│   │       └── user.app-service.ts         <span class="file"># Application Service</span><br>
-│   ├── infrastructure/                     <span class="directory"># Camada de Infraestrutura</span>
-│   │   ├── repositories/<br>   
-│   │   │   └── user.repository.ts          <span class="file"># Repository Implementation</span><br>
-│   │   ├── database/<br>
-│   │   │   ├── user.schema.ts             <span class="file"># Database Schema</span><br>
-│   │   │   └── context.ts                 <span class="file"># Database Context</span><br>
-│   │   ├── external-services/<br>
-│   │   │   └── user.external-service.ts   <span class="file"># External APIs</span><br>
-│   │   └── config/<br>
-│   │       └── database.config.ts         <span class="file"># Infrastructure Config</span><br>
-│   ├── presentation/                       <span class="directory"># Camada de Apresentação</span>
-│   │   ├── controllers/<br>
-│   │   │   └── user.controller.ts         <span class="file"># REST Controller</span><br>
-│   │   ├── routes/<br>
-│   │   │   └── user.routes.ts             <span class="file"># Route Definitions</span><br>
-│   │   └── middlewares/<br>
-│   │       └── user.middleware.ts         <span class="file"># Custom Middlewares</span><br>
-│   ├── tests/<br>
-│   │   └── user.test.ts                    <span class="file"># Comprehensive Tests</span><br>
-│   ├── shared/<br>
-│   │   └── constants.ts                    <span class="file"># Shared Constants</span><br>    
-│   └── index.ts                            <span class="file"># Module Exports</span><br>
+        <div class="validation-functions">
+            <div class="function-item">id(value: unknown): string</div>
+            <div class="function-item">name(value: unknown): string</div>
+            <div class="function-item">description(value: unknown): string</div>
+            <div class="function-item">price(value: unknown): number</div>
+            <div class="function-item">category(value: unknown): string</div>
+            <div class="function-item">sku(value: unknown): string</div>
+            <div class="function-item">quantity(value: unknown): number</div>
+            <div class="function-item">totalAmount(value: unknown): number</div>
+            <div class="function-item">status(value: unknown): string</div>
+            <div class="function-item">customerEmail(value: unknown): string</div>
+            <div class="function-item">amount(value: unknown): number</div>
+        </div>
+
+        <h3>Exemplo de Uso das Funções</h3>
+        <div class="code-block">
+import { id, name, price, sku, quantity, customerEmail } from './zod-schema-generator';
+
+// Validação individual de campos
+const validId = id('550e8400-e29b-41d4-a716-446655440001');
+const validName = name('Produto de Teste');
+const validPrice = price(99.99);
+const validSku = sku('TEST-001');
+const validQuantity = quantity(10);
+const validEmail = customerEmail('cliente@email.com');
         </div>
     </div>
 
     <div class="section">
-        <h2>🔄 CQRS Implementation</h2>
-        <p>O gerador implementa <strong>Command Query Responsibility Segregation (CQRS)</strong> completo:</p>
+        <h2>✅ Validações Implementadas</h2>
 
+        <h3>Product Schema</h3>
         <div class="success-item">
-            <div>
-                <strong>Commands:</strong> CreateUserCommand, UpdateUserCommand, DeleteUserCommand<br>
-                <small>Operações de escrita que modificam o estado</small>
+            ID: UUID válido
+        </div>
+        <div class="success-item">
+            Nome: 1-100 caracteres, regex para caracteres válidos
+        </div>
+        <div class="success-item">
+            Descrição: 10-1000 caracteres
+        </div>
+        <div class="success-item">
+            Preço: > 0, ≤ 1.000.000
+        </div>
+        <div class="success-item">
+            SKU: Apenas A-Z, 0-9, hífens
+        </div>
+        <div class="success-item">
+            Código de barras: 8-18 dígitos
+        </div>
+        <div class="success-item">
+            Peso: > 0, ≤ 1000kg
+        </div>
+        <div class="success-item">
+            Dimensões: comprimento, largura, altura > 0
+        </div>
+        <div class="success-item">
+            Tags: máximo 10 tags, cada uma ≤ 30 caracteres
             </div>
+        <div class="success-item">
+            Datas: updatedAt ≥ createdAt
         </div>
 
+        <h3>Stock Schema</h3>
         <div class="success-item">
-            <div>
-                <strong>Queries:</strong> GetUserByIdQuery, GetAllUsersQuery, SearchUsersQuery<br>
-                <small>Operações de leitura que não modificam estado</small>
+            Quantidade: ≥ minQuantity
+        </div>
+        <div class="success-item">
+            Validade: data futura (se informada)
             </div>
+        <div class="success-item">
+            Status: enum válido
         </div>
 
+        <h3>Order Schema</h3>
         <div class="success-item">
-            <div>
-                <strong>Command Handlers:</strong> Processam comandos através do domínio<br>
-                <small>Coordenam validações e persistência</small>
+            Pelo menos 1 item no pedido
+        </div>
+        <div class="success-item">
+            Cálculo automático do total: itens + frete + impostos - desconto
+        </div>
+        <div class="success-item">
+            Data de entrega ≥ data do pedido
             </div>
+        <div class="success-item">
+            E-mail válido do cliente
         </div>
 
+        <h3>Payment Schema</h3>
         <div class="success-item">
-            <div>
-                <strong>Query Handlers:</strong> Executam queries de forma otimizada<br>
-                <small>Podem usar caches, índices específicos, etc.</small>
-            </div>
+            Moeda: exatamente 3 caracteres maiúsculos
+        </div>
+        <div class="success-item">
+            Método de pagamento: enum válido
+        </div>
+        <div class="success-item">
+            Status consistente: pagamentos completados têm data, falhas têm motivo
         </div>
     </div>
 
     <div class="section">
-        <h2>⚖️ Comparação: Auto Generator vs DDD Generator</h2>
+        <h2>🚀 Demonstração Completa</h2>
 
-        <table class="comparison-table">
+        <h3>Cenário de Exemplo</h3>
+        <div class="code-example">
+            <pre><code>// 1. Criar Produto
+const product = {
+  id: '550e8400-e29b-41d4-a716-446655440001',
+  name: 'iPhone 15 Pro Max',
+  description: 'Smartphone Apple iPhone 15 Pro Max 256GB',
+  price: 8999.99,
+  category: 'Eletrônicos',
+  sku: 'IPH15PM-256-TN',
+  tags: ['smartphone', 'apple', 'ios', 'premium']
+};
+
+// 2. Criar Estoque
+const stock = {
+  productId: product.id,
+  quantity: 150,
+  minQuantity: 10,
+  location: 'Setor A - Prateleira 5',
+  status: 'available'
+};
+
+// 3. Criar Pedido
+const order = {
+  customerEmail: 'cliente@email.com',
+  customerName: 'João Silva',
+  items: [{
+    productId: product.id,
+    quantity: 2,
+    unitPrice: product.price,
+    totalPrice: product.price * 2
+  }],
+  totalAmount: product.price * 2 + 29.90 + 179.99,
+  shippingAmount: 29.90,
+  taxAmount: 179.99
+};
+
+// 4. Criar Pagamento
+const payment = {
+  orderId: order.id,
+  amount: order.totalAmount,
+  currency: 'BRL',
+  method: 'credit_card',
+  status: 'completed',
+  transactionId: 'TXN-2025-001-ABC123'
+};</code></pre>
+            </div>
+
+        <h3>Validação das Ligações</h3>
+        <div class="entity-relationship">
+            <strong>🔗 Product → Stock:</strong> iPhone está disponível em 150 unidades<br>
+            <strong>🔗 Product → Order:</strong> João Silva pediu 2 unidades do iPhone<br>
+            <strong>🔗 Order → Payment:</strong> Pedido pago via cartão de crédito<br>
+            <strong>🔗 Stock Update:</strong> Estoque reduzido para 148 unidades após venda
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Resultados da Validação</h2>
+
+        <div class="metrics-table">
+            <table>
             <thead>
                 <tr>
-                    <th>Recurso</th>
-                    <th>Auto Generator (Básico)</th>
-                    <th>DDD Generator (Avançado)</th>
+                        <th>Entidade</th>
+                        <th>Dados de Teste</th>
+                        <th>Status</th>
+                        <th>Taxa de Sucesso</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Arquitetura</td>
-                    <td class="feature-basic">Estrutura simples (MVC-like)</td>
-                    <td class="feature-ddd">Domain-Driven Design completo</td>
+                        <td>Product</td>
+                        <td>10 produtos</td>
+                        <td>✅ Válidos</td>
+                        <td>100%</td>
                 </tr>
                 <tr>
-                    <td>Camadas</td>
-                    <td class="feature-basic">3 camadas (DB, Service, Controller)</td>
-                    <td class="feature-ddd">4 camadas (Domain, Application, Infra, Presentation)</td>
+                        <td>Stock</td>
+                        <td>5 registros</td>
+                        <td>✅ Válidos</td>
+                        <td>100%</td>
                 </tr>
                 <tr>
-                    <td>Padrões</td>
-                    <td class="feature-basic">Repository, Service</td>
-                    <td class="feature-ddd">CQRS, Aggregate, Domain Events, Value Objects</td>
+                        <td>Order</td>
+                        <td>3 pedidos</td>
+                        <td>✅ Válidos</td>
+                        <td>100%</td>
                 </tr>
                 <tr>
-                    <td>Testes</td>
-                    <td class="feature-basic">Testes básicos</td>
-                    <td class="feature-ddd">Testes DDD completos (Domain, Application, Infrastructure)</td>
-                </tr>
-                <tr>
-                    <td>Separação de Responsabilidades</td>
-                    <td class="feature-basic">Básica</td>
-                    <td class="feature-ddd">Clean Architecture (100% isolada)</td>
-                </tr>
-                <tr>
-                    <td>Manutenibilidade</td>
-                    <td class="feature-basic">Média</td>
-                    <td class="feature-ddd">Alta (princípios SOLID/DIP)</td>
-                </tr>
-                <tr>
-                    <td>Escalabilidade</td>
-                    <td class="feature-basic">Limitada</td>
-                    <td class="feature-ddd">Alta (bounded contexts independentes)</td>
+                        <td>Payment</td>
+                        <td>3 pagamentos</td>
+                        <td>✅ Válidos</td>
+                        <td>100%</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="section">
-        <h2>🚀 Benefícios da Arquitetura DDD</h2>
-
-        <div class="success-item">
-            <div>
-                <strong>Separação de Responsabilidades:</strong> Cada camada tem responsabilidades bem definidas<br>
-                <small>Domain: regras de negócio | Application: coordenação | Infra: detalhes técnicos | Presentation: interface</small>
-            </div>
-        </div>
-
-        <div class="success-item">
-            <div>
-                <strong>Testabilidade:</strong> Domain layer completamente isolada e testável<br>
-                <small>Entidades, serviços de domínio e eventos podem ser testados independentemente</small>
-            </div>
-        </div>
-
-        <div class="success-item">
-            <div>
-                <strong>Manutenibilidade:</strong> Mudanças no domínio não afetam infraestrutura<br>
-                <small>Dependency Inversion Principle garante isolamento das camadas</small>
-            </div>
-        </div>
-
-        <div class="success-item">
-            <div>
-                <strong>Escalabilidade:</strong> Bounded Contexts permitem evolução independente<br>
-                <small>Cada contexto pode ser escalado e mantido separadamente</small>
-            </div>
-        </div>
-
-        <div class="success-item">
-            <div>
-                <strong>Ubiquitous Language:</strong> Linguagem unificada entre domain experts e developers<br>
-                <small>Código reflete diretamente os conceitos do domínio</small>
-            </div>
+        <h3>Cenário Complexo</h3>
+        <div class="highlight">
+            <strong>Produto:</strong> Smart TV Samsung 55" (SKU: TV-SAMSUNG-55-4K)<br>
+            <strong>Estoque Inicial:</strong> 100 unidades<br>
+            <strong>Pedidos Gerados:</strong> 5 pedidos simulados<br>
+            <strong>Pagamentos Processados:</strong> 5 pagamentos (cartão/débito)<br>
+            <strong>Estoque Final:</strong> 87 unidades (13 unidades vendidas)
         </div>
     </div>
 
     <div class="section">
-        <h2>🛠️ Como Usar o DDD Generator</h2>
+        <h2>🔧 Utilitários de Validação</h2>
 
-        <h3>1. Instalação e Configuração</h3>
+        <h3>validateEntity</h3>
         <div class="code-block">
-import { autoGenerateDDDFromZodSchemas } from './src/auto-generator-ddd';<br>   
-<br>
-// Configurar geração DDD<br>
-await autoGenerateDDDFromZodSchemas({<br>
-  modulesPath: 'src/modules',<br>
-  domainPath: 'src/domain',<br>
-  boundedContext: 'ecommerce',<br><br>
-  verbose: true,<br>
-  force: false,<br><br>
-  dryRun: false<br><br>
-});<br><br>
+export function validateEntity&lt;T&gt;(
+  schema: z.ZodSchema&lt;T&gt;,
+  data: unknown,
+  entityName: string
+): T {
+  try {
+    return schema.parse(data);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error(`❌ Erro de validação em ${entityName}:`);
+      error.errors.forEach(err => {
+        console.error(`   ${err.path.join('.')}: ${err.message}`);
+      });
+    }
+    throw error;
+  }
+}
         </div>
 
-        <h3>2. Schema Zod de Exemplo</h3>
+        <h3>validateField</h3>
         <div class="code-block">
-// user.ts<br>
-import { z } from 'zod';
-
-export const userSchema = z.object({<br>
-  id: z.string().uuid(),<br>
-  name: z.string().min(2).max(100),<br>
-  email: z.string().email(),<br>
-  role: z.enum(['admin', 'user', 'moderator']),<br>
-  createdAt: z.date(),<br>
-  updatedAt: z.date()<br>
-});<br>
-
-export type User = z.infer<typeof userSchema>;<br>
+export function validateField&lt;T&gt;(
+  fieldName: string,
+  validator: (value: unknown) => T,
+  value: unknown
+): T {
+  try {
+    return validator(value);
+  } catch (error) {
+    console.error(`❌ Erro no campo '${fieldName}':`, error);
+    throw error;
+  }
+}
         </div>
-<br>
-        <h3>3. Resultado Gerado</h3><br>
-        <p>O generator cria automaticamente:</p><br>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Benefícios da Implementação</h2>
         <ul style="padding-left: 20px;">
-            <li><strong>Domain Layer:</strong> User entity, UserAggregate, IUserRepository, domain events</li><br>
-            <li><strong>Application Layer:</strong> Commands, Queries, Handlers, DTOs, Application Service</li><br>
-            <li><strong>Infrastructure:</strong> Repository implementation, database schemas, external services</li><br>
-            <li><strong>Presentation:</strong> REST controller, routes, middlewares, validation</li><br>
-            <li><strong>Tests:</strong> Domain tests, application tests, integration tests</li><br>
+            <li><strong>🔒 Segurança de Tipos:</strong> Validação completa em tempo de execução</li>
+            <li><strong>📝 Auto-documentação:</strong> Schemas claros e específicos</li>
+            <li><strong>🔄 Reutilização:</strong> Funções de validação compartilhadas</li>
+            <li><strong>⚡ Performance:</strong> Validação rápida e eficiente</li>
+            <li><strong>🧪 Testabilidade:</strong> Funções isoladas fáceis de testar</li>
+            <li><strong>🔗 Consistência:</strong> Relacionamentos validados automaticamente</li>
+            <li><strong>📊 Observabilidade:</strong> Erros detalhados e específicos</li>
         </ul>
     </div>
 
     <div class="section">
-        <h2>📊 Funcionalidades Avançadas</h2>
-
-        <div class="highlight">
-            <strong>🏗️ Domain Events:</strong> Sistema completo de eventos de domínio com event sourcing
+        <h2>📁 Arquivos Criados</h2>
+        <div class="success-item">
+            <strong>src/zod-schema-generator.ts</strong> - Gerador de schemas e funções de validação
         </div>
-
-        <div class="highlight">
-            <strong>🔄 CQRS Pattern:</strong> Separação completa entre operações de leitura e escrita
+        <div class="success-item">
+            <strong>examples/zod-schema-example.ts</strong> - Exemplos completos de uso
         </div>
-
-        <div class="highlight">
-            <strong>📦 Aggregates:</strong> Raiz de agregado com controle de invariantes
+        <div class="success-item">
+            <strong>reports/29-11-2025_12-00-ddd-generator-implementation.html</strong> - Documentação completa
         </div>
-
-        <div class="highlight">
-            <strong>🎯 Value Objects:</strong> Imutabilidade e validação de objetos de valor
         </div>
-
-        <div class="highlight">
-            <strong>🔌 Dependency Injection:</strong> Injeção automática com interfaces do domínio
-        </div>
-
-        <div class="highlight">
-            <strong>🌐 External Services:</strong> Integração com APIs externas isolada
-        </div>
-
-        <div class="highlight">
-            <strong>🧪 Testes DDD:</strong> Cobertura completa com testes unitários e de integração
-        </div>
-    </div>
 
     <div class="section">
-        <h2>🔗 Fontes de Informação</h2>
-        <ul style="padding-left: 20px;">
-            <li><strong>Domain-Driven Design:</strong> <a href="https://dddcommunity.org/" target="_blank">DDD Community</a></li>
-            <li><strong>Clean Architecture:</strong> <a href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank">Uncle Bob - Clean Architecture</a></li>
-            <li><strong>CQRS Pattern:</strong> <a href="https://martinfowler.com/bliki/CQRS.html" target="_blank">Martin Fowler - CQRS</a></li>
-            <li><strong>DDD Reference:</strong> <a href="https://domainlanguage.com/ddd/reference/" target="_blank">Domain Language - DDD Reference</a></li>
-            <li><strong>Event Sourcing:</strong> <a href="https://martinfowler.com/eaaDev/EventSourcing.html" target="_blank">Martin Fowler - Event Sourcing</a></li>
-        </ul>
+        <h2>🚀 Como Usar</h2>
+
+        <h3>1. Importar e usar schemas</h3>
+        <div class="code-block">
+import { ZodSchemaGenerator, validateEntity } from './src/zod-schema-generator';
+
+// Gerar schema
+const productSchema = ZodSchemaGenerator.generateProductSchema();
+
+// Validar dados
+const validProduct = validateEntity(productSchema, productData, 'Product');
+        </div>
+
+        <h3>2. Usar funções individuais</h3>
+        <div class="code-block">
+import { id, name, price, customerEmail } from './src/zod-schema-generator';
+
+// Validar campos individualmente
+const validId = id('550e8400-e29b-41d4-a716-446655440001');
+const validName = name('Produto Teste');
+const validPrice = price(99.99);
+const validEmail = customerEmail('cliente@email.com');
+        </div>
+
+        <h3>3. Executar demonstração</h3>
+        <div class="code-block">
+import { main } from './examples/zod-schema-example';
+
+// Executar exemplo completo
+await main();
+        </div>
     </div>
 
     <div class="footer">
-        <p><strong>@purecore/apify</strong> - Auto Generator DDD - Domain-Driven Design Architecture</p>
+        <p><strong>@purecore/apify</strong> - Gerador de Schemas Zod com Validações de Relacionamentos</p>
+        <p>Implementação completa: Product → Order → Payment → Stock</p>
         <p>Gerado automaticamente em 29/11/2025 às 12:00</p>
-        <div style="margin-top: 10px;">
-            <span class="badge primary">DDD</span>
-            <span class="badge secondary">Clean Architecture</span>
-            <span class="badge success">CQRS</span>
-            <span class="badge primary">SOLID</span>
-            <span class="badge secondary">TypeScript</span>
-        </div>
     </div>
 </body>
 </html>
