@@ -1,5 +1,62 @@
 # 📋 CHANGELOG - @purecore/apify
 
+## [Release] v0.7.0-fastify-factory
+
+### What's Changed
+* 🚀 **PureCore Fastify Factory** - Factory completa compatível com Fastify API
+* 🎯 **createPureCoreFastify()** - Função factory que cria instâncias Fastify-like
+* 📋 **API 100% Compatível** - get, post, put, delete, patch, use, register, addHook, decorate, listen
+* 🔒 **Decorators Integrados** - ApifyCompleteSentinel, SecuritySentinel, CQRS em handlers
+* ✅ **Validação Zod Automática** - createValidatedHandler para validação automática
+* 🔌 **Plugins Fastify** - Suporte completo a plugins e middlewares do Fastify
+* 🏪 **Exemplo E-commerce Completo** - Product, Order, Payment com autenticação JWT
+* 🎨 **Hooks e Middlewares** - Sistema completo de lifecycle hooks
+* 📊 **Demonstrações Práticas** - Exemplos básicos e avançados funcionais
+* 📚 **Documentação Completa** - README e relatórios HTML detalhados
+
+### Technical Details
+* **Compatibilidade**: API idêntica ao Fastify (migração zero)
+* **Superpoderes**: Decorators de segurança + validação automática
+* **Ecossistema**: Plugins Fastify + recursos Apify
+* **Type Safety**: TypeScript + Zod validation integrada
+* **Performance**: Circuit Breaker + Smart Cache embutidos
+* **Segurança**: Helmet + XSS + CSRF + JWT protection
+* **CQRS**: Separação automática de Commands e Queries
+
+### Factory Usage
+```typescript
+import { createPureCoreFastify } from '@purecore/apify';
+
+const app = createPureCoreFastify({
+  logger: true,
+  resilientConfig: {
+    enableFallback: true,
+    retryAttempts: 3
+  }
+});
+
+// API idêntica ao Fastify
+app.get('/health', async (req, res) => {
+  res.json({ status: 'OK' });
+});
+
+app.post('/products', createValidatedHandler(
+  ProductValidator.validate,
+  async (req, res) => {
+    const product = await createProduct(req.body);
+    res.status(201).json({ product });
+  }
+));
+
+app.listen(3000, () => {
+  console.log('🚀 PureCore Fastify rodando!');
+});
+```
+
+### New Contributors
+* [@purecore/apify/fastify-factory](https://github.com/suissa/purecore-apify) - Factory Fastify-like
+* [Fastify](https://fastify.dev/) - Web framework compatibility
+
 ## [Release] v0.5.0-auto-router
 
 ### What's Changed

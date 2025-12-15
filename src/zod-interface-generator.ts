@@ -642,7 +642,7 @@ import { RelationshipManager } from './zod-interface-generator';
 export const relationshipManager = new RelationshipManager();
 
 // Registrar relacionamentos automaticamente
-${Array.from(this.relationshipManager.getRelationships.bind(this.relationshipManager)('')).map(([entityName, relationships]) =>
+${Array.from(this.relationshipManager['relationships'].entries()).map(([entityName, relationships]) =>
   `relationshipManager.registerRelationships('${entityName}', ${JSON.stringify(relationships, null, 2)});`
 ).join('\n')}
 
