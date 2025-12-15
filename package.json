@@ -26,7 +26,10 @@
     "generate:schemas": "tsx generate-zod-schemas.ts",
     "demo:schemas": "tsx examples/zod-schema-generation.ts",
     "demo:fastify": "tsx examples/fastify-integration.ts",
-    "dev:fastify": "tsx examples/advanced-fastify-decorators.ts"
+    "dev:fastify": "tsx examples/advanced-fastify-decorators.ts",
+    "dev:aon": "tsx examples/aon-example.ts",
+    "demo:aon": "tsx examples/aon-example.ts",
+    "demo:aon-simple": "node examples/simple-aon-demo.cjs"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",

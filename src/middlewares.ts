@@ -3,6 +3,9 @@ import * as jwt from 'jsonwebtoken';
 import * as cookie from 'cookie';
 import { randomUUID } from 'node:crypto';
 
+// Importa AON (Adaptive Observability Negotiation)
+import { aonMiddleware, createAONMiddleware, AONRequest } from './aon/index.js';
+
 // --- 0. Transparent Body Parser Middleware ---
 // Aplica automaticamente parsing de body em todas as rotas não-GET
 
@@ -348,4 +351,41 @@ export function databaseError(message: string, originalError?: Error): never {
  */
 export function externalApiError(service: string, message?: string, originalError?: Error): never {
   throw new ExternalApiError(service, message, originalError);
+}
+
+// =========================================
+// MIDDLEWARE AON (ADAPTIVE OBSERVABILITY NEGOTIATION)
+// =========================================
+
+/**
+ * Middleware AON - Exporta para uso direto
+ * Implementa padrão de observabilidade adaptativa conforme AONP spec
+ */
+export { aonMiddleware, createAONMiddleware };
+
+/**
+ * Middleware AON com configuração automática
+ * Detecta ambiente e aplica configuração apropriada
+ */
+export const autoAONMiddleware = createAONMiddleware();
+
+/**
+ * Helper para verificar se requisição suporta AON
+ */
+export function hasAONSupport(req: Request): req is AONRequest {
+  return 'aon' in req && req.aon !== undefined;
+}
+
+/**
+ * Helper para obter writer AON de uma requisição
+ */
+export function getAONWriter(req: Request) {
+  return hasAONSupport(req) ? req.aonWriter : null;
+}
+
+/**
+ * Helper para obter healer AON de uma requisição
+ */
+export function getAONHealer(req: Request) {
+  return hasAONSupport(req) ? req.aonHealer : null;
 }

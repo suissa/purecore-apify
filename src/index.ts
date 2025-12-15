@@ -3,11 +3,12 @@ import { readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { Router } from './router';
 import { Request, Response, NextFunction, RequestHandler } from './types';
-import { errorHandler } from './middlewares';
+import { errorHandler, autoAONMiddleware } from './middlewares';
 import { NotFoundError } from './errors';
 import { initI18n } from './i18n';
 import { getResilientFallback, ResilientConfig } from './healer';
 import { autoGenerateFromZodSchemas } from './auto-generator';
+import { AONConfig } from './aon/index.js';
 // Import will be conditional to avoid build issues if file doesn't exist
 
 export class Apify extends Router {
@@ -17,10 +18,13 @@ export class Apify extends Router {
   private i18nInitialized: boolean = false;
   private resilientConfig: ResilientConfig = {};
   private registeredRoutes: string[] = [];
+  private aonConfig: AONConfig = {};
+  private aonEnabled: boolean = true;
 
-  constructor(resilientConfig?: ResilientConfig) {
+  constructor(resilientConfig?: ResilientConfig, aonConfig?: AONConfig) {
     super();
     this.resilientConfig = resilientConfig || {};
+    this.aonConfig = aonConfig || {};
     this.initializeI18n();
   }
 
@@ -51,6 +55,20 @@ export class Apify extends Router {
    */
   setResilientConfig(config: ResilientConfig): void {
     this.resilientConfig = { ...this.resilientConfig, ...config };
+  }
+
+  /**
+   * Configura o sistema AON (Adaptive Observability Negotiation)
+   */
+  setAONConfig(config: AONConfig): void {
+    this.aonConfig = { ...this.aonConfig, ...config };
+  }
+
+  /**
+   * Habilita/desabilita o sistema AON
+   */
+  setAONEnabled(enabled: boolean): void {
+    this.aonEnabled = enabled;
   }
 
   /**
@@ -195,7 +213,22 @@ export class Apify extends Router {
       this.augmentRequest(appReq);
       this.augmentResponse(appRes);
 
-      // 2. Handler Final (Caso nenhuma rota do Router responda)
+      // 2. Aplica middleware AON se habilitado
+      if (this.aonEnabled) {
+        try {
+          await new Promise<void>((resolve, reject) => {
+            autoAONMiddleware(appReq, appRes, (err?: any) => {
+              if (err) reject(err);
+              else resolve();
+            });
+          });
+        } catch (aonError) {
+          console.warn('⚠️ Erro no middleware AON:', aonError);
+          // Continua sem AON em caso de erro
+        }
+      }
+
+      // 3. Handler Final (Caso nenhuma rota do Router responda)
       const finalHandler: NextFunction = (err) => {
         if (err) {
           // Usa o errorHandler middleware para tratamento robusto
@@ -209,7 +242,7 @@ export class Apify extends Router {
         }
       };
 
-      // 3. Passa a bola para a lógica do Router (herdada!)
+      // 4. Passa a bola para a lógica do Router (herdada!)
       await this.handle(appReq, appRes, finalHandler);
     });
 
@@ -334,6 +367,7 @@ export * from './decorators';
 export * from './errors';
 export * from './i18n';
 export * from './healer';
+export * from './aon';
 
 // Inicializa o sistema de decorators
 import { initializeDecorators } from './decorators/config.js';
