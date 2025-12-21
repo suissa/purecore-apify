@@ -9,11 +9,18 @@ O PureCore Apify implementa múltiplos modos de observabilidade, evoluindo do co
 ### 1. Black Box Mode (Tradicional)
 **Header**: `Accept: application/json`
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   REQUEST       │───▶│   PROCESSING    │───▶│   RESPONSE      │
-│                 │    │   (Hidden)      │    │   (Final)       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor
+    participant P as Processamento
+    
+    C->>S: Request
+    Note over S,P: Processamento Oculto
+    S->>P: Executa lógica
+    P-->>S: Resultado/Erro
+    S->>C: Response Final
+    Note over C: Sem visibilidade do processo
 ```
 
 **Características:**
@@ -26,18 +33,24 @@ O PureCore Apify implementa múltiplos modos de observabilidade, evoluindo do co
 ### 2. Glass Box Mode (Transparente)
 **Header**: `Accept: application/x-ndjson`
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   REQUEST       │───▶│   PROCESSING    │───▶│   RESPONSE      │
-│                 │    │   (Visible)     │    │   (Streamed)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │  TELEMETRY      │
-                    │  STREAM         │
-                    │  (NDJSON)       │
-                    └─────────────────┘
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor
+    participant P as Processamento
+    participant T as Telemetria
+    
+    C->>S: Request
+    S->>T: Inicia Stream NDJSON
+    T->>C: {"type":"status","message":"iniciando..."}
+    S->>P: Executa lógica
+    P->>T: Evento de progresso
+    T->>C: {"type":"status","message":"processando..."}
+    P->>T: Evento de healing
+    T->>C: {"type":"healing","action":"retry"}
+    P-->>S: Resultado
+    S->>T: Finaliza stream
+    T->>C: {"type":"result","data":{...}}
 ```
 
 **Características:**
@@ -50,18 +63,31 @@ O PureCore Apify implementa múltiplos modos de observabilidade, evoluindo do co
 ### 3. 🔮 CrystalBox Mode (Inovação PureCore)
 **Header**: `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive`
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   REQUEST       │───▶│   PROCESSING    │───▶│   RESPONSE      │
-│                 │    │   (Interactive) │    │   (Adaptive)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │  SELF-HEALING   │◀──── Dev Interaction
-                    │  + TELEMETRY    │      (WhatsApp/Slack)
-                    │  (Bidirectional)│
-                    └─────────────────┘
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant S as Servidor
+    participant H as Interactive Healer
+    participant D as Desenvolvedor
+    participant W as WhatsApp/Slack
+    
+    C->>S: Request (Crystal Mode)
+    S->>C: 103 Early Hints (preload)
+    S->>H: Inicia processamento
+    H->>C: {"type":"status","message":"iniciando..."}
+    
+    Note over H: Erro detectado
+    H->>H: Tentativa auto-healing (3x)
+    H->>C: {"type":"healing","attempt":3,"failed":true}
+    
+    H->>W: Notifica desenvolvedor
+    W->>D: 🔮 CrystalBox Alert: Healing failed
+    S->>C: 102 Processing (aguardando dev)
+    
+    D->>S: Solução via webhook
+    H->>H: Aplica solução do dev
+    H->>C: {"type":"healing","dev_assisted":true}
+    H->>C: {"type":"result","data":{...}}
 ```
 
 **Características Únicas:**
@@ -83,10 +109,64 @@ O **CrystalBox** é o primeiro modo de observabilidade que combina:
 3. **Self-Healing Automático**
 4. **Colaboração Humano-IA**
 
+### Arquitetura do CrystalBox
+
+```mermaid
+graph TB
+    subgraph "Cliente"
+        C[Cliente/Browser]
+        PWA[PWA/Offline App]
+    end
+    
+    subgraph "CrystalBox Server"
+        CM[Crystal Middleware]
+        CW[Crystal Writer]
+        IH[Interactive Healer]
+        TD[Theme Detection]
+        OS[Offline Support]
+    end
+    
+    subgraph "Notification Services"
+        WA[WhatsApp API]
+        SL[Slack Webhook]
+        MS[Teams Webhook]
+    end
+    
+    subgraph "Developer"
+        DEV[Desenvolvedor]
+        MOB[Mobile/Desktop]
+    end
+    
+    C -->|Accept: x-ndjson + X-Crystal-Mode| CM
+    CM --> TD
+    CM --> OS
+    CM --> CW
+    CW --> IH
+    
+    CW -->|103 Early Hints| C
+    CW -->|NDJSON Stream| C
+    CW -->|102 Processing| C
+    
+    IH -->|Healing Failed| WA
+    IH -->|Healing Failed| SL
+    IH -->|Healing Failed| MS
+    
+    WA --> MOB
+    SL --> MOB
+    MS --> MOB
+    MOB --> DEV
+    
+    DEV -->|Solution Webhook| IH
+    IH -->|Apply Solution| CW
+    
+    TD -->|Theme CSS| PWA
+    OS -->|Offline Components| PWA
+```
+
 ### Fluxo de Healing Interativo
 
 ```mermaid
-graph TD
+flowchart TD
     A[Request Iniciado] --> B[Processamento Normal]
     B --> C{Erro Detectado?}
     C -->|Não| H[Resposta Sucesso]
@@ -100,6 +180,42 @@ graph TD
     K --> L[Retoma Processamento]
     F --> H
     L --> H
+```
+
+### Estados do Interactive Healer
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle: Sistema Iniciado
+    
+    Idle --> AutoHealing: Erro Detectado
+    AutoHealing --> Success: Healing OK
+    AutoHealing --> Retry: Falha (< 3 tentativas)
+    AutoHealing --> NotifyDev: Falha (≥ 3 tentativas)
+    
+    Retry --> AutoHealing: Nova Tentativa
+    
+    NotifyDev --> WaitingDev: Notificação Enviada
+    WaitingDev --> ApplySolution: Dev Responde
+    WaitingDev --> Timeout: 30s sem resposta
+    
+    ApplySolution --> Success: Solução OK
+    ApplySolution --> AutoHealing: Retry Solicitado
+    ApplySolution --> Skip: Dev Skip
+    
+    Timeout --> AutoHealing: Continua Tentativas
+    Success --> [*]: Processo Completo
+    Skip --> [*]: Processo Pulado
+    
+    note right of NotifyDev
+        WhatsApp/Slack/Teams
+        Status: 102 Processing
+    end note
+    
+    note right of WaitingDev
+        Aguarda resposta do dev
+        Timeout: 30 segundos
+    end note
 ```
 
 ### Status Codes Inteligentes
@@ -308,6 +424,39 @@ class DeveloperNotificationService {
 ```
 
 ## 📊 Comparação dos Modos
+
+```mermaid
+graph LR
+    subgraph "Black Box Mode"
+        BB1[Cliente] --> BB2[Servidor] --> BB3[Resposta]
+        BB2 -.-> BB4[Processamento Oculto]
+        BB4 -.-> BB2
+    end
+    
+    subgraph "Glass Box Mode"
+        GB1[Cliente] --> GB2[Servidor] --> GB3[Stream NDJSON]
+        GB2 --> GB4[Telemetria Visível]
+        GB4 --> GB3
+        GB3 --> GB5[Resposta Final]
+    end
+    
+    subgraph "CrystalBox Mode"
+        CB1[Cliente] --> CB2[Servidor] --> CB3[Stream Interativo]
+        CB2 --> CB4[Interactive Healer]
+        CB4 --> CB5[Dev Notification]
+        CB5 --> CB6[WhatsApp/Slack]
+        CB6 --> CB7[Desenvolvedor]
+        CB7 --> CB4
+        CB4 --> CB3
+        CB3 --> CB8[Never Fails]
+    end
+    
+    style BB4 fill:#333,color:#fff
+    style GB4 fill:#4CAF50,color:#fff
+    style CB4 fill:#9C27B0,color:#fff
+    style CB5 fill:#FF9800,color:#fff
+    style CB8 fill:#2196F3,color:#fff
+```
 
 | Característica | Black Box | Glass Box | **CrystalBox** |
 |----------------|-----------|-----------|----------------|
