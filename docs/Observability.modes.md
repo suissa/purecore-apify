@@ -100,7 +100,7 @@ sequenceDiagram
 
 ## 🚀 CrystalBox: O Futuro da Observabilidade
 
-### Conceito Revolucionário
+### Conceito Inédito
 
 O **CrystalBox** é o primeiro modo de observabilidade que combina:
 
