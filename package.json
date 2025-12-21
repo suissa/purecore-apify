@@ -1,6 +1,6 @@
 {
-  "name": "@purecore/apify",
-  "version": "0.7.0",
+  "name": "4pi",
+  "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +29,8 @@
     "dev:fastify": "tsx examples/advanced-fastify-decorators.ts",
     "dev:aon": "tsx examples/aon-example.ts",
     "demo:aon": "tsx examples/aon-example.ts",
-    "demo:aon-simple": "node examples/simple-aon-demo.cjs"
+    "demo:aon-simple": "node examples/simple-aon-demo.cjs",
+    "demo:crystalbox": "tsx examples/crystalbox-example.ts"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",

@@ -1,16 +1,43 @@
 /**
  * Módulo AON (Adaptive Observability Negotiation)
  * Implementação completa do padrão AONP para PureCore Apify
+ * Inclui CrystalBox Mode - Observabilidade Interativa
  * 
- * @see docs/AONP.md - Especificação completa
+ * @see docs/AONP.md - Especificação AON
+ * @see docs/Observability.modes.md - Modos de Observabilidade
  */
+
+import { aonMiddleware } from './middleware.js';
 
 // =========================================
 // EXPORTS PRINCIPAIS
 // =========================================
 
-// Middleware principal
+// Middleware principal AON
 export { aonMiddleware, withAON, analyzeIntent, performHealing, reportStatus } from './middleware.js';
+
+// CrystalBox Mode - Observabilidade Interativa
+export { 
+  crystalBoxMiddleware, 
+  withCrystalBox, 
+  sendEarlyHints, 
+  requestInteractiveHealing,
+  isCrystalBoxMode,
+  isInteractiveMode
+} from './crystal-middleware.js';
+
+export { 
+  createCrystalBoxWriter, 
+  createDeveloperNotificationService,
+  developerNotificationService,
+  CrystalBoxWriter,
+  DeveloperNotificationService
+} from './crystal-box.js';
+
+export { 
+  createInteractiveHealer,
+  InteractiveHealer
+} from './interactive-healer.js';
 
 // Tipos e interfaces
 export type {
@@ -79,6 +106,71 @@ export const AON_MINIMAL_CONFIG = {
   debug: false
 };
 
+/**
+ * Configuração CrystalBox para desenvolvimento
+ * - Modo interativo ativo
+ * - Notificações de desenvolvedor habilitadas
+ * - Detecção de tema e offline
+ */
+export const CRYSTALBOX_DEV_CONFIG = {
+  ...AON_DEV_CONFIG,
+  crystalBox: {
+    maxAutoAttempts: 3,
+    devNotificationThreshold: 2,
+    healingTimeout: 30000,
+    devResponseTimeout: 30000,
+    enableWhatsApp: true,
+    enableSlack: true,
+    enableTeams: false,
+    devContacts: {
+      whatsapp: process.env.DEV_WHATSAPP,
+      slack: process.env.DEV_SLACK,
+      teams: process.env.DEV_TEAMS
+    }
+  },
+  themeDetection: {
+    enabled: true,
+    defaultTheme: 'dark',
+    supportedThemes: ['light', 'dark', 'auto']
+  },
+  offlineSupport: {
+    enabled: true,
+    components: ['forms', 'cache', 'sync', 'storage'],
+    cacheStrategy: 'aggressive' as const
+  }
+};
+
+/**
+ * Configuração CrystalBox para produção
+ * - Modo interativo conservador
+ * - Notificações apenas para erros críticos
+ */
+export const CRYSTALBOX_PROD_CONFIG = {
+  ...AON_PROD_CONFIG,
+  crystalBox: {
+    maxAutoAttempts: 5,
+    devNotificationThreshold: 4,
+    healingTimeout: 20000,
+    devResponseTimeout: 60000,
+    enableWhatsApp: true,
+    enableSlack: false,
+    enableTeams: false,
+    devContacts: {
+      whatsapp: process.env.PROD_DEV_WHATSAPP
+    }
+  },
+  themeDetection: {
+    enabled: true,
+    defaultTheme: 'light',
+    supportedThemes: ['light', 'dark']
+  },
+  offlineSupport: {
+    enabled: true,
+    components: ['cache', 'sync'],
+    cacheStrategy: 'conservative' as const
+  }
+};
+
 // =========================================
 // FACTORY FUNCTIONS
 // =========================================
@@ -102,6 +194,30 @@ export function createAONMiddleware(customConfig?: Partial<typeof AON_DEV_CONFIG
   }
 
   return aonMiddleware({ ...baseConfig, ...customConfig });
+}
+
+/**
+ * Cria middleware CrystalBox com configuração automática baseada no ambiente
+ */
+export function createCrystalBoxMiddleware(customConfig?: any) {
+  const env = process.env.NODE_ENV || 'development';
+  
+  let baseConfig;
+  switch (env) {
+    case 'production':
+      baseConfig = CRYSTALBOX_PROD_CONFIG;
+      break;
+    case 'test':
+      baseConfig = AON_MINIMAL_CONFIG;
+      break;
+    default:
+      baseConfig = CRYSTALBOX_DEV_CONFIG;
+  }
+
+  // Importa dinamicamente para evitar problemas de dependência circular
+  return import('./crystal-middleware.js').then(module => 
+    module.crystalBoxMiddleware({ ...baseConfig, ...customConfig })
+  );
 }
 
 // =========================================
@@ -193,6 +309,7 @@ export function withAONSupport(target: any, propertyKey: string, descriptor: Pro
 
 export const AON_VERSION = '1.0.0';
 export const AON_SPEC_VERSION = '1.0.0';
+export const CRYSTALBOX_VERSION = '1.0.0';
 
 export const AON_MIME_TYPES = {
   NDJSON: 'application/x-ndjson',
@@ -202,7 +319,25 @@ export const AON_MIME_TYPES = {
 export const AON_HEADERS = {
   SUMMARY: 'X-AON-Summary',
   MODE: 'X-AON-Mode',
-  REQUEST_ID: 'X-AON-Request-ID'
+  REQUEST_ID: 'X-AON-Request-ID',
+  // CrystalBox headers
+  CRYSTAL_MODE: 'X-Crystal-Mode',
+  USER_THEME: 'X-User-Theme',
+  OFFLINE_CAPABLE: 'X-Offline-Capable',
+  DEV_NOTIFIED: 'X-Dev-Notified',
+  HEALING_ATTEMPT: 'X-Healing-Attempt',
+  PROCESSING_STATUS: 'X-Processing-Status',
+  EARLY_HINTS: 'X-Early-Hints'
+} as const;
+
+export const CRYSTALBOX_MODES = {
+  INTERACTIVE: 'interactive',
+  STANDARD: 'standard'
+} as const;
+
+export const STATUS_CODES = {
+  PROCESSING: 102,
+  EARLY_HINTS: 103
 } as const;
 
 // =========================================
@@ -236,4 +371,6 @@ export const AONLogger = {
 
 console.log(`✅ AON (Adaptive Observability Negotiation) v${AON_VERSION} carregado`);
 console.log(`📋 Especificação AONP v${AON_SPEC_VERSION} implementada`);
+console.log(`🔮 CrystalBox Mode v${CRYSTALBOX_VERSION} disponível`);
 console.log(`🔧 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+console.log(`📡 Modos: Black Box | Glass Box | CrystalBox`);
