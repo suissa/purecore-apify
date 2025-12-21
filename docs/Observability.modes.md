@@ -60,7 +60,7 @@ sequenceDiagram
 - ❌ Apenas observação passiva
 - ❌ Sem interação durante o processo
 
-### 3. 🔮 CrystalBox Mode (Inovação PureCore)
+### 3. ❄️👁️ CrystalBox Mode (Inovação PureCore)
 **Header**: `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive`
 
 ```mermaid
@@ -98,7 +98,9 @@ sequenceDiagram
 - ✅ **Comunicação bidirecional** durante o processamento
 - ✅ **Status codes inteligentes** (102 Processing, 103 Early Hints)
 
-## 🚀 CrystalBox: O Futuro da Observabilidade
+<img src="https://i.imgur.com/VOYy9Nq.png" align="center">
+
+## ❄️👁️ CrystalBox: O Futuro da Observabilidade
 
 ### Conceito Inédito
 
@@ -458,7 +460,7 @@ graph LR
     style CB8 fill:#2196F3,color:#fff
 ```
 
-| Característica | Black Box | Glass Box | **CrystalBox** |
+| Característica | Black Box | Glass Box | **❄️👁️ CrystalBox** |
 |----------------|-----------|-----------|----------------|
 | Observabilidade | ❌ | ✅ | ✅ |
 | Streaming | ❌ | ✅ | ✅ |
@@ -516,4 +518,4 @@ graph LR
 
 ---
 
-**🔮 CrystalBox representa o futuro da observabilidade: não apenas ver o que acontece, mas participar ativamente da solução em tempo real.**
+**❄️👁️ CrystalBox representa o futuro da observabilidade: não apenas ver o que acontece, mas participar ativamente da solução em tempo real.**

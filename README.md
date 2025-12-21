@@ -238,7 +238,7 @@ npx @purecore/apify create crud billing --entry apps/api/src/main.ts
 
 ## Auto-Geração de Código Baseado em Schemas Zod 🚀
 
-O `@purecore/apify` possui um sistema revolucionário de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
+O `@purecore/apify` possui um sistema inédito de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
 
 - **Repository** com operações CRUD completas
 - **Service** com regras de negócio
@@ -918,9 +918,12 @@ COOP_POLICY=same-origin
 CORP_POLICY=same-origin
 ```
 
-## 🔮 AON & CrystalBox - Observabilidade Adaptativa
 
-O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o revolucionário **CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
+<img src="https://i.imgur.com/lLHckdW.png" align="center">
+
+## 👁️ AON & CrystalBox ❄️ - Observabilidade Adaptativa
+
+O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
 
 ### Modos de Observabilidade
 
@@ -928,7 +931,7 @@ O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiati
 |------|--------|-----------|
 | **Black Box** | `Accept: application/json` | Modo tradicional - resposta única |
 | **Glass Box** | `Accept: application/x-ndjson` | Streaming de telemetria em tempo real |
-| **🔮 CrystalBox** | `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive` | **Observabilidade interativa com self-healing** |
+| **❄️ CrystalBox** | `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive` | **Observabilidade interativa com self-healing** |
 
 ### Headers de Resposta AON/CrystalBox
 

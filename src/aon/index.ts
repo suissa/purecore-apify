@@ -371,6 +371,6 @@ export const AONLogger = {
 
 console.log(`✅ AON (Adaptive Observability Negotiation) v${AON_VERSION} carregado`);
 console.log(`📋 Especificação AONP v${AON_SPEC_VERSION} implementada`);
-console.log(`🔮 CrystalBox Mode v${CRYSTALBOX_VERSION} disponível`);
+console.log(`❄️👁️ CrystalBox Mode v${CRYSTALBOX_VERSION} disponível`);
 console.log(`🔧 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-console.log(`📡 Modos: Black Box | Glass Box | CrystalBox`);
+console.log(`📡 Modos: Black Box | Glass Box | ❄️👁️ CrystalBox`);

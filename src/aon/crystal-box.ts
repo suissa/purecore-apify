@@ -351,7 +351,7 @@ export class DeveloperNotificationService {
   private formatWhatsAppMessage(notification: DevNotification): string {
     const priority = this.getPriorityEmoji(notification.priority);
     
-    return `🔮 *CrystalBox Alert* ${priority}
+    return `❄️👁️ *CrystalBox Alert* ${priority}
 
 ${notification.message}
 
@@ -366,7 +366,7 @@ Reply with:
 
   private formatSlackMessage(notification: DevNotification) {
     return {
-      text: `🔮 CrystalBox Alert - ${notification.priority.toUpperCase()}`,
+      text: `❄️👁️ CrystalBox Alert - ${notification.priority.toUpperCase()}`,
       blocks: [
         {
           type: 'header',
@@ -424,7 +424,7 @@ Reply with:
       themeColor: this.getPriorityColor(notification.priority),
       sections: [
         {
-          activityTitle: '🔮 CrystalBox Alert',
+          activityTitle: '❄️👁️ CrystalBox Alert',
           activitySubtitle: `Priority: ${notification.priority.toUpperCase()}`,
           text: notification.message,
           facts: [
@@ -463,7 +463,7 @@ Reply with:
       case 'high': return '⚠️';
       case 'medium': return '🔶';
       case 'low': return 'ℹ️';
-      default: return '🔮';
+      default: return '❄️👁️';
     }
   }
 

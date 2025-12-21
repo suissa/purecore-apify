@@ -256,7 +256,7 @@ app.post('/api/v1/crystal/heal/:requestId', (req, res) => {
   const { requestId } = req.params;
   const solution = req.body;
   
-  console.log(`🔮 [CrystalBox] Recebida solução do desenvolvedor para ${requestId}:`, solution);
+  console.log(`❄️👁️ [CrystalBox] Recebida solução do desenvolvedor para ${requestId}:`, solution);
   
   // Processa a solução do desenvolvedor
   const { developerNotificationService } = require('../src/aon/crystal-box.js');
@@ -307,7 +307,7 @@ app.get('/api/v1/crystal/stats', (req, res) => {
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
 app.listen(PORT, () => {
-  console.log('🔮 Servidor CrystalBox Example rodando!');
+  console.log('❄️👁️ Servidor CrystalBox Example rodando!');
   console.log(`📡 Porta: ${PORT}`);
   console.log('');
   console.log('📋 Rotas CrystalBox disponíveis:');
@@ -337,7 +337,7 @@ app.listen(PORT, () => {
   console.log(`       -d '{"type":"create","data":{"name":"Test"}}' \\`);
   console.log(`       http://localhost:${PORT}/api/v1/crystal/complex-operation`);
   console.log('');
-  console.log('🔮 CrystalBox Mode: Observabilidade Interativa com Self-Healing!');
+  console.log('❄️👁️ CrystalBox Mode: Observabilidade Interativa com Self-Healing!');
   console.log('📱 Configure DEV_WHATSAPP e DEV_SLACK para receber notificações');
 });
 
