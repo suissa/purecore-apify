@@ -1,86 +1,22 @@
-Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. It is written on top of busboy for maximum efficiency.
+Objetivo: criar um middleware em `src/middlewares/uploadify` que deve conter todas as funcionalidades do multer, com a mesma interface. Porém sem usar NENHUMA biblioteca externa. Tudo que for necessário deve ser feito nativamente utilizando as mais novas funcionalidades do node.js.
 
-NOTE: Multer will not process any form which is not multipart (multipart/form-data).
+- [ ] Implementar a mesma interface do multer
+- [ ] Implementar a mesma funcionalidade do multer
+- [ ] Criar a pasta para o upload de forma dinâmica, caso o seu valor não tenha sido definida
+- [ ] Definir valores padrões para as opções do multer, para NUNCA emitir erro caso não tenha sido definido
+- [ ] Deve implementar o Notification Pattern para emitir os raros eventos de upload que podem acontecer, mas a lib deve ser criada para NUNCA dar erro, o Notification Pattern deve ser apenas para emitir o resultado final do upload, com seus valores finais, para o usuário saber o que aconteceu 
+- [ ] Implementar a mesma segurança do multer
+- [ ] Implementar a mesma performance do multer
+- [ ] Implementar a mesma facilidade de uso do multer
+- [ ] Implementar a mesma facilidade de configuração do multer
+- [ ] Implementar a mesma facilidade de teste do multer
+- [ ] Implementar a mesma facilidade de debug do multer
+- [ ] Implementar a mesma facilidade de monitoramento do multer
+- [ ] Implementar a mesma facilidade de escalabilidade do multer
+- [ ] Implementar a mesma facilidade de manutenção do multer
 
-Translations
-This README is also available in other languages:
 
-العربية	Arabic
-简体中文	Chinese
-Français	French
-한국어	Korean
-Português	Portuguese (BR)
-Русский язык	Russian
-Español	Spanish
-O'zbek tili	Uzbek
-Việt Nam	Vietnamese
-Installation
-$ npm install multer
-Usage
-Multer adds a body object and a file or files object to the request object. The body object contains the values of the text fields of the form, the file or files object contains the files uploaded via the form.
-
-Basic usage example:
-
-Don't forget the enctype="multipart/form-data" in your form.
-
-<form action="/profile" method="post" enctype="multipart/form-data">
-  <input type="file" name="avatar" />
-</form>
-const express = require('express')
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
-
-const app = express()
-
-app.post('/profile', upload.single('avatar'), function (req, res, next) {
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
-})
-
-app.post('/photos/upload', upload.array('photos', 12), function (req, res, next) {
-  // req.files is array of `photos` files
-  // req.body will contain the text fields, if there were any
-})
-
-const uploadMiddleware = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-app.post('/cool-profile', uploadMiddleware, function (req, res, next) {
-  // req.files is an object (String -> Array) where fieldname is the key, and the value is array of files
-  //
-  // e.g.
-  //  req.files['avatar'][0] -> File
-  //  req.files['gallery'] -> Array
-  //
-  // req.body will contain the text fields, if there were any
-})
-In case you need to handle a text-only multipart form, you should use the .none() method:
-
-const express = require('express')
-const app = express()
-const multer  = require('multer')
-const upload = multer()
-
-app.post('/profile', upload.none(), function (req, res, next) {
-  // req.body contains the text fields
-})
-Here's an example on how multer is used in a HTML form. Take special note of the enctype="multipart/form-data" and name="uploaded_file" fields:
-
-<form action="/stats" enctype="multipart/form-data" method="post">
-  <div class="form-group">
-    <input type="file" class="form-control-file" name="uploaded_file">
-    <input type="text" class="form-control" placeholder="Number of speakers" name="nspeakers">
-    <input type="submit" value="Get me the stats!" class="btn btn-default">
-  </div>
-</form>
-Then in your javascript file you would add these lines to access both the file and the body. It is important that you use the name field value from the form in your upload function. This tells multer which field on the request it should look for the files in. If these fields aren't the same in the HTML form and on your server, your upload will fail:
-
-const multer  = require('multer')
-const upload = multer({ dest: './public/data/uploads/' })
-app.post('/stats', upload.single('uploaded_file'), function (req, res) {
-  // req.file is the name of your file in the form above, here 'uploaded_file'
-  // req.body will hold the text fields, if there were any
-  console.log(req.file, req.body)
-});
-API
+## API do multer
 File information
 Each file contains the following information:
 
@@ -224,5 +160,26 @@ app.post('/profile', function (req, res) {
     }
 
     // Everything went fine.
+  })
+})
+
+Exemplo com o nosso middleware:
+
+import uploadify from './middlewares/uploadify'
+const upload = uploadify().single('avatar')
+
+app.post('/profile', function (req, res) {
+  upload(req, res, function (result) {
+    // caso o sistema devolva o processamento posterior do upload
+    // retorne com SSE o result não finalizando a requisição
+    res.sse({upload: result})
+    res.send(await Controller.processUpload(result))
+    // finaliza a requisição
+    res.end()
+
+    // caso não precise retornar nada além da informação do upload use
+    res.send({upload: result})
+    // finaliza a requisição
+    res.end()
   })
 })
