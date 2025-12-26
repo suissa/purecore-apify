@@ -9,6 +9,25 @@ export interface QueryDictionary {
   [key: string]: string | string[] | undefined;
 }
 
+export interface UploadFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination?: string;
+  filename?: string;
+  path?: string;
+  buffer?: Buffer;
+}
+
+export interface Notification {
+  code: string;
+  message: string;
+  field?: string;
+  timestamp: string;
+}
+
 /**
  * Request compatível com Express + Generics
  */
@@ -25,6 +44,12 @@ export interface Request<
   baseUrl: string;
   /** URL original completa */
   originalUrl: string;
+  /** Arquivo único (uploadify.single) */
+  file?: UploadFile;
+  /** Múltiplos arquivos (uploadify.array ou uploadify.fields) */
+  files?: UploadFile[] | { [fieldname: string]: UploadFile[] };
+  /** Notification Pattern: Erros não-fatais */
+  notifications?: Notification[];
 }
 
 /**
