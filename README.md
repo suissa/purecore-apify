@@ -921,9 +921,9 @@ CORP_POLICY=same-origin
 
 <img src="https://i.imgur.com/lLHckdW.png" align="center">
 
-## 👁️ AON & CrystalBox ❄️ - Observabilidade Adaptativa
+## ❄️👁️ AON & CrystalBox - Observabilidade Adaptativa
 
-O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
+O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **❄️👁️ CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
 
 ### Modos de Observabilidade
 
@@ -931,9 +931,9 @@ O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiati
 |------|--------|-----------|
 | **Black Box** | `Accept: application/json` | Modo tradicional - resposta única |
 | **Glass Box** | `Accept: application/x-ndjson` | Streaming de telemetria em tempo real |
-| **❄️ CrystalBox** | `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive` | **Observabilidade interativa com self-healing** |
+| **❄️👁️ CrystalBox** | `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive` | **Observabilidade interativa com self-healing** |
 
-### Headers de Resposta AON/CrystalBox
+### Headers de Resposta AON/CrystalBox 👁️❄️
 
 O sistema retorna headers específicos que indicam o estado do healing e observabilidade:
 
@@ -944,7 +944,7 @@ X-AON-Request-ID: aon_1703123456789_abc123
 X-AON-Summary: {"totalEvents":5,"duration":1200,"healingAttempts":1}
 ```
 
-#### Headers CrystalBox Mode
+#### Headers ❄️👁️ CrystalBox Mode
 ```http
 X-Crystal-Mode: interactive
 X-Request-ID: crystal_1703123456789_def456
@@ -974,7 +974,7 @@ app.use(aonMiddleware({
   healingTimeout: 10000
 }));
 
-// CrystalBox (Modo Interativo)
+// ❄️👁️ CrystalBox (Modo Interativo)
 app.use(crystalBoxMiddleware({
   crystalBox: {
     enableWhatsApp: true,
@@ -1080,7 +1080,7 @@ TEAMS_WEBHOOK_URL=https://outlook.office.com/webhook/...
 ### Exemplo de Notificação
 
 ```
-🔮 CrystalBox Alert 🚨
+❄️�r️ CrystalBox Alert 🚨
 
 Action: database_recovery
 Description: Conexão com banco perdida
@@ -1130,7 +1130,7 @@ AON_DEBUG=true
 AON_HEALING_TIMEOUT=10000
 AON_MAX_TELEMETRY_EVENTS=1000
 
-# CrystalBox Configuration
+# ❄️👁️ CrystalBox Configuration
 CRYSTALBOX_INTERACTIVE=true
 CRYSTALBOX_MAX_AUTO_ATTEMPTS=3
 CRYSTALBOX_DEV_NOTIFICATION_THRESHOLD=2
@@ -1155,9 +1155,9 @@ OFFLINE_COMPONENTS=forms,cache,sync,storage
 CACHE_STRATEGY=aggressive
 ```
 
-### Benefícios do CrystalBox
+### Benefícios do ❄️👁️ CrystalBox
 
-- 🔮 **Nunca Falha**: Sistema sempre tenta se curar antes de retornar erro
+- ❄️👁️ **Nunca Falha**: Sistema sempre tenta se curar antes de retornar erro
 - 📱 **Notificação Instantânea**: Desenvolvedor recebe WhatsApp/Slack em tempo real
 - 🚀 **Early Hints**: Preload inteligente de recursos baseado no tema do usuário
 - 📱 **Offline-First**: Suporte automático para PWAs e aplicações offline
@@ -1173,7 +1173,7 @@ curl -H "Accept: application/json" http://localhost:3000/api/v1/users/123
 # Modo Glass Box (streaming)
 curl -H "Accept: application/x-ndjson" http://localhost:3000/api/v1/users/123
 
-# Modo CrystalBox (interativo)
+# Modo ❄️👁️ CrystalBox (interativo)
 curl -H "Accept: application/x-ndjson" \
      -H "X-Crystal-Mode: interactive" \
      -H "X-User-Theme: dark" \
