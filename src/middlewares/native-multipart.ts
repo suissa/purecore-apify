@@ -3,6 +3,9 @@ import { pipeline } from 'node:stream/promises';
 import { createWriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { AsyncResource } from 'node:async_hooks';
+import { Readable } from 'node:stream';
+import { StorageEngine, DiskStorageEngine, FileInfo } from './storage-engines.js';
 
 /**
  * Middleware nativo para upload de arquivos usando Node.js 20+
@@ -24,18 +27,32 @@ export interface MultipartOptions {
   maxFileSize?: number;
   maxFiles?: number;
   allowedMimeTypes?: string[];
+  preserveAsyncContext?: boolean;
+  charset?: string;
+  storage?: StorageEngine;
 }
 
 export class NativeMultipartParser {
-  private options: Required<MultipartOptions>;
+  private options: Required<Omit<MultipartOptions, 'storage'>> & { storage: StorageEngine };
+  private asyncResource?: AsyncResource;
 
   constructor(options: MultipartOptions = {}) {
     this.options = {
       uploadDir: options.uploadDir || './uploads',
       maxFileSize: options.maxFileSize || 10 * 1024 * 1024, // 10MB
       maxFiles: options.maxFiles || 10,
-      allowedMimeTypes: options.allowedMimeTypes || []
+      allowedMimeTypes: options.allowedMimeTypes || [],
+      preserveAsyncContext: options.preserveAsyncContext ?? true,
+      charset: options.charset || 'utf8',
+      storage: options.storage || new DiskStorageEngine({
+        destination: options.uploadDir || './uploads'
+      })
     };
+
+    // Cria AsyncResource para preservar contexto assíncrono
+    if (this.options.preserveAsyncContext) {
+      this.asyncResource = new AsyncResource('NativeMultipartParser');
+    }
   }
 
   async parse(req: IncomingMessage): Promise<{ fields: Record<string, string>, files: UploadedFile[] }> {
@@ -50,6 +67,17 @@ export class NativeMultipartParser {
       throw new Error('Boundary não encontrado no Content-Type');
     }
 
+    // Preserva contexto assíncrono se habilitado
+    if (this.asyncResource) {
+      return this.asyncResource.runInAsyncScope(async () => {
+        return this.parseWithAsyncContext(req, boundary);
+      });
+    }
+
+    return this.parseWithAsyncContext(req, boundary);
+  }
+
+  private async parseWithAsyncContext(req: IncomingMessage, boundary: string): Promise<{ fields: Record<string, string>, files: UploadedFile[] }> {
     const chunks: Buffer[] = [];
     
     // Coleta todos os chunks
@@ -102,11 +130,14 @@ export class NativeMultipartParser {
           throw new Error(`Arquivo muito grande: ${body.length} bytes`);
         }
 
-        const savedFile = await this.saveFile(body, filename, contentType, fieldName);
+        const savedFile = await this.saveFileWithStorage(body, filename, contentType, fieldName);
         files.push(savedFile);
       } else {
-        // É um campo de texto
-        fields[fieldName] = body.toString('utf8');
+        // É um campo de texto - aplica charset configurado
+        const textValue = this.options.charset === 'utf8' 
+          ? body.toString('utf8')
+          : body.toString(this.options.charset as BufferEncoding);
+        fields[fieldName] = textValue;
       }
     }
 
@@ -157,31 +188,42 @@ export class NativeMultipartParser {
     return { headers, body };
   }
 
-  private async saveFile(buffer: Buffer, originalName: string, mimeType: string, fieldName: string): Promise<UploadedFile> {
-    const filename = `${Date.now()}-${randomUUID()}-${originalName}`;
-    const filepath = join(this.options.uploadDir, filename);
+  private async saveFileWithStorage(buffer: Buffer, originalName: string, mimeType: string, fieldName: string): Promise<UploadedFile> {
+    return new Promise((resolve, reject) => {
+      // Cria stream do buffer
+      const stream = Readable.from(buffer);
+      
+      const fileInfo: FileInfo = {
+        fieldname: fieldName,
+        originalname: originalName,
+        encoding: '7bit',
+        mimetype: mimeType,
+        stream
+      };
 
-    // Cria o diretório se não existir
-    const { mkdir } = await import('node:fs/promises');
-    await mkdir(this.options.uploadDir, { recursive: true });
+      // Usa o storage engine configurado
+      this.options.storage._handleFile(null, fileInfo, (error, info) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-    // Salva o arquivo usando streams
-    const { Readable } = await import('node:stream');
-    const readable = Readable.from(buffer);
-    const writeStream = createWriteStream(filepath);
+        const uploadedFile: UploadedFile = {
+          fieldname: fieldName,
+          originalname: originalName,
+          encoding: '7bit',
+          mimetype: mimeType,
+          size: buffer.length,
+          destination: info?.destination || this.options.uploadDir,
+          filename: info?.filename || `${Date.now()}-${randomUUID()}-${originalName}`,
+          path: info?.path,
+          buffer: info?.buffer,
+          location: info?.location
+        };
 
-    await pipeline(readable, writeStream);
-
-    return {
-      fieldname: fieldName,
-      originalname: originalName,
-      encoding: '7bit',
-      mimetype: mimeType,
-      size: buffer.length,
-      destination: this.options.uploadDir,
-      filename,
-      path: filepath
-    };
+        resolve(uploadedFile);
+      });
+    });
   }
 }
 

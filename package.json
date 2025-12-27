@@ -38,6 +38,8 @@
     "demo:aon-simple": "node examples/simple-aon-demo.cjs",
     "demo:crystalbox": "tsx examples/crystalbox-example.ts",
     "benchmark": "node dist/benchmark.api.js",
+    "test": "node --test test/*.test.js",
+    "test:native": "tsx test/native-multipart.test.ts",
     "test:performance": "node --test test/performance.test.js",
     "monitor": "node --inspect dist/index.js"
   },

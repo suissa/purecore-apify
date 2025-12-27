@@ -5,6 +5,7 @@
 
 import { Apify, Router } from '../src/index.js';
 import { nativeMultipart } from '../src/middlewares/native-multipart.js';
+import { StorageEngineFactory } from '../src/middlewares/storage-engines.js';
 import { executeCpuTask } from '../src/workers/cpu-worker.js';
 import { globalCache, Cached } from '../src/cache/native-cache.js';
 import { getPerformanceMonitor, Monitor } from '../src/observability/performance-monitor.js';
@@ -18,21 +19,89 @@ const monitor = getPerformanceMonitor();
 app.use(monitor.httpMiddleware());
 
 // =============================================================================
-// 1. Upload Nativo (sem busboy/multer)
+// 1. Upload Nativo com Storage Engines Customizados
 // =============================================================================
-router.post('/upload', nativeMultipart({ 
+
+// Upload para disco local
+router.post('/upload/disk', nativeMultipart({ 
   uploadDir: './uploads',
   maxFileSize: 5 * 1024 * 1024, // 5MB
-  allowedMimeTypes: ['image/jpeg', 'image/png', 'text/plain']
+  allowedMimeTypes: ['image/jpeg', 'image/png', 'text/plain'],
+  storage: StorageEngineFactory.disk({
+    destination: './uploads/disk',
+    filename: (req, file) => `custom-${Date.now()}-${file.originalname}`
+  })
 }), async (req: any, res: any) => {
   const { files, body } = req;
   
   res.json({
-    message: 'Upload realizado com sucesso',
+    message: 'Upload para disco realizado com sucesso',
+    storage: 'disk',
     files: files.map((f: any) => ({
       name: f.originalname,
       size: f.size,
       path: f.path
+    })),
+    fields: body
+  });
+});
+
+// Upload para memória
+router.post('/upload/memory', nativeMultipart({ 
+  maxFileSize: 2 * 1024 * 1024, // 2MB
+  storage: StorageEngineFactory.memory()
+}), async (req: any, res: any) => {
+  const { files, body } = req;
+  
+  res.json({
+    message: 'Upload para memória realizado com sucesso',
+    storage: 'memory',
+    files: files.map((f: any) => ({
+      name: f.originalname,
+      size: f.size,
+      hasBuffer: !!f.buffer,
+      bufferSize: f.buffer?.length
+    })),
+    fields: body
+  });
+});
+
+// Upload simulado para S3
+router.post('/upload/s3', nativeMultipart({ 
+  maxFileSize: 10 * 1024 * 1024, // 10MB
+  storage: StorageEngineFactory.s3({
+    bucket: 'my-app-uploads',
+    region: 'us-east-1',
+    key: (req, file) => `uploads/${Date.now()}/${file.originalname}`
+  })
+}), async (req: any, res: any) => {
+  const { files, body } = req;
+  
+  res.json({
+    message: 'Upload para S3 simulado com sucesso',
+    storage: 's3',
+    files: files.map((f: any) => ({
+      name: f.originalname,
+      size: f.size,
+      location: f.location
+    })),
+    fields: body
+  });
+});
+
+// Upload com charset customizado
+router.post('/upload/charset', nativeMultipart({ 
+  charset: 'latin1',
+  storage: StorageEngineFactory.disk()
+}), async (req: any, res: any) => {
+  const { files, body } = req;
+  
+  res.json({
+    message: 'Upload com charset latin1',
+    charset: 'latin1',
+    files: files.map((f: any) => ({
+      name: f.originalname,
+      size: f.size
     })),
     fields: body
   });
@@ -210,16 +279,21 @@ app.listen(PORT, () => {
   console.log(`📡 Rodando na porta ${PORT}`);
   console.log('');
   console.log('🔗 Endpoints disponíveis:');
-  console.log('  POST /api/modern/upload           - Upload nativo');
-  console.log('  GET  /api/modern/heavy-task/:n    - CPU task com workers');
-  console.log('  GET  /api/modern/data/:id         - Cache inteligente');
-  console.log('  GET  /api/modern/stream-data/:n   - Streaming de dados');
-  console.log('  GET  /api/modern/metrics          - Métricas de performance');
-  console.log('  GET  /api/modern/health           - Health check');
-  console.log('  POST /api/modern/hash             - Hash com workers');
+  console.log('  POST /api/modern/upload/disk       - Upload para disco');
+  console.log('  POST /api/modern/upload/memory     - Upload para memória');
+  console.log('  POST /api/modern/upload/s3         - Upload para S3 (simulado)');
+  console.log('  POST /api/modern/upload/charset    - Upload com charset customizado');
+  console.log('  GET  /api/modern/heavy-task/:n     - CPU task com workers');
+  console.log('  GET  /api/modern/data/:id          - Cache inteligente');
+  console.log('  GET  /api/modern/stream-data/:n    - Streaming de dados');
+  console.log('  GET  /api/modern/metrics           - Métricas de performance');
+  console.log('  GET  /api/modern/health            - Health check');
+  console.log('  POST /api/modern/hash              - Hash com workers');
   console.log('');
   console.log('💡 Funcionalidades demonstradas:');
-  console.log('  ✅ Upload sem dependências externas');
+  console.log('  ✅ Upload com múltiplos storage engines');
+  console.log('  ✅ AsyncLocalStorage para contexto assíncrono');
+  console.log('  ✅ Charset customizado para campos de texto');
   console.log('  ✅ Worker Threads para CPU-intensive');
   console.log('  ✅ Cache nativo com TTL e LRU');
   console.log('  ✅ Web Streams API');
