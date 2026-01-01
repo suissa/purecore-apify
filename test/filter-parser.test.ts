@@ -68,6 +68,18 @@ test("AdvancedFilterParser Suite", async (t) => {
     });
   });
 
+  await t.test("Proteção de strings", () => {
+    const res = AdvancedFilterParser.parse(
+      "name=\"John AND Doe\"&OR&status='Active OR Inactive'"
+    );
+    assert.deepEqual(res, {
+      $or: [
+        { name: { $eq: "John AND Doe" } },
+        { status: { $eq: "Active OR Inactive" } },
+      ],
+    });
+  });
+
   await t.test("Expressão booleana implícita", () => {
     assert.deepEqual(AdvancedFilterParser.parse("isActive"), {
       isActive: true,

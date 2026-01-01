@@ -68,7 +68,7 @@ export class GetIntentMiddleware {
   /**
    * Função principal do Middleware
    */
-  static handle(req: any, res: any, next: () => void) {
+  static async handle(req: any, res: any, next: () => void) {
     // 1. Detectar Modo AON (Glass Box)
     const accept = req.headers['accept'] || '';
     const isAON = accept.includes('application/x-ndjson');
@@ -106,7 +106,7 @@ export class GetIntentMiddleware {
     }
 
     // 3. Processar a Query com Heurísticas
-    const { healedQuery, corrections } = this.parseAndHeal(rawQueryString);
+    const { healedQuery, corrections } = await this.parseAndHeal(rawQueryString);
 
     // 4. Reportar Correções via AON
     corrections.forEach(c => {
@@ -132,14 +132,65 @@ export class GetIntentMiddleware {
   /**
    * O Motor de Parsing e Cura
    */
-  private static parseAndHeal(rawString: string) {
+  private static async parseAndHeal(rawString: string) {
     const healedQuery: any = {};
     const corrections: string[] = [];
     const decodedString = decodeURIComponent(rawString);
 
+    // --- PASSO 0: Advanced Filter Identification (Heurística de Cura) ---
+    // Se a query contém "filter=", capturamos o bloco inteiro antes do split por '&'
+    // Isso evita que o '&' dentro de lógicas como &AND& quebrem o parser padrão.
+    let remainingString = decodedString;
+    const filterKeyMatch = decodedString.match(/(?:^|&)(filter|search|q|busca)=\[?(.*)/i);
+    
+    if (filterKeyMatch) {
+      const key = filterKeyMatch[1];
+      const startOfValue = filterKeyMatch[2];
+      
+      // Heurística de fechamento: vai até o próximo param real ou fim da string
+      // (Se começou com [, procura o próximo ])
+      let filterValue = '';
+      if (startOfValue.startsWith('[')) {
+        let depth = 0;
+        let i = 0;
+        for (; i < startOfValue.length; i++) {
+          if (startOfValue[i] === '[') depth++;
+          if (startOfValue[i] === ']') depth--;
+          if (depth === 0) break;
+        }
+        filterValue = startOfValue.slice(0, i + 1);
+      } else {
+        // Pega até o fim ou até o próximo param conhecido assistido por heurística
+        // Simplificamos: pega até o próximo "&keyword=" onde keyword é canônico
+        const nextAmp = startOfValue.indexOf('&');
+        if (nextAmp === -1) {
+          filterValue = startOfValue;
+        } else {
+          // Verifica se o "&" é seguido por algo que parece uma chave (=)
+          const nextPart = startOfValue.slice(nextAmp + 1);
+          if (nextPart.includes('=') && !nextPart.startsWith('AND&') && !nextPart.startsWith('OR&')) {
+            filterValue = startOfValue.slice(0, nextAmp);
+          } else {
+             // Provavelmente um & interior ao filtro (ex: &AND&)
+             filterValue = startOfValue; // Pega tudo, split posterior cuidará
+          }
+        }
+      }
+
+      try {
+        const { AdvancedFilterParser } = await import('./filter-parser');
+        healedQuery.where = AdvancedFilterParser.parse(filterValue);
+        corrections.push(`Advanced Filter DSL detected in '${key}'. Parsed into structured 'where' clause.`);
+        
+        // Remove o filtro processado da string para não processar de novo
+        remainingString = decodedString.replace(`${key}=${filterValue}`, '').replace(/^&|&$/, '');
+      } catch (err) {
+        console.warn('[GetIntent] Failed to load AdvancedFilterParser dynamically:', err);
+      }
+    }
+
     // Passo A: Split Inteligente por '&'
-    // (Poderíamos melhorar para suportar ';' também se quisesse ser muito robusto)
-    const parts = decodedString.split('&');
+    const parts = remainingString.split('&');
 
     for (const part of parts) {
       if (!part) continue;
@@ -317,8 +368,8 @@ export class GetIntentMiddleware {
 // --- FACTORY PARA EXPRESS / FASTIFY ---
 
 export const intentGetter = () => {
-  return (req: any, res: any, next: any) => {
-    GetIntentMiddleware.handle(req, res, next);
+  return async (req: any, res: any, next: any) => {
+    await GetIntentMiddleware.handle(req, res, next);
   };
 };
 ```

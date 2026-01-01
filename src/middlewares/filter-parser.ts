@@ -3,6 +3,7 @@ import { RawFilterString, MongoQuery } from "../types";
 /**
  * Intent-Based Filter Parser
  * Transforma strings de busca complexas em objetos estruturados (MongoDB-style).
+ * Suporta tokens aninhados, parênteses e proteção de strings.
  */
 export class AdvancedFilterParser {
   /**
@@ -22,89 +23,78 @@ export class AdvancedFilterParser {
 
   /**
    * Parser recursivo para suportar parênteses e precedência.
+   * Ordem de precedência: OR (menor) -> AND -> NOR -> NOT (maior)
    */
   private static parseRecursive(input: string): any {
     input = input.trim();
 
-    // Se está totalmente envolto em parênteses, remove e processa conteúdo
-    if (
-      input.startsWith("(") &&
-      this.getMatchingParenthesis(input, 0) === input.length - 1
-    ) {
-      return this.parseRecursive(input.slice(1, -1));
+    // Tratamento de parênteses externos
+    if (input.startsWith("(")) {
+      const matchEnd = this.getMatchingParenthesis(input, 0);
+      if (matchEnd === input.length - 1) {
+        return this.parseRecursive(input.slice(1, -1));
+      }
     }
 
-    // Normalização básica de tokens para facilitar o split sem quebrar strings
-    // Ordem de precedência: OR (menor) -> AND -> NOT (maior)
-
-    // Busca por OR fora de parênteses
-    const orIndex = this.findOperatorOutsideParens(
-      input,
-      /&OR&|\sOR\s|,|\|\|/i
-    );
-    if (orIndex !== -1) {
-      const parts = this.splitOutsideParens(input, /&OR&|\sOR\s|,|\|\|/i);
-      return { $or: parts.map((p) => this.parseRecursive(p)) };
+    // Procura por operadores fora de parênteses e fora de strings
+    // 1. OR (| , || &OR& OR)
+    const orSplit = this.splitByOperator(input, /&OR&|\sOR\s|,|\|\|/i);
+    if (orSplit.length > 1) {
+      return { $or: orSplit.map((p) => this.parseRecursive(p)) };
     }
 
-    // Busca por AND fora de parênteses
-    const andIndex = this.findOperatorOutsideParens(
-      input,
-      /&AND&|\sAND\s|;|&&/i
-    );
-    if (andIndex !== -1) {
-      const parts = this.splitOutsideParens(input, /&AND&|\sAND\s|;|&&/i);
-      return { $and: parts.map((p) => this.parseRecursive(p)) };
+    // 2. AND (& ; && &AND& AND)
+    const andSplit = this.splitByOperator(input, /&AND&|\sAND\s|;|&&/i);
+    if (andSplit.length > 1) {
+      return { $and: andSplit.map((p) => this.parseRecursive(p)) };
     }
 
-    // Busca por NOR fora de parênteses
-    const norIndex = this.findOperatorOutsideParens(input, /&NOR&|\sNOR\s/i);
-    if (norIndex !== -1) {
-      const parts = this.splitOutsideParens(input, /&NOR&|\sNOR\s/i);
-      return { $nor: parts.map((p) => this.parseRecursive(p)) };
+    // 3. NOR (&NOR& NOR)
+    const norSplit = this.splitByOperator(input, /&NOR&|\sNOR\s/i);
+    if (norSplit.length > 1) {
+      return { $nor: norSplit.map((p) => this.parseRecursive(p)) };
     }
 
-    // Busca por NOT no início
+    // 4. NOT (! &NOT& NOT)
     if (input.match(/^(!|&NOT&|\sNOT\s)/i)) {
       const content = input.replace(/^(!|&NOT&|\sNOT\s)/i, "").trim();
-      const parsed = this.parseRecursive(content);
-      // Se for uma expressão simples, aplica $not no nível do campo
-      // Se for complexa, aplica logicamente (depende da implementação do backend)
-      return { $not: parsed };
+      return { $not: this.parseRecursive(content) };
     }
 
-    // Se chegou aqui, deve ser uma expressão atômica (campo op valor)
+    // Expressão atômica
     return this.parseExpression(input);
   }
 
-  private static findOperatorOutsideParens(
+  /**
+   * Divide a string por um operador, respeitando parênteses e aspas.
+   */
+  private static splitByOperator(
     input: string,
-    regex: RegExp
-  ): number {
-    let depth = 0;
-    for (let i = 0; i < input.length; i++) {
-      if (input[i] === "(") depth++;
-      else if (input[i] === ")") depth--;
-      else if (depth === 0) {
-        const remaining = input.slice(i);
-        const match = remaining.match(regex);
-        if (match && match.index === 0) return i;
-      }
-    }
-    return -1;
-  }
-
-  private static splitOutsideParens(input: string, regex: RegExp): string[] {
+    operatorRegex: RegExp
+  ): string[] {
     const parts: string[] = [];
     let depth = 0;
+    let inQuotes: string | null = null;
     let lastIndex = 0;
 
     for (let i = 0; i < input.length; i++) {
-      if (input[i] === "(") depth++;
-      else if (input[i] === ")") depth--;
-      else if (depth === 0) {
+      const char = input[i];
+
+      // Handle quotes
+      if ((char === '"' || char === "'") && input[i - 1] !== "\\") {
+        if (!inQuotes) inQuotes = char;
+        else if (inQuotes === char) inQuotes = null;
+      }
+
+      if (inQuotes) continue;
+
+      // Handle parentheses
+      if (char === "(") depth++;
+      else if (char === ")") depth--;
+
+      if (depth === 0) {
         const remaining = input.slice(i);
-        const match = remaining.match(regex);
+        const match = remaining.match(operatorRegex);
         if (match && match.index === 0) {
           parts.push(input.slice(lastIndex, i).trim());
           i += match[0].length - 1;
@@ -112,8 +102,12 @@ export class AdvancedFilterParser {
         }
       }
     }
-    parts.push(input.slice(lastIndex).trim());
-    return parts;
+
+    if (parts.length > 0) {
+      parts.push(input.slice(lastIndex).trim());
+    }
+
+    return parts.length > 0 ? parts : [input];
   }
 
   private static getMatchingParenthesis(str: string, start: number): number {
@@ -128,14 +122,14 @@ export class AdvancedFilterParser {
 
   private static parseExpression(expr: string): any {
     // Regex para capturar: chave, operador, valor
-    // Suporta: == (RSQL), =, !=, >=, <=, >, <, : (contains)
+    // Suporta identificadores com pontos, colchetes e operadores diversos
     const match = expr.match(
       /^([a-zA-Z0-9_.]+)\s*(==|!=|>=|<=|=|>|<|:)\s*(.+)$/
     );
 
     if (!match) {
-      // Fallback: se for só uma palavra, assume que é um campo booleano
       const key = expr.trim();
+      // Heurística para booleano implícito: "isActive" -> { isActive: true }
       if (key.match(/^[a-zA-Z0-9_.]+$/)) {
         return { [key]: true };
       }
@@ -145,7 +139,6 @@ export class AdvancedFilterParser {
     const [, key, op, rawVal] = match;
     const value = this.inferType(rawVal);
 
-    // Tradução de Operadores para sintaxe MongoDB
     switch (op) {
       case "==":
       case "=":
@@ -172,15 +165,16 @@ export class AdvancedFilterParser {
     if (val === "true") return true;
     if (val === "false") return false;
     if (val === "null") return null;
-    if (!isNaN(Number(val)) && val !== "") return Number(val);
 
-    // Remove aspas
+    // Remove aspas se presentes
     if (
       (val.startsWith('"') && val.endsWith('"')) ||
       (val.startsWith("'") && val.endsWith("'"))
     ) {
       return val.slice(1, -1);
     }
+
+    if (!isNaN(Number(val)) && val !== "") return Number(val);
     return val;
   }
 }
