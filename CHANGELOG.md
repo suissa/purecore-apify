@@ -8,6 +8,8 @@
 - 🛡️ **Intent-Based Filtering** - Suporte a dialéticas SQL-like, RSQL e Custom DSL (`&AND&`, `&OR&`, `&NOT&`).
 - 🧩 **Nested Parentheses** - Suporte completo a parênteses aninhados para precedência lógica complexa.
 - 🏷️ **@Filter Decorator** - Decorator de método para injeção automática de filtros estruturados em `req.query.where`.
+- ⚓ **Middleware Integration** - Integração profunda no `GetIntentMiddleware` com heurística de cura para extrair filtros complexos antes da quebra da query string por `&`.
+- 🛡️ **String Protection** - Suporte a operadores dentro de strings aspas (ex: `name="John AND Doe"`) sem quebrar a lógica.
 - 💎 **Nominal Semantic Typing** - Tipagem estrita com `RawFilterString` e `MongoQuery` para segurança em tempo de compilação.
 - ✅ **Suite de Testes** - Testes unitários abrangendo todos os operadores e cenários de aninhamento.
 - 🤖 **AON Integration** - Notificação automática de correções para o sistema Adaptive Observability Negotiation.
