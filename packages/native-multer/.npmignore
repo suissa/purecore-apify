@@ -1,0 +1,16 @@
+src/
+test/
+benchmarks/
+*.test.js
+*.test.ts
+.git/
+.github/
+node_modules/
+coverage/
+.nyc_output/
+tsconfig.json
+.eslintrc*
+.prettierrc*
+*.log
+.DS_Store
+Thumbs.db
