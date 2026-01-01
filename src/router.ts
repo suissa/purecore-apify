@@ -41,12 +41,13 @@ export class Router implements IRouter {
 
       const layer = this.stack[idx++];
 
-      // 1. Verifica Match da URL (Regex)
+      // 1. Verifica Método (se não for middleware 'ALL')
+      // OPTIMIZATION: Check method before expensive regex match
+      if (layer.method !== 'ALL' && layer.method !== req.method) return next();
+
+      // 2. Verifica Match da URL (Regex)
       const match = currentPath.match(layer.regex);
       if (!match) return next();
-
-      // 2. Verifica Método (se não for middleware 'ALL')
-      if (layer.method !== 'ALL' && layer.method !== req.method) return next();
 
       // 3. Extrai Params
       if (layer.keys.length > 0) {
@@ -106,7 +107,7 @@ export class Router implements IRouter {
    */
   private addLayer(method: string, path: string, handler: RequestHandler | IRouter) {
     const keys: string[] = [];
-    
+
     // Converte :param em regex group
     let regexPath = path.replace(/:([a-zA-Z0-9_]+)/g, (_, key) => {
       keys.push(key);
@@ -120,15 +121,15 @@ export class Router implements IRouter {
     // Se for middleware, não usa $ no final (para dar match em prefixo)
     // Ex: /api deve dar match em /api/users
     const endAnchor = isMiddleware ? '' : '$';
-    
+
     // Normaliza barras
     regexPath = regexPath.replace(/\/+/g, '/');
     if (regexPath !== '/' && regexPath.endsWith('/')) {
         regexPath = regexPath.slice(0, -1);
     }
-    
+
     const regex = path === '/' && isMiddleware
-        ? new RegExp('^.*') 
+        ? new RegExp('^.*')
         : new RegExp(`^${regexPath}(?:/)?${endAnchor}`);
 
     this.stack.push({
