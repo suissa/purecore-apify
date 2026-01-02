@@ -3,31 +3,31 @@
  * Baseado em https://github.com/helmetjs/helmet
  */
 
-import { Request, Response, NextFunction, RequestHandler } from '../types';
-import { createHandlerDecorator } from './base';
+import { Request, Response, NextFunction, RequestHandler } from "../types";
+import { createHandlerDecorator } from "./base";
 
 // =========================================
 // CONTENT SECURITY POLICY (CSP)
 // =========================================
 
 interface CSPDirectives {
-  'default-src'?: string[];
-  'script-src'?: string[];
-  'style-src'?: string[];
-  'img-src'?: string[];
-  'connect-src'?: string[];
-  'font-src'?: string[];
-  'object-src'?: string[];
-  'media-src'?: string[];
-  'frame-src'?: string[];
-  'sandbox'?: string[];
-  'report-uri'?: string;
-  'child-src'?: string[];
-  'form-action'?: string[];
-  'frame-ancestors'?: string[];
-  'plugin-types'?: string[];
-  'base-uri'?: string[];
-  'report-to'?: string;
+  "default-src"?: string[];
+  "script-src"?: string[];
+  "style-src"?: string[];
+  "img-src"?: string[];
+  "connect-src"?: string[];
+  "font-src"?: string[];
+  "object-src"?: string[];
+  "media-src"?: string[];
+  "frame-src"?: string[];
+  sandbox?: string[];
+  "report-uri"?: string;
+  "child-src"?: string[];
+  "form-action"?: string[];
+  "frame-ancestors"?: string[];
+  "plugin-types"?: string[];
+  "base-uri"?: string[];
+  "report-to"?: string;
   [key: string]: string[] | string | undefined;
 }
 
@@ -41,21 +41,23 @@ interface CSPGuardOptions {
  */
 export const CSPGuard = (options: CSPGuardOptions = {}): MethodDecorator => {
   const defaultDirectives: CSPDirectives = {
-    'default-src': ["'self'"],
-    'base-uri': ["'self'"],
-    'font-src': ["'self'", 'https:', 'data:'],
-    'form-action': ["'self'"],
-    'frame-ancestors': ["'self'"],
-    'img-src': ["'self'", 'data:', 'https:'],
-    'object-src': ["'none'"],
-    'script-src': ["'self'"],
-    'script-src-attr': ["'none'"],
-    'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-    'upgrade-insecure-requests': [],
+    "default-src": ["'self'"],
+    "base-uri": ["'self'"],
+    "font-src": ["'self'", "https:", "data:"],
+    "form-action": ["'self'"],
+    "frame-ancestors": ["'self'"],
+    "img-src": ["'self'", "data:", "https:"],
+    "object-src": ["'none'"],
+    "script-src": ["'self'"],
+    "script-src-attr": ["'none'"],
+    "style-src": ["'self'", "https:", "'unsafe-inline'"],
+    "upgrade-insecure-requests": [],
   };
 
   const directives = { ...defaultDirectives, ...options.directives };
-  const headerName = options.reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+  const headerName = options.reportOnly
+    ? "Content-Security-Policy-Report-Only"
+    : "Content-Security-Policy";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
@@ -63,11 +65,13 @@ export const CSPGuard = (options: CSPGuardOptions = {}): MethodDecorator => {
         .filter(([, value]) => value !== undefined)
         .map(([directive, sources]) => {
           if (Array.isArray(sources)) {
-            return sources.length > 0 ? `${directive} ${sources.join(' ')}` : directive;
+            return sources.length > 0
+              ? `${directive} ${sources.join(" ")}`
+              : directive;
           }
           return `${directive} ${sources}`;
         })
-        .join('; ');
+        .join("; ");
 
       res.setHeader(headerName, cspValue);
       return handler(req, res, next);
@@ -84,12 +88,14 @@ export const CSPGuard = (options: CSPGuardOptions = {}): MethodDecorator => {
 /**
  * Cross-Origin Embedder Policy - Previne carregamento de recursos cross-origin
  */
-export const COEPGuard = (options: { policy?: 'require-corp' | 'credentialless' } = {}): MethodDecorator => {
-  const policy = options.policy ?? 'require-corp';
+export const COEPGuard = (
+  options: { policy?: "require-corp" | "credentialless" } = {}
+): MethodDecorator => {
+  const policy = options.policy ?? "require-corp";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('Cross-Origin-Embedder-Policy', policy);
+      res.setHeader("Cross-Origin-Embedder-Policy", policy);
       return handler(req, res, next);
     };
 
@@ -100,12 +106,16 @@ export const COEPGuard = (options: { policy?: 'require-corp' | 'credentialless' 
 /**
  * Cross-Origin Opener Policy - Isola janelas de origem cruzada
  */
-export const COOPGuard = (options: { policy?: 'same-origin' | 'same-origin-allow-popups' | 'unsafe-none' } = {}): MethodDecorator => {
-  const policy = options.policy ?? 'same-origin';
+export const COOPGuard = (
+  options: {
+    policy?: "same-origin" | "same-origin-allow-popups" | "unsafe-none";
+  } = {}
+): MethodDecorator => {
+  const policy = options.policy ?? "same-origin";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('Cross-Origin-Opener-Policy', policy);
+      res.setHeader("Cross-Origin-Opener-Policy", policy);
       return handler(req, res, next);
     };
 
@@ -116,12 +126,14 @@ export const COOPGuard = (options: { policy?: 'same-origin' | 'same-origin-allow
 /**
  * Cross-Origin Resource Policy - Controla compartilhamento de recursos cross-origin
  */
-export const CORPGuard = (options: { policy?: 'same-origin' | 'same-site' | 'cross-origin' } = {}): MethodDecorator => {
-  const policy = options.policy ?? 'same-origin';
+export const CORPGuard = (
+  options: { policy?: "same-origin" | "same-site" | "cross-origin" } = {}
+): MethodDecorator => {
+  const policy = options.policy ?? "same-origin";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('Cross-Origin-Resource-Policy', policy);
+      res.setHeader("Cross-Origin-Resource-Policy", policy);
       return handler(req, res, next);
     };
 
@@ -135,7 +147,7 @@ export const CORPGuard = (options: { policy?: 'same-origin' | 'same-site' | 'cro
 export const OriginAgentClusterGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('Origin-Agent-Cluster', '?1');
+      res.setHeader("Origin-Agent-Cluster", "?1");
       return handler(req, res, next);
     };
 
@@ -148,19 +160,28 @@ export const OriginAgentClusterGuard = (): MethodDecorator => {
 // =========================================
 
 interface ReferrerPolicyOptions {
-  policy?: 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' |
-           'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url';
+  policy?:
+    | "no-referrer"
+    | "no-referrer-when-downgrade"
+    | "origin"
+    | "origin-when-cross-origin"
+    | "same-origin"
+    | "strict-origin"
+    | "strict-origin-when-cross-origin"
+    | "unsafe-url";
 }
 
 /**
  * Referrer Policy - Controla envio de referrer
  */
-export const ReferrerPolicyGuard = (options: ReferrerPolicyOptions = {}): MethodDecorator => {
-  const policy = options.policy ?? 'no-referrer';
+export const ReferrerPolicyGuard = (
+  options: ReferrerPolicyOptions = {}
+): MethodDecorator => {
+  const policy = options.policy ?? "no-referrer";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('Referrer-Policy', policy);
+      res.setHeader("Referrer-Policy", policy);
       return handler(req, res, next);
     };
 
@@ -189,10 +210,10 @@ export const HSTSGuard = (options: HSTSOptions = {}): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
       let hstsValue = `max-age=${maxAge}`;
-      if (includeSubDomains) hstsValue += '; includeSubDomains';
-      if (preload) hstsValue += '; preload';
+      if (includeSubDomains) hstsValue += "; includeSubDomains";
+      if (preload) hstsValue += "; preload";
 
-      res.setHeader('Strict-Transport-Security', hstsValue);
+      res.setHeader("Strict-Transport-Security", hstsValue);
       return handler(req, res, next);
     };
 
@@ -210,7 +231,7 @@ export const HSTSGuard = (options: HSTSOptions = {}): MethodDecorator => {
 export const XContentTypeOptionsGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader("X-Content-Type-Options", "nosniff");
       return handler(req, res, next);
     };
 
@@ -221,12 +242,14 @@ export const XContentTypeOptionsGuard = (): MethodDecorator => {
 /**
  * X-DNS-Prefetch-Control - Controla DNS prefetching
  */
-export const XDNSPrefetchControlGuard = (options: { allow?: boolean } = {}): MethodDecorator => {
+export const XDNSPrefetchControlGuard = (
+  options: { allow?: boolean } = {}
+): MethodDecorator => {
   const allow = options.allow ?? false;
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-DNS-Prefetch-Control', allow ? 'on' : 'off');
+      res.setHeader("X-DNS-Prefetch-Control", allow ? "on" : "off");
       return handler(req, res, next);
     };
 
@@ -240,7 +263,7 @@ export const XDNSPrefetchControlGuard = (options: { allow?: boolean } = {}): Met
 export const XDownloadOptionsGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-Download-Options', 'noopen');
+      res.setHeader("X-Download-Options", "noopen");
       return handler(req, res, next);
     };
 
@@ -251,12 +274,14 @@ export const XDownloadOptionsGuard = (): MethodDecorator => {
 /**
  * X-Frame-Options - Previne clickjacking
  */
-export const XFrameOptionsGuard = (options: { action?: 'DENY' | 'SAMEORIGIN' } = {}): MethodDecorator => {
-  const action = options.action ?? 'SAMEORIGIN';
+export const XFrameOptionsGuard = (
+  options: { action?: "DENY" | "SAMEORIGIN" } = {}
+): MethodDecorator => {
+  const action = options.action ?? "SAMEORIGIN";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-Frame-Options', action);
+      res.setHeader("X-Frame-Options", action);
       return handler(req, res, next);
     };
 
@@ -267,14 +292,16 @@ export const XFrameOptionsGuard = (options: { action?: 'DENY' | 'SAMEORIGIN' } =
 /**
  * X-Permitted-Cross-Domain-Policies - Controla políticas cross-domain
  */
-export const XPermittedCrossDomainPoliciesGuard = (options: {
-  permittedPolicies?: 'none' | 'master-only' | 'by-content-type' | 'all'
-} = {}): MethodDecorator => {
-  const permittedPolicies = options.permittedPolicies ?? 'none';
+export const XPermittedCrossDomainPoliciesGuard = (
+  options: {
+    permittedPolicies?: "none" | "master-only" | "by-content-type" | "all";
+  } = {}
+): MethodDecorator => {
+  const permittedPolicies = options.permittedPolicies ?? "none";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-Permitted-Cross-Domain-Policies', permittedPolicies);
+      res.setHeader("X-Permitted-Cross-Domain-Policies", permittedPolicies);
       return handler(req, res, next);
     };
 
@@ -288,7 +315,7 @@ export const XPermittedCrossDomainPoliciesGuard = (options: {
 export const XPoweredByGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.removeHeader('X-Powered-By');
+      res.removeHeader("X-Powered-By");
       return handler(req, res, next);
     };
 
@@ -302,7 +329,7 @@ export const XPoweredByGuard = (): MethodDecorator => {
 export const XXSSProtectionGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      res.setHeader('X-XSS-Protection', '0');
+      res.setHeader("X-XSS-Protection", "0");
       return handler(req, res, next);
     };
 
@@ -315,18 +342,26 @@ export const XXSSProtectionGuard = (): MethodDecorator => {
 // =========================================
 
 interface HelmetOptions {
-  contentSecurityPolicy?: CSPGuardOptions | false;
-  crossOriginEmbedderPolicy?: { policy?: 'require-corp' | 'credentialless' } | false;
-  crossOriginOpenerPolicy?: { policy?: 'same-origin' | 'same-origin-allow-popups' | 'unsafe-none' } | false;
-  crossOriginResourcePolicy?: { policy?: 'same-origin' | 'same-site' | 'cross-origin' } | false;
+  contentSecurityPolicy?: CSPGuardOptions | boolean;
+  crossOriginEmbedderPolicy?:
+    | { policy?: "require-corp" | "credentialless" }
+    | boolean;
+  crossOriginOpenerPolicy?:
+    | { policy?: "same-origin" | "same-origin-allow-popups" | "unsafe-none" }
+    | boolean;
+  crossOriginResourcePolicy?:
+    | { policy?: "same-origin" | "same-site" | "cross-origin" }
+    | boolean;
   originAgentCluster?: boolean;
-  referrerPolicy?: ReferrerPolicyOptions | false;
-  strictTransportSecurity?: HSTSOptions | false;
+  referrerPolicy?: ReferrerPolicyOptions | boolean;
+  strictTransportSecurity?: HSTSOptions | boolean;
   xContentTypeOptions?: boolean;
-  xDnsPrefetchControl?: { allow?: boolean } | false;
+  xDnsPrefetchControl?: { allow?: boolean } | boolean;
   xDownloadOptions?: boolean;
-  xFrameOptions?: { action?: 'DENY' | 'SAMEORIGIN' } | false;
-  xPermittedCrossDomainPolicies?: { permittedPolicies?: 'none' | 'master-only' | 'by-content-type' | 'all' } | false;
+  xFrameOptions?: { action?: "DENY" | "SAMEORIGIN" } | boolean;
+  xPermittedCrossDomainPolicies?:
+    | { permittedPolicies?: "none" | "master-only" | "by-content-type" | "all" }
+    | boolean;
   xPoweredBy?: boolean;
   xXssProtection?: boolean;
 }
@@ -338,18 +373,41 @@ interface HelmetOptions {
 export const HelmetGuard = (options: HelmetOptions = {}): MethodDecorator => {
   // Configurações padrão (habilitadas por padrão)
   const config = {
-    contentSecurityPolicy: options.contentSecurityPolicy !== false ? (options.contentSecurityPolicy || {}) : false,
-    crossOriginEmbedderPolicy: options.crossOriginEmbedderPolicy !== false ? (options.crossOriginEmbedderPolicy || {}) : false,
-    crossOriginOpenerPolicy: options.crossOriginOpenerPolicy !== false ? (options.crossOriginOpenerPolicy || {}) : false,
-    crossOriginResourcePolicy: options.crossOriginResourcePolicy !== false ? (options.crossOriginResourcePolicy || {}) : false,
+    contentSecurityPolicy:
+      options.contentSecurityPolicy === true
+        ? {}
+        : options.contentSecurityPolicy || false,
+    crossOriginEmbedderPolicy:
+      options.crossOriginEmbedderPolicy === true
+        ? {}
+        : options.crossOriginEmbedderPolicy || false,
+    crossOriginOpenerPolicy:
+      options.crossOriginOpenerPolicy === true
+        ? {}
+        : options.crossOriginOpenerPolicy || false,
+    crossOriginResourcePolicy:
+      options.crossOriginResourcePolicy === true
+        ? {}
+        : options.crossOriginResourcePolicy || false,
     originAgentCluster: options.originAgentCluster ?? false,
-    referrerPolicy: options.referrerPolicy !== false ? (options.referrerPolicy || {}) : false,
-    strictTransportSecurity: options.strictTransportSecurity !== false ? (options.strictTransportSecurity || {}) : false,
+    referrerPolicy:
+      options.referrerPolicy === true ? {} : options.referrerPolicy || false,
+    strictTransportSecurity:
+      options.strictTransportSecurity === true
+        ? {}
+        : options.strictTransportSecurity || false,
     xContentTypeOptions: options.xContentTypeOptions ?? true,
-    xDnsPrefetchControl: options.xDnsPrefetchControl !== false ? (options.xDnsPrefetchControl || {}) : false,
+    xDnsPrefetchControl:
+      options.xDnsPrefetchControl === true
+        ? {}
+        : options.xDnsPrefetchControl || false,
     xDownloadOptions: options.xDownloadOptions ?? true,
-    xFrameOptions: options.xFrameOptions !== false ? (options.xFrameOptions || {}) : false,
-    xPermittedCrossDomainPolicies: options.xPermittedCrossDomainPolicies !== false ? (options.xPermittedCrossDomainPolicies || {}) : false,
+    xFrameOptions:
+      options.xFrameOptions === true ? {} : options.xFrameOptions || false,
+    xPermittedCrossDomainPolicies:
+      options.xPermittedCrossDomainPolicies === true
+        ? {}
+        : options.xPermittedCrossDomainPolicies || false,
     xPoweredBy: options.xPoweredBy ?? true,
     xXssProtection: options.xXssProtection ?? true,
   };
@@ -360,122 +418,157 @@ export const HelmetGuard = (options: HelmetOptions = {}): MethodDecorator => {
         // Aplica todos os headers de segurança diretamente
 
         // Content Security Policy
-        if (config.contentSecurityPolicy !== false) {
-          const cspOptions = config.contentSecurityPolicy;
+        if (
+          config.contentSecurityPolicy &&
+          typeof config.contentSecurityPolicy === "object"
+        ) {
+          const cspOptions = config.contentSecurityPolicy as CSPGuardOptions;
           const defaultDirectives: CSPDirectives = {
-            'default-src': ["'self'"],
-            'base-uri': ["'self'"],
-            'font-src': ["'self'", 'https:', 'data:'],
-            'form-action': ["'self'"],
-            'frame-ancestors': ["'self'"],
-            'img-src': ["'self'", 'data:', 'https:'],
-            'object-src': ["'none'"],
-            'script-src': ["'self'"],
-            'script-src-attr': ["'none'"],
-            'style-src': ["'self'", 'https:', "'unsafe-inline'"],
-            'upgrade-insecure-requests': [],
+            "default-src": ["'self'"],
+            "base-uri": ["'self'"],
+            "font-src": ["'self'", "https:", "data:"],
+            "form-action": ["'self'"],
+            "frame-ancestors": ["'self'"],
+            "img-src": ["'self'", "data:", "https:"],
+            "object-src": ["'none'"],
+            "script-src": ["'self'"],
+            "script-src-attr": ["'none'"],
+            "style-src": ["'self'", "https:", "'unsafe-inline'"],
+            "upgrade-insecure-requests": [],
           };
 
-          const directives = { ...defaultDirectives, ...(cspOptions.directives || {}) };
-          const headerName = cspOptions.reportOnly ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+          const directives = {
+            ...defaultDirectives,
+            ...(cspOptions.directives || {}),
+          };
+          const headerName = cspOptions.reportOnly
+            ? "Content-Security-Policy-Report-Only"
+            : "Content-Security-Policy";
 
           const cspValue = Object.entries(directives)
             .filter(([, value]) => value !== undefined)
             .map(([directive, sources]) => {
               if (Array.isArray(sources)) {
-                return sources.length > 0 ? `${directive} ${sources.join(' ')}` : directive;
+                return sources.length > 0
+                  ? `${directive} ${sources.join(" ")}`
+                  : directive;
               }
               return `${directive} ${sources}`;
             })
-            .join('; ');
+            .join("; ");
 
           res.setHeader(headerName, cspValue);
         }
 
         // Cross-Origin Embedder Policy
-        if (config.crossOriginEmbedderPolicy !== false) {
-          const policy = config.crossOriginEmbedderPolicy.policy ?? 'require-corp';
-          res.setHeader('Cross-Origin-Embedder-Policy', policy);
+        if (
+          config.crossOriginEmbedderPolicy &&
+          typeof config.crossOriginEmbedderPolicy === "object"
+        ) {
+          const policy =
+            (config.crossOriginEmbedderPolicy as any).policy ?? "require-corp";
+          res.setHeader("Cross-Origin-Embedder-Policy", policy);
         }
 
         // Cross-Origin Opener Policy
-        if (config.crossOriginOpenerPolicy !== false) {
-          const policy = config.crossOriginOpenerPolicy.policy ?? 'same-origin';
-          res.setHeader('Cross-Origin-Opener-Policy', policy);
+        if (
+          config.crossOriginOpenerPolicy &&
+          typeof config.crossOriginOpenerPolicy === "object"
+        ) {
+          const policy =
+            (config.crossOriginOpenerPolicy as any).policy ?? "same-origin";
+          res.setHeader("Cross-Origin-Opener-Policy", policy);
         }
 
         // Cross-Origin Resource Policy
-        if (config.crossOriginResourcePolicy !== false) {
-          const policy = config.crossOriginResourcePolicy.policy ?? 'same-origin';
-          res.setHeader('Cross-Origin-Resource-Policy', policy);
+        if (
+          config.crossOriginResourcePolicy &&
+          typeof config.crossOriginResourcePolicy === "object"
+        ) {
+          const policy =
+            (config.crossOriginResourcePolicy as any).policy ?? "same-origin";
+          res.setHeader("Cross-Origin-Resource-Policy", policy);
         }
 
         // Origin-Agent-Cluster
         if (config.originAgentCluster) {
-          res.setHeader('Origin-Agent-Cluster', '?1');
+          res.setHeader("Origin-Agent-Cluster", "?1");
         }
 
         // Referrer Policy
-        if (config.referrerPolicy !== false) {
-          const policy = config.referrerPolicy.policy ?? 'no-referrer';
-          res.setHeader('Referrer-Policy', policy);
+        if (
+          config.referrerPolicy &&
+          typeof config.referrerPolicy === "object"
+        ) {
+          const policy = (config.referrerPolicy as any).policy ?? "no-referrer";
+          res.setHeader("Referrer-Policy", policy);
         }
 
         // Strict Transport Security (HSTS)
-        if (config.strictTransportSecurity !== false) {
-          const hstsOptions = config.strictTransportSecurity;
+        if (
+          config.strictTransportSecurity &&
+          typeof config.strictTransportSecurity === "object"
+        ) {
+          const hstsOptions = config.strictTransportSecurity as HSTSOptions;
           const maxAge = Math.floor(hstsOptions.maxAge ?? 31536000);
           const includeSubDomains = hstsOptions.includeSubDomains ?? true;
           const preload = hstsOptions.preload ?? false;
 
           let hstsValue = `max-age=${maxAge}`;
-          if (includeSubDomains) hstsValue += '; includeSubDomains';
-          if (preload) hstsValue += '; preload';
+          if (includeSubDomains) hstsValue += "; includeSubDomains";
+          if (preload) hstsValue += "; preload";
 
-          res.setHeader('Strict-Transport-Security', hstsValue);
+          res.setHeader("Strict-Transport-Security", hstsValue);
         }
 
         // X-Content-Type-Options
         if (config.xContentTypeOptions) {
-          res.setHeader('X-Content-Type-Options', 'nosniff');
+          res.setHeader("X-Content-Type-Options", "nosniff");
         }
 
         // X-DNS-Prefetch-Control
-        if (config.xDnsPrefetchControl !== false) {
-          const allow = config.xDnsPrefetchControl.allow ?? false;
-          res.setHeader('X-DNS-Prefetch-Control', allow ? 'on' : 'off');
+        if (
+          config.xDnsPrefetchControl &&
+          typeof config.xDnsPrefetchControl === "object"
+        ) {
+          const allow = (config.xDnsPrefetchControl as any).allow ?? false;
+          res.setHeader("X-DNS-Prefetch-Control", allow ? "on" : "off");
         }
 
         // X-Download-Options
         if (config.xDownloadOptions) {
-          res.setHeader('X-Download-Options', 'noopen');
+          res.setHeader("X-Download-Options", "noopen");
         }
 
         // X-Frame-Options
-        if (config.xFrameOptions !== false) {
-          const action = config.xFrameOptions.action ?? 'SAMEORIGIN';
-          res.setHeader('X-Frame-Options', action);
+        if (config.xFrameOptions && typeof config.xFrameOptions === "object") {
+          const action = (config.xFrameOptions as any).action ?? "SAMEORIGIN";
+          res.setHeader("X-Frame-Options", action);
         }
 
         // X-Permitted-Cross-Domain-Policies
-        if (config.xPermittedCrossDomainPolicies !== false) {
-          const permittedPolicies = config.xPermittedCrossDomainPolicies.permittedPolicies ?? 'none';
-          res.setHeader('X-Permitted-Cross-Domain-Policies', permittedPolicies);
+        if (
+          config.xPermittedCrossDomainPolicies &&
+          typeof config.xPermittedCrossDomainPolicies === "object"
+        ) {
+          const permittedPolicies =
+            (config.xPermittedCrossDomainPolicies as any).permittedPolicies ??
+            "none";
+          res.setHeader("X-Permitted-Cross-Domain-Policies", permittedPolicies);
         }
 
         // X-Powered-By (remoção)
         if (config.xPoweredBy) {
-          res.removeHeader('X-Powered-By');
+          res.removeHeader("X-Powered-By");
         }
 
         // X-XSS-Protection
         if (config.xXssProtection) {
-          res.setHeader('X-XSS-Protection', '0');
+          res.setHeader("X-XSS-Protection", "0");
         }
 
         // Executa o handler original
         return handler(req, res, next);
-
       } catch (error) {
         return next(error);
       }
@@ -487,7 +580,7 @@ export const HelmetGuard = (options: HelmetOptions = {}): MethodDecorator => {
 
 // Função helper para uso como middleware
 let target: any = {};
-let propertyKey: string | symbol = Symbol('helmet');
+let propertyKey: string | symbol = Symbol("helmet");
 
 /**
  * Middleware helper para aplicar Helmet headers
@@ -497,7 +590,7 @@ export const helmet = (options?: HelmetOptions): RequestHandler => {
   const descriptor = helmetDecorator(target, propertyKey, {
     value: async (req: Request, res: Response, next: NextFunction) => {
       next();
-    }
+    },
   });
 
   return descriptor.value;

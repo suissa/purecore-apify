@@ -9,7 +9,7 @@ import { aonMiddleware, createAONMiddleware, AONRequest } from "./aon/index.js";
 // --- 0. Transparent Body Parser Middleware ---
 // Aplica automaticamente parsing de body em todas as rotas não-GET
 
-export const bodyParserMiddleware: RequestHandler = async (
+export const jsonBodyParser: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -213,7 +213,7 @@ export interface ErrorResponse {
  * Middleware de tratamento de erro robusto e resiliente
  * Deve ser registrado como ÚLTIMO middleware: app.use(errorHandler)
  */
-export const errorHandler: RequestHandler = async (
+export const errorHandler = async (
   err: Error | HttpError,
   req: Request,
   res: Response,

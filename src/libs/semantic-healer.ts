@@ -7,36 +7,34 @@ const Algorithms = {
    * Distância de Levenshtein (Edições necessárias para transformar A em B)
    */
   levenshtein(a: string, b: string): number {
-    if (a.length === 0) return b.length;
-    if (b.length === 0) return a.length;
+    const aLen = a.length;
+    const bLen = b.length;
+    if (aLen === 0) return bLen;
+    if (bLen === 0) return aLen;
 
-    const matrix = [];
-
-    for (let i = 0; i <= b.length; i++) {
-      matrix[i] = [i];
+    const matrix: number[][] = [];
+    for (let i = 0; i <= bLen; i++) {
+      matrix[i] = new Array(aLen + 1);
+      matrix[i][0] = i;
     }
-
-    for (let j = 0; j <= a.length; j++) {
+    for (let j = 0; j <= aLen; j++) {
       matrix[0][j] = j;
     }
 
-    for (let i = 1; i <= b.length; i++) {
-      for (let j = 1; j <= a.length; j++) {
-        if (b.charAt(i - 1) == a.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
+    for (let i = 1; i <= bLen; i++) {
+      for (let j = 1; j <= aLen; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1]!;
         } else {
           matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1, // substitution
-            Math.min(
-              matrix[i][j - 1] + 1, // insertion
-              matrix[i - 1][j] + 1 // deletion
-            )
+            matrix[i - 1][j - 1]! + 1,
+            Math.min(matrix[i][j - 1]! + 1, matrix[i - 1][j]! + 1)
           );
         }
       }
     }
 
-    return matrix[b.length][a.length];
+    return matrix[bLen][aLen]!;
   },
 
   /**
@@ -77,10 +75,12 @@ const Algorithms = {
     };
 
     r =
-      f +
+      (f || "") +
       a
-        .map((v) => codes[v])
-        .filter((v, i, arr) => (i === 0 ? v !== codes[f!] : v !== arr[i - 1]))
+        .map((v) => codes[v] || 0)
+        .filter((v, i, arr) =>
+          i === 0 ? v !== (codes[f!] || 0) : v !== arr[i - 1]
+        )
         .filter((v) => v !== 0)
         .join("");
 
@@ -130,7 +130,7 @@ const Algorithms = {
     let l = 0;
     const p = 0.1;
     if (weight > 0.7) {
-      while (s1[l] === s2[l] && l < 4) ++l;
+      while (s1[l] && s1[l] === s2[l] && l < 4) ++l;
       weight = weight + l * p * (1 - weight);
     }
     return weight;

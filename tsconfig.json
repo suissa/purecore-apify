@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -29,14 +29,11 @@
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "paths": {
-      "zod": ["./packages/zod/index.ts"],
-      "cookie": ["./packages/cookie/index.ts"],
-      "i18next": ["./packages/i18next/index.ts"],
-      "@purecore/one-jwt-4-all": [
-        "./node_modules/@purecore/one-jwt-4-all/src/index.ts"
-      ]
+      "zod": ["./src/packages/zod/index.ts"],
+      "cookie": ["./src/packages/cookie/index.ts"],
+      "i18next": ["./src/packages/i18next/index.ts"]
     }
   },
-  "include": ["src/**/*", "tests/**/*", "packages/**/*"],
+  "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

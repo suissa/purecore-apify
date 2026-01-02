@@ -44,7 +44,7 @@
     "monitor": "node --inspect dist/index.js"
   },
   "workspaces": [
-    "packages/*"
+    "src/packages/*"
   ],
   "devDependencies": {
     "@types/node": "^22.10.2",
