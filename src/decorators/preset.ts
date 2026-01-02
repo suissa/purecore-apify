@@ -2,11 +2,7 @@
  * Preset Decorator Factory - Permite combinar múltiplos decorators em um único
  */
 
-export type DecoratorFunction = (
-  target: any,
-  propertyKey?: string | symbol,
-  descriptor?: PropertyDescriptor
-) => any;
+export type DecoratorFunction = (...args: any[]) => any;
 
 /**
  * Factory para criar presets de decorators combinados
