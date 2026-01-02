@@ -27,15 +27,15 @@ export class S3Storage implements StorageEngine {
 
   _handleFile(req: Request, file: FileInfo, callback: (error?: any, info?: Partial<File>) => void): void {
     const key = typeof this.keyGenerator === 'function' 
-      ? this.keyGenerator(req, file as File)
+      ? this.keyGenerator(req, file as unknown as File)
       : this.keyGenerator;
 
     const contentType = typeof this.contentTypeGenerator === 'function'
-      ? this.contentTypeGenerator(req, file as File)
+      ? this.contentTypeGenerator(req, file as unknown as File)
       : this.contentTypeGenerator;
 
     const metadata = typeof this.metadataGenerator === 'function'
-      ? this.metadataGenerator(req, file as File)
+      ? this.metadataGenerator(req, file as unknown as File)
       : this.metadataGenerator;
 
     const chunks: Buffer[] = [];

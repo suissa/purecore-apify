@@ -21,11 +21,11 @@ export class GCSStorage implements StorageEngine {
 
   _handleFile(req: Request, file: FileInfo, callback: (error?: any, info?: Partial<File>) => void): void {
     const filename = typeof this.filenameGenerator === 'function'
-      ? this.filenameGenerator(req, file as File)
+      ? this.filenameGenerator(req, file as unknown as File)
       : this.filenameGenerator;
 
     const metadata = typeof this.metadataGenerator === 'function'
-      ? this.metadataGenerator(req, file as File)
+      ? this.metadataGenerator(req, file as unknown as File)
       : this.metadataGenerator;
 
     const chunks: Buffer[] = [];

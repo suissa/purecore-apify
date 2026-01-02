@@ -13,10 +13,10 @@ const RouterAlgorithms = {
     const matrix: number[][] = [];
     for (let i = 0; i <= bLen; i++) {
       matrix[i] = new Array(aLen + 1);
-      matrix[i][0] = i;
+      matrix[i]![0] = i;
     }
     for (let j = 0; j <= aLen; j++) {
-      matrix[0][j] = j;
+      matrix[0]![j] = j;
     }
 
     for (let i = 1; i <= bLen; i++) {
@@ -31,7 +31,7 @@ const RouterAlgorithms = {
         }
       }
     }
-    return matrix[bLen][aLen]!;
+    return matrix[bLen]![aLen]!;
   },
 };
 

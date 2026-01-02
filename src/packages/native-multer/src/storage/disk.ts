@@ -24,10 +24,10 @@ export class DiskStorage implements StorageEngine {
   }
 
   _handleFile(req: Request, file: FileInfo, callback: (error?: any, info?: Partial<File>) => void): void {
-    this.getDestination(req, file as File, (err, destination) => {
+    this.getDestination(req, file as unknown as File, (err, destination) => {
       if (err) return callback(err);
 
-      this.getFilename(req, file as File, (err, filename) => {
+      this.getFilename(req, file as unknown as File, (err, filename) => {
         if (err) return callback(err);
 
         const filepath = join(destination, filename);
