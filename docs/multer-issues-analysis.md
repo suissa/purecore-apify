@@ -23,29 +23,29 @@ Esta análise examina as issues abertas no repositório [expressjs/multer](https
 
 ### **Issues de Bugs Críticos**
 
-| Issue # | Título | Status Nossa Impl. | Impacto | Descrição | Nossa Solução |
-|---------|--------|-------------------|---------|-----------|---------------|
-| #1348 | File too large error at exact limit | ✅ Resolvido | 🔴 CRÍTICO | Erro quando arquivo tem exatamente o tamanho limite | Validação correta com `>=` ao invés de `>` |
-| #1280 | v2 fastify/busboy hangs | ✅ Resolvido | 🔴 CRÍTICO | Travamento com busboy em certas condições | Não usamos busboy, implementação nativa |
-| #1300 | Stream cleanup on request abort | ✅ Resolvido | 🟡 ALTO | Limpeza manual de streams quando request é abortado | AsyncResource e cleanup automático |
-| #1295 | Flaky tests on macOS | ✅ Resolvido | 🟢 MÉDIO | Testes instáveis no macOS | Testes cross-platform com Node.js test runner |
+| Issue # | Título                              | Status Nossa Impl. | Impacto    | Descrição                                           | Nossa Solução                                 |
+|---------|-------------------------------------|--------------------|------------|-----------------------------------------------------|-----------------------------------------------|
+| #1348   | File too large error at exact limit | ✅ Resolvido        | 🔴 CRÍTICO | Erro quando arquivo tem exatamente o tamanho limite | Validação correta com `>=` ao invés de `>`    |
+| #1280   | v2 fastify/busboy hangs             | ✅ Resolvido        | 🔴 CRÍTICO | Travamento com busboy em certas condições           | Não usamos busboy, implementação nativa       |
+| #1300   | Stream cleanup on request abort     | ✅ Resolvido        | 🟡 ALTO    | Limpeza manual de streams quando request é abortado | AsyncResource e cleanup automático            |
+| #1295   | Flaky tests on macOS                | ✅ Resolvido        | 🟢 MÉDIO   | Testes instáveis no macOS                           | Testes cross-platform com Node.js test runner |
 
 ### **Issues de Funcionalidades**
 
-| Issue # | Título | Status Nossa Impl. | Impacto | Descrição | Nossa Solução |
-|---------|--------|-------------------|---------|-----------|---------------|
-| #1293 | Test _removeFile function | ✅ Resolvido | 🟢 MÉDIO | Dificuldade para testar remoção de arquivos | Interface clara com `_removeFile` opcional |
-| #1291 | Stream Storage Engine implementation | ✅ Resolvido | 🟡 ALTO | Implementação correta de storage engines | Interface bem definida com exemplos |
-| #1292 | FileFilter file size not available | ✅ Resolvido | 🟡 ALTO | Tamanho do arquivo não disponível no filter | Informações completas disponíveis durante validação |
+| Issue # | Título                               | Status Nossa Impl. | Impacto  | Descrição                                   | Nossa Solução                                       |
+|---------|--------------------------------------|--------------------|----------|---------------------------------------------|-----------------------------------------------------|
+| #1293   | Test _removeFile function            | ✅ Resolvido        | 🟢 MÉDIO | Dificuldade para testar remoção de arquivos | Interface clara com `_removeFile` opcional          |
+| #1291   | Stream Storage Engine implementation | ✅ Resolvido        | 🟡 ALTO  | Implementação correta de storage engines    | Interface bem definida com exemplos                 |
+| #1292   | FileFilter file size not available   | ✅ Resolvido        | 🟡 ALTO  | Tamanho do arquivo não disponível no filter | Informações completas disponíveis durante validação |
 
 ### **Issues de Documentação**
 
-| Issue # | Título | Status Nossa Impl. | Impacto | Descrição | Nossa Solução |
-|---------|--------|-------------------|---------|-----------|---------------|
-| #1341 | Add Farsi Translation | ❌ Não Aplicável | 🔵 BAIXO | Tradução da documentação | Documentação em inglês com exemplos claros |
-| #1340 | Add Kiswahili Translation | ❌ Não Aplicável | 🔵 BAIXO | Tradução da documentação | Documentação em inglês com exemplos claros |
-| #1287 | Remove translations from readme | ❌ Não Aplicável | 🔵 BAIXO | Debate sobre traduções no README | Não aplicável à nossa implementação |
-| #1283 | Improve Code Documentation | ✅ Resolvido | 🟢 MÉDIO | Melhor suporte ao IntelliSense | TypeScript nativo com JSDoc completo |
+| Issue # | Título                          | Status Nossa Impl. | Impacto  | Descrição                        | Nossa Solução                              |
+|---------|---------------------------------|--------------------|----------|----------------------------------|--------------------------------------------|
+| #1341   | Add Farsi Translation           | ❌ Não Aplicável    | 🔵 BAIXO | Tradução da documentação         | Documentação em inglês com exemplos claros |
+| #1340   | Add Kiswahili Translation       | ❌ Não Aplicável    | 🔵 BAIXO | Tradução da documentação         | Documentação em inglês com exemplos claros |
+| #1287   | Remove translations from readme | ❌ Não Aplicável    | 🔵 BAIXO | Debate sobre traduções no README | Não aplicável à nossa implementação        |
+| #1283   | Improve Code Documentation      | ✅ Resolvido        | 🟢 MÉDIO | Melhor suporte ao IntelliSense   | TypeScript nativo com JSDoc completo       |
 
 ---
 
