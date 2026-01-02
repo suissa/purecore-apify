@@ -4,7 +4,7 @@
     "": {
       "name": "@purecore/apify",
       "dependencies": {
-        "@purecore/one-jwt-4-all": "latest",
+        "@purecore/one-jwt-4-all": "^1.3.0",
         "@purecore/reqify": "workspace:*",
         "@types/node": "^25.0.3",
         "cookie": "workspace:*",
