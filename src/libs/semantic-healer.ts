@@ -268,7 +268,10 @@ export class SemanticHealer {
     // --- FASE 4: Coerção de Tipos (Type Healing) ---
     // Tentamos converter o que achamos até agora para o tipo correto antes da fase 5
     for (const key of Object.keys(healedData)) {
-      healedData[key] = this.coerceType(healedData[key], schemaShape[key]);
+      const targetSchema = schemaShape[key];
+      if (targetSchema) {
+        healedData[key] = this.coerceType(healedData[key], targetSchema);
+      }
     }
 
     // --- FASE 5: Content Matching (Brute Force Inteligente) ---
@@ -279,19 +282,21 @@ export class SemanticHealer {
       for (const inputKey of Array.from(unusedInputKeys)) {
         const value = flatInput[inputKey];
 
-        // Tenta parsear o valor com o schema do campo
-        // Precisamos tentar coagir o valor "órfão" também (ex: string '123' para number schema)
-        const coercedValue = this.coerceType(value, targetSchema);
-        const result = targetSchema.safeParse(coercedValue);
+        if (targetSchema) {
+          // Tenta parsear o valor com o schema do campo
+          // Precisamos tentar coagir o valor "órfão" também (ex: string '123' para number schema)
+          const coercedValue = this.coerceType(value, targetSchema);
+          const result = targetSchema.safeParse(coercedValue);
 
-        if (result.success) {
-          console.log(
-            `[Healer] Content Match: Value of '${inputKey}' valid for '${schemaKey}'`
-          );
-          healedData[schemaKey] = result.data; // Usa o dado parseado/transformado
-          missingSchemaKeys.delete(schemaKey);
-          unusedInputKeys.delete(inputKey);
-          break;
+          if (result.success) {
+            console.log(
+              `[Healer] Content Match: Value of '${inputKey}' valid for '${schemaKey}'`
+            );
+            healedData[schemaKey] = result.data; // Usa o dado parseado/transformado
+            missingSchemaKeys.delete(schemaKey);
+            unusedInputKeys.delete(inputKey);
+            break;
+          }
         }
       }
     }
@@ -314,7 +319,7 @@ export class SemanticHealer {
         // Ex: data.user.email -> email
         const parts = prop.split(".");
         const lastPart = parts[parts.length - 1];
-        if (!result[lastPart]) result[lastPart] = cur;
+        if (lastPart !== undefined && !result[lastPart]) result[lastPart] = cur;
       } else if (Array.isArray(cur)) {
         result[prop] = cur; // Arrays mantemos como estão por enquanto
       } else {

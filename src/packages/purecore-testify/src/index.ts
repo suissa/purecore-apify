@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';
+import assert from "node:assert/strict";
 
 // Implementação nativa de Mock
 interface MockCall {
@@ -27,10 +27,10 @@ class MockFunction {
   get mock() {
     return {
       calls: this._calls,
-      results: this._calls.map(call => ({
-        type: call.error ? 'throw' : 'return',
-        value: call.error || call.result
-      }))
+      results: this._calls.map((call) => ({
+        type: call.error ? "throw" : "return",
+        value: call.error || call.result,
+      })),
     };
   }
 
@@ -81,10 +81,10 @@ class MockFunction {
     return (...args: any[]) => this._call(...args);
   }
 
-  private _call(...args: any[]) {
+  public _call(...args: any[]) {
     const call: MockCall = {
       arguments: args,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     try {
@@ -109,15 +109,17 @@ class MockFunction {
           this._calls.push(call);
           return Promise.reject(this._mockRejectedValue);
         }
-        return result.then((res: any) => {
-          call.result = res;
-          this._calls.push(call);
-          return res;
-        }).catch((err: any) => {
-          call.error = err;
-          this._calls.push(call);
-          throw err;
-        });
+        return result
+          .then((res: any) => {
+            call.result = res;
+            this._calls.push(call);
+            return res;
+          })
+          .catch((err: any) => {
+            call.error = err;
+            this._calls.push(call);
+            throw err;
+          });
       }
 
       call.result = result;
@@ -136,7 +138,7 @@ const spyHandler = {
   apply(target: Function, thisArg: any, args: any[]) {
     const call: MockCall = {
       arguments: args,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     try {
@@ -144,23 +146,23 @@ const spyHandler = {
       call.result = result;
 
       // Store call on the spied function
-      if (!target.mock) {
-        target.mock = { calls: [] };
+      if (!(target as any).mock) {
+        (target as any).mock = { calls: [] };
       }
-      target.mock.calls.push(call);
+      (target as any).mock.calls.push(call);
 
       return result;
     } catch (error) {
       call.error = error;
 
-      if (!target.mock) {
-        target.mock = { calls: [] };
+      if (!(target as any).mock) {
+        (target as any).mock = { calls: [] };
       }
-      target.mock.calls.push(call);
+      (target as any).mock.calls.push(call);
 
       throw error;
     }
-  }
+  },
 };
 
 // Mock utilities
@@ -169,17 +171,21 @@ export const mock = {
     const mockFn = new MockFunction(impl);
     const proxy = new Proxy((...args: any[]) => mockFn._call(...args), {
       get(target, prop) {
-        if (prop === 'mock') return mockFn.mock;
-        if (prop === 'mockReturnValue') return (value: any) => mockFn.mockReturnValue(value);
-        if (prop === 'mockResolvedValue') return (value: any) => mockFn.mockResolvedValue(value);
-        if (prop === 'mockRejectedValue') return (value: any) => mockFn.mockRejectedValue(value);
-        if (prop === 'mockImplementation') return (impl: Function) => mockFn.mockImplementation(impl);
-        if (prop === 'mockClear') return () => mockFn.mockClear();
-        if (prop === 'mockReset') return () => mockFn.mockReset();
+        if (prop === "mock") return mockFn.mock;
+        if (prop === "mockReturnValue")
+          return (value: any) => mockFn.mockReturnValue(value);
+        if (prop === "mockResolvedValue")
+          return (value: any) => mockFn.mockResolvedValue(value);
+        if (prop === "mockRejectedValue")
+          return (value: any) => mockFn.mockRejectedValue(value);
+        if (prop === "mockImplementation")
+          return (impl: Function) => mockFn.mockImplementation(impl);
+        if (prop === "mockClear") return () => mockFn.mockClear();
+        if (prop === "mockReset") return () => mockFn.mockReset();
         return (target as any)[prop];
-      }
+      },
     });
-    return proxy as MockFunction & T;
+    return proxy as unknown as MockFunction & T;
   },
 
   method: (obj: any, methodName: string) => {
@@ -195,7 +201,7 @@ export const mock = {
     };
 
     return spiedMethod;
-  }
+  },
 };
 
 type Matchers<T> = {
@@ -214,8 +220,8 @@ type Matchers<T> = {
 
 // Helper interno
 const assertCondition = (condition: boolean, isNot: boolean, msg?: string) => {
-  if (isNot) assert.ok(!condition, msg || 'Expected condition to be false');
-  else assert.ok(condition, msg || 'Expected condition to be true');
+  if (isNot) assert.ok(!condition, msg || "Expected condition to be false");
+  else assert.ok(condition, msg || "Expected condition to be true");
 };
 
 export function expect<T = any>(actual: T): Matchers<T> {
@@ -231,30 +237,39 @@ export function expect<T = any>(actual: T): Matchers<T> {
     toBeTruthy: () => assertCondition(!!value, isNot),
     toBeFalsy: () => assertCondition(!value, isNot),
     toThrow: (err) => {
-       if (isNot) assert.doesNotThrow(() => (value as Function)(), err);
-       else assert.throws(() => (value as Function)(), err);
+      if (isNot) assert.doesNotThrow(() => (value as Function)(), err as any);
+      else assert.throws(() => (value as Function)(), err as any);
     },
-    toHaveBeenCalled: () => assertCondition((value as any).mock.calls.length > 0, isNot),
+    toHaveBeenCalled: () =>
+      assertCondition((value as any).mock.calls.length > 0, isNot),
     toHaveBeenCalledWith: (...args) => {
-        const calls = (value as any).mock.calls;
-        const found = calls.some((c: any) => {
-            try { assert.deepStrictEqual(c.arguments, args); return true; } 
-            catch { return false; }
-        });
-        assertCondition(found, isNot);
+      const calls = (value as any).mock.calls;
+      const found = calls.some((c: any) => {
+        try {
+          assert.deepStrictEqual(c.arguments, args);
+          return true;
+        } catch {
+          return false;
+        }
+      });
+      assertCondition(found, isNot);
     },
-    
-    get not() { return createMatchers(value, !isNot); },
-    
+
+    get not() {
+      return createMatchers(value, !isNot);
+    },
+
     get resolves() {
-      return (value as Promise<any>).then(res => createMatchers(res));
+      return (value as Promise<any>).then((res) => createMatchers(res));
     },
     get rejects() {
       return (value as Promise<any>).then(
-        () => { throw new Error('Promise resolved but expected rejection'); },
+        () => {
+          throw new Error("Promise resolved but expected rejection");
+        },
         (err) => createMatchers(err)
       );
-    }
+    },
   });
 
   return createMatchers(actual);

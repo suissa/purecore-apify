@@ -60,6 +60,7 @@ export class Router implements IRouter {
       if (idx >= this.stack.length) return done();
 
       const layer = this.stack[idx++];
+      if (!layer) return done();
 
       // 1. Verifica Match da URL (Regex)
       const match = currentPath.match(layer.regex);

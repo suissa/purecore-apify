@@ -137,7 +137,8 @@ export class AdvancedFilterParser {
     }
 
     const [, key, op, rawVal] = match;
-    const value = this.inferType(rawVal);
+    if (!key) return {};
+    const value = this.inferType(rawVal!);
 
     switch (op) {
       case "==":

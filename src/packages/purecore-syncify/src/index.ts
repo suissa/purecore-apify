@@ -1,44 +1,44 @@
 /**
  * 🚀 @purecore/syncify
- * 
+ *
  * Biblioteca de utilidades para sincronização de funções assíncronas.
- * 
+ *
  * @module @purecore/syncify
  * @author Suissa
  * @license MIT
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   syncFlow, 
- *   syncParallel, 
- *   syncRace, 
+ * import {
+ *   syncFlow,
+ *   syncParallel,
+ *   syncRace,
  *   syncRetry,
  *   SyncQueue,
  *   SyncPubSub,
  *   SyncChannel
  * } from '@purecore/syncify';
- * 
+ *
  * // Pipeline de funções assíncronas
  * const result = await syncFlow([
  *   async (x) => x * 2,
  *   async (x) => x + 10,
  *   async (x) => `Resultado: ${x}`
  * ], 5);
- * 
+ *
  * // Execução paralela
  * const users = await syncParallel([
  *   () => fetchUser(1),
  *   () => fetchUser(2),
  *   () => fetchUser(3)
  * ]);
- * 
+ *
  * // Corrida entre funções
  * const fastest = await syncRace([
  *   () => fetchFromServer1(),
  *   () => fetchFromServer2()
  * ]);
- * 
+ *
  * // Retry com backoff exponencial
  * const data = await syncRetry(
  *   () => unstableApi.fetch(),
@@ -71,8 +71,8 @@ export type {
   ParallelOptions,
   SettledResult,
   RaceOptions,
-  RaceResult
-} from './types';
+  RaceResult,
+} from "./types";
 
 // ============================================
 // 🔗 syncFlow - Pipeline de funções assíncronas
@@ -83,8 +83,8 @@ export {
   createSyncFlow,
   syncFlowWithController,
   composeSyncFlow,
-  FlowController
-} from './utils/syncFlow';
+  FlowController,
+} from "./utils/syncFlow";
 
 // ============================================
 // ⚡ syncParallel - Execução paralela
@@ -97,8 +97,8 @@ export {
   syncParallelFilter,
   syncParallelReduce,
   createParallelBatch,
-  type ParallelResult
-} from './utils/syncParallel';
+  type ParallelResult,
+} from "./utils/syncParallel";
 
 // ============================================
 // 🏁 syncRace - Corrida entre funções
@@ -109,8 +109,8 @@ export {
   syncRaceWithFallback,
   syncRaceFirst,
   syncRaceTimeout,
-  createRaceExecutor
-} from './utils/syncRace';
+  createRaceExecutor,
+} from "./utils/syncRace";
 
 // ============================================
 // 🔄 syncRetry - Retry com backoff
@@ -124,8 +124,8 @@ export {
   createRetryExecutor,
   withRetry,
   withRetryInput,
-  type RetryResult
-} from './utils/syncRetry';
+  type RetryResult,
+} from "./utils/syncRetry";
 
 // ============================================
 // 📋 syncQueue - Fila com concorrência
@@ -138,8 +138,8 @@ export {
   PriorityQueue,
   RateLimitedQueue,
   type QueueEvent,
-  type QueueEventListener
-} from './utils/syncQueue';
+  type QueueEventListener,
+} from "./utils/syncQueue";
 
 // ============================================
 // 📢 syncPubSub - Pub/Sub síncrono
@@ -149,8 +149,8 @@ export {
   RequestResponse,
   createPubSub,
   createRequestResponse,
-  type PublishResult
-} from './utils/syncPubSub';
+  type PublishResult,
+} from "./utils/syncPubSub";
 
 // ============================================
 // 🔌 syncChannel - Comunicação bidirecional
@@ -164,8 +164,8 @@ export {
   createChannelPair,
   type MessageHandler,
   type ChannelEvent,
-  type ChannelEventListener
-} from './utils/syncChannel';
+  type ChannelEventListener,
+} from "./utils/syncChannel";
 
 // ============================================
 // 🎨 Decorators
@@ -183,8 +183,8 @@ export {
   Measure,
   Fallback,
   CircuitBreaker,
-  Lock
-} from './decorators';
+  Lock,
+} from "./decorators";
 
 // ============================================
 // 🛠️ Utility Functions
@@ -194,7 +194,7 @@ export {
  * Delay assíncrono
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -255,10 +255,16 @@ export function promisify<T, A1>(
   fn: (arg1: A1, callback: (error: Error | null, result: T) => void) => void
 ): (arg1: A1) => Promise<T>;
 export function promisify<T, A1, A2>(
-  fn: (arg1: A1, arg2: A2, callback: (error: Error | null, result: T) => void) => void
+  fn: (
+    arg1: A1,
+    arg2: A2,
+    callback: (error: Error | null, result: T) => void
+  ) => void
 ): (arg1: A1, arg2: A2) => Promise<T>;
-export function promisify(fn: (...args: unknown[]) => void) {
-  return (...args: unknown[]) => {
+export function promisify(
+  fn: (...args: any[]) => void
+): (...args: any[]) => Promise<any> {
+  return (...args: any[]) => {
     return new Promise((resolve, reject) => {
       fn(...args, (error: Error | null, result: unknown) => {
         if (error) reject(error);
@@ -285,7 +291,7 @@ export class Semaphore {
       return;
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.waiters.push(resolve);
     });
   }
@@ -349,13 +355,13 @@ export class Barrier {
 
     if (this.waiting >= this.count) {
       // Libera todos os waiters
-      this.waiters.forEach(waiter => waiter());
+      this.waiters.forEach((waiter) => waiter());
       this.waiters = [];
       this.waiting = 0;
       return;
     }
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.waiters.push(resolve);
     });
   }
@@ -376,7 +382,7 @@ export class CountDownLatch {
     this.count--;
 
     if (this.count <= 0) {
-      this.waiters.forEach(waiter => waiter());
+      this.waiters.forEach((waiter) => waiter());
       this.waiters = [];
     }
   }
@@ -384,7 +390,7 @@ export class CountDownLatch {
   async wait(): Promise<void> {
     if (this.count <= 0) return;
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.waiters.push(resolve);
     });
   }
@@ -393,4 +399,3 @@ export class CountDownLatch {
     return this.count;
   }
 }
-
