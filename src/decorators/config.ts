@@ -12,7 +12,7 @@ import { CQRS as CQRSPerformance } from './performance.js';
 // Imports dos novos decorators
 import { PresetDecoratorFactory } from './preset.js';
 import { SchemaValidator, ZodValidator, JoiValidator, YupValidator, AjvValidator } from './schema-validator.js';
-import { Memoization, SmartCache as MemoCache, ApiCache } from './memoization.js';
+import { Memoization, SmartCache, ApiCache } from './memoization.js';
 import { Inject, LazyInject, InjectMethod, registerDependency, resolveDependency } from './injection.js';
 import { Catch, CatchHttpErrors, CatchValidationErrors, CatchWithRetry } from './catch.js';
 
@@ -154,7 +154,7 @@ export const IdempotentGuard = IdempotentGuardSecurity;
 // Performance & Optimization
 export {
   Memoization,
-  MemoCache,
+  SmartCache,
   ApiCache
 };
 
@@ -230,7 +230,7 @@ export const AutoescaleSentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   TraceSpan,
-  MemoCache({ ttl: 300 }),
+  SmartCache({ ttl: 300 } as any),
   CircuitBreaker,
   Timeout,
   Failover,
@@ -252,7 +252,7 @@ export const SecuritySentinel = PresetDecoratorFactory([
  */
 export const PerformanceSentinel = PresetDecoratorFactory([
   CQRS,
-  MemoCache({ ttl: 300 }),
+  SmartCache({ ttl: 300 }),
   CORSGuard,
   HSTSGuard,
   XSSGuard
@@ -265,7 +265,7 @@ export const ApifySentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   TraceSpan,
-  MemoCache({ ttl: 300 }),
+  SmartCache({ ttl: 300 }),
   CircuitBreaker,
   Timeout,
   Failover,
@@ -311,7 +311,7 @@ export const ApifyCompleteSentinel = PresetDecoratorFactory([
   }),
 
   // Performance
-  MemoCache({ ttl: 300 })
+  SmartCache({ ttl: 300 })
 ]);
 
 /**

@@ -1,0 +1,88 @@
+###
+# Testes do padrão AON (Adaptive Observability Negotiation)
+# Use com extensões REST Client do VS Code ou similar
+###
+
+### 1. Health Check - Modo padrão (Black Box)
+GET http://localhost:3000/api/v1/health
+Accept: application/json
+
+### 2. Health Check - Modo Glass Box (streaming)
+GET http://localhost:3000/api/v1/health
+Accept: application/x-ndjson
+
+### 3. Busca de usuário - Modo Black Box
+GET http://localhost:3000/api/v1/users/123
+Accept: application/json
+
+### 4. Busca de usuário - Modo Glass Box (com telemetria)
+GET http://localhost:3000/api/v1/users/123
+Accept: application/x-ndjson
+
+### 5. Busca de usuário inválido - Modo Glass Box (demonstra healing)
+GET http://localhost:3000/api/v1/users/invalid
+Accept: application/x-ndjson
+
+### 6. Processamento de pedido - Modo Glass Box
+POST http://localhost:3000/api/v1/process-order
+Accept: application/x-ndjson
+Content-Type: application/json
+
+{
+  "customerId": "cust_123",
+  "items": [
+    { "id": "item_1", "name": "Produto A", "price": 29.99 },
+    { "id": "item_2", "name": "Produto B", "price": 15.50 }
+  ]
+}
+
+### 7. Processamento de pedido sem itens - Demonstra healing automático
+POST http://localhost:3000/api/v1/process-order
+Accept: application/x-ndjson
+Content-Type: application/json
+
+{
+  "customerId": "cust_456",
+  "items": []
+}
+
+### 8. Busca com query - Modo Glass Box
+GET http://localhost:3000/api/v1/search?q=typescript
+Accept: application/x-ndjson
+
+### 9. Busca sem query - Demonstra análise de intenção
+GET http://localhost:3000/api/v1/search
+Accept: application/x-ndjson
+
+### 10. Busca com erro simulado - Demonstra healing
+GET http://localhost:3000/api/v1/search?q=error
+Accept: application/x-ndjson
+
+### 11. Demonstração de modos
+GET http://localhost:3000/api/v1/demo/modes
+Accept: application/json
+
+### 12. Comparação: mesma rota em ambos os modos
+
+# Modo Black Box (resposta única)
+GET http://localhost:3000/api/v1/users/456
+Accept: application/json
+
+###
+
+# Modo Glass Box (streaming com telemetria)
+GET http://localhost:3000/api/v1/users/456
+Accept: application/x-ndjson
+
+###
+# Teste de carga - múltiplas requisições simultâneas
+# (descomente para testar)
+
+# GET http://localhost:3000/api/v1/users/1
+# Accept: application/x-ndjson
+
+# GET http://localhost:3000/api/v1/users/2
+# Accept: application/x-ndjson
+
+# GET http://localhost:3000/api/v1/users/3
+# Accept: application/x-ndjson

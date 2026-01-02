@@ -1,0 +1,153 @@
+###
+# Testes do CrystalBox Mode - Observabilidade Interativa
+# Use com extensões REST Client do VS Code ou similar
+###
+
+### 1. Demo do CrystalBox - Informações sobre modos
+GET http://localhost:3000/api/v1/crystal/demo
+Accept: application/json
+
+### 2. Usuário válido - Modo Black Box (tradicional)
+GET http://localhost:3000/api/v1/crystal/users/123
+Accept: application/json
+
+### 3. Usuário válido - Modo Glass Box (AON padrão)
+GET http://localhost:3000/api/v1/crystal/users/123
+Accept: application/x-ndjson
+
+### 4. Usuário válido - Modo CrystalBox Interactive
+GET http://localhost:3000/api/v1/crystal/users/123
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+X-User-Theme: dark
+X-Offline-Capable: true
+
+### 5. Usuário inválido - Força healing automático
+GET http://localhost:3000/api/v1/crystal/users/invalid
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+
+### 6. Usuário com erro - Força notificação de desenvolvedor
+GET http://localhost:3000/api/v1/crystal/users/error
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+
+### 7. Operação complexa - Modo CrystalBox
+POST http://localhost:3000/api/v1/crystal/complex-operation
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+X-User-Theme: dark
+Content-Type: application/json
+
+{
+  "type": "create",
+  "data": {
+    "name": "Operação de Teste",
+    "priority": "high"
+  }
+}
+
+### 8. Operação complexa sem tipo - Força healing de validação
+POST http://localhost:3000/api/v1/crystal/complex-operation
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+Content-Type: application/json
+
+{
+  "data": {
+    "name": "Operação sem tipo"
+  }
+}
+
+### 9. Estatísticas do CrystalBox
+GET http://localhost:3000/api/v1/crystal/stats
+Accept: application/json
+
+### 10. Webhook para resposta de desenvolvedor (simulação)
+POST http://localhost:3000/api/v1/crystal/heal/crystal_1234567890_abc123
+Content-Type: application/json
+
+{
+  "action": "retry",
+  "parameters": {
+    "maxRetries": 5,
+    "backoffMultiplier": 2
+  }
+}
+
+### 11. Webhook com solução customizada
+POST http://localhost:3000/api/v1/crystal/heal/crystal_1234567890_def456
+Content-Type: application/json
+
+{
+  "action": "custom",
+  "customCode": "return { success: true, message: 'Problema resolvido manualmente' };",
+  "parameters": {
+    "manualFix": true
+  }
+}
+
+### 12. Comparação de modos - mesma rota, diferentes headers
+
+# Black Box
+GET http://localhost:3000/api/v1/crystal/users/456
+Accept: application/json
+
+###
+
+# Glass Box
+GET http://localhost:3000/api/v1/crystal/users/456
+Accept: application/x-ndjson
+
+###
+
+# CrystalBox Interactive
+GET http://localhost:3000/api/v1/crystal/users/456
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+X-User-Theme: auto
+
+### 13. Teste de Early Hints - Preload de recursos
+GET http://localhost:3000/api/v1/crystal/users/789
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+X-User-Theme: dark
+X-Offline-Capable: true
+
+### 14. Teste de detecção de tema automática
+GET http://localhost:3000/api/v1/crystal/users/101
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+User-Agent: Mozilla/5.0 (Dark Theme Browser)
+
+### 15. Teste com múltiplas falhas simultâneas
+POST http://localhost:3000/api/v1/crystal/complex-operation
+Accept: application/x-ndjson
+X-Crystal-Mode: interactive
+Content-Type: application/json
+
+{
+  "type": "update",
+  "data": {
+    "id": "invalid_id",
+    "name": "",
+    "priority": "unknown"
+  },
+  "forceErrors": true
+}
+
+###
+# Testes de Performance - múltiplas requisições
+# (descomente para testar carga)
+
+# GET http://localhost:3000/api/v1/crystal/users/perf1
+# Accept: application/x-ndjson
+# X-Crystal-Mode: interactive
+
+# GET http://localhost:3000/api/v1/crystal/users/perf2
+# Accept: application/x-ndjson
+# X-Crystal-Mode: interactive
+
+# GET http://localhost:3000/api/v1/crystal/users/perf3
+# Accept: application/x-ndjson
+# X-Crystal-Mode: interactive

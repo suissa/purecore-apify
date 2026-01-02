@@ -238,7 +238,7 @@ npx @purecore/apify create crud billing --entry apps/api/src/main.ts
 
 ## Auto-Geração de Código Baseado em Schemas Zod 🚀
 
-O `@purecore/apify` possui um sistema revolucionário de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
+O `@purecore/apify` possui um sistema inédito de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
 
 - **Repository** com operações CRUD completas
 - **Service** com regras de negócio
@@ -917,3 +917,267 @@ COEP_POLICY=require-corp
 COOP_POLICY=same-origin
 CORP_POLICY=same-origin
 ```
+
+
+<img src="https://i.imgur.com/lLHckdW.png" align="center">
+
+## ❄️👁️ AON & CrystalBox - Observabilidade Adaptativa
+
+O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **❄️👁️ CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
+
+### Modos de Observabilidade
+
+| Modo | Header | Descrição |
+|------|--------|-----------|
+| **Black Box** | `Accept: application/json` | Modo tradicional - resposta única |
+| **Glass Box** | `Accept: application/x-ndjson` | Streaming de telemetria em tempo real |
+| **❄️👁️ CrystalBox** | `Accept: application/x-ndjson` + `X-Crystal-Mode: interactive` | **Observabilidade interativa com self-healing** |
+
+### Headers de Resposta AON/CrystalBox 👁️❄️
+
+O sistema retorna headers específicos que indicam o estado do healing e observabilidade:
+
+#### Headers Padrão AON
+```http
+X-AON-Mode: glassbox
+X-AON-Request-ID: aon_1703123456789_abc123
+X-AON-Summary: {"totalEvents":5,"duration":1200,"healingAttempts":1}
+```
+
+#### Headers ❄️👁️ CrystalBox Mode
+```http
+X-Crystal-Mode: interactive
+X-Request-ID: crystal_1703123456789_def456
+X-Healing-Enabled: true
+X-Dev-Notification: enabled
+X-User-Theme: dark
+X-Offline-Ready: true
+```
+
+#### Headers de Healing Ativo
+```http
+X-Processing-Status: 102
+X-Healing-Attempt: 3
+X-Dev-Notified: true
+X-Early-Hints: 103
+```
+
+### Configuração Básica
+
+```typescript
+import { aonMiddleware, crystalBoxMiddleware } from '@purecore/apify';
+
+// AON básico (Glass Box)
+app.use(aonMiddleware({
+  enabled: true,
+  debug: true,
+  healingTimeout: 10000
+}));
+
+// ❄️👁️ CrystalBox (Modo Interativo)
+app.use(crystalBoxMiddleware({
+  crystalBox: {
+    enableWhatsApp: true,
+    enableSlack: true,
+    devContacts: {
+      whatsapp: process.env.DEV_WHATSAPP,
+      slack: process.env.DEV_SLACK
+    }
+  },
+  themeDetection: {
+    enabled: true,
+    defaultTheme: 'dark'
+  },
+  offlineSupport: {
+    enabled: true,
+    components: ['forms', 'cache', 'sync']
+  }
+}));
+```
+
+### Uso em Rotas
+
+```typescript
+import { withCrystalBox, requestInteractiveHealing, sendEarlyHints } from '@purecore/apify';
+
+app.get('/api/users/:id', withCrystalBox(async (req, res) => {
+  // Envia Early Hints (103) para preload
+  sendEarlyHints(req, {
+    theme: req.userTheme,
+    preloadLinks: ['/css/user-profile.css'],
+    offlineComponents: ['user-cache']
+  });
+
+  // Healing interativo se necessário
+  if (connectionFailed) {
+    const healed = await requestInteractiveHealing(
+      req, 
+      'database_recovery', 
+      'Conexão com banco perdida',
+      { database: 'users_db', errorCode: 'ECONNREFUSED' }
+    );
+    
+    if (!healed) {
+      // Sistema nunca falha - sempre tenta se curar
+      return res.status(503).json({ error: 'Healing em andamento...' });
+    }
+  }
+
+  return { user: userData };
+}));
+```
+
+### Status Codes Inteligentes
+
+#### 🔄 102 Processing (Healing em Andamento)
+```http
+HTTP/1.1 102 Processing
+Content-Type: application/x-ndjson
+X-Crystal-Mode: healing
+X-Healing-Attempt: 3
+X-Dev-Notification: sent
+
+{"type":"healing","action":"database_recovery","attempt":3,"dev_notified":true}
+```
+
+#### 🚀 103 Early Hints (Preload Agentic UX)
+```http
+HTTP/1.1 103 Early Hints
+Link: </css/user-theme-dark.css>; rel=preload; as=style
+Link: </js/offline-components.js>; rel=preload; as=script
+X-User-Theme: dark
+X-Offline-Ready: true
+
+{"type":"preload","theme":"dark","offline_components":["forms","cache","sync"]}
+```
+
+### Notificações de Desenvolvedor
+
+Quando o healing automático falha, o sistema notifica desenvolvedores via:
+
+#### WhatsApp Business API
+```typescript
+// Configuração
+DEV_WHATSAPP=+5511999999999
+WHATSAPP_TOKEN=your_whatsapp_business_token
+WHATSAPP_PHONE_ID=your_phone_number_id
+```
+
+#### Slack Webhooks
+```typescript
+// Configuração
+DEV_SLACK=#dev-alerts
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+```
+
+#### Microsoft Teams
+```typescript
+// Configuração
+DEV_TEAMS=#development
+TEAMS_WEBHOOK_URL=https://outlook.office.com/webhook/...
+```
+
+### Exemplo de Notificação
+
+```
+❄️�r️ CrystalBox Alert 🚨
+
+Action: database_recovery
+Description: Conexão com banco perdida
+Attempt: 3
+Request ID: crystal_1703123456789_abc123
+Time: 2024-12-15T10:30:00.000Z
+
+Metadata:
+{
+  "database": "users_db",
+  "connectionPool": "primary",
+  "errorCode": "ECONNREFUSED"
+}
+
+Reply with:
+• HEAL:crystal_1703123456789_abc123:retry - Try again
+• HEAL:crystal_1703123456789_abc123:skip - Skip this step
+• HEAL:crystal_1703123456789_abc123:custom:YOUR_CODE - Custom fix
+```
+
+### Webhook para Respostas de Desenvolvedor
+
+```typescript
+// Endpoint automático para receber soluções
+app.post('/api/v1/crystal/heal/:requestId', (req, res) => {
+  const { requestId } = req.params;
+  const solution = req.body;
+  
+  // Sistema aplica solução automaticamente
+  developerNotificationService.receiveDeveloperResponse({
+    requestId,
+    action: solution.action, // 'retry', 'skip', 'custom'
+    customCode: solution.customCode,
+    parameters: solution.parameters
+  });
+  
+  res.json({ message: 'Solução aplicada', requestId });
+});
+```
+
+### Variáveis de Ambiente AON/CrystalBox
+
+```bash
+# AON Configuration
+AON_ENABLED=true
+AON_DEBUG=true
+AON_HEALING_TIMEOUT=10000
+AON_MAX_TELEMETRY_EVENTS=1000
+
+# ❄️👁️ CrystalBox Configuration
+CRYSTALBOX_INTERACTIVE=true
+CRYSTALBOX_MAX_AUTO_ATTEMPTS=3
+CRYSTALBOX_DEV_NOTIFICATION_THRESHOLD=2
+CRYSTALBOX_DEV_RESPONSE_TIMEOUT=30000
+
+# Developer Notifications
+DEV_WHATSAPP=+5511999999999
+DEV_SLACK=#dev-alerts
+DEV_TEAMS=#development
+WHATSAPP_TOKEN=your_token
+SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+TEAMS_WEBHOOK_URL=https://outlook.office.com/...
+
+# Theme Detection
+THEME_DETECTION_ENABLED=true
+DEFAULT_THEME=dark
+SUPPORTED_THEMES=light,dark,auto
+
+# Offline Support
+OFFLINE_SUPPORT_ENABLED=true
+OFFLINE_COMPONENTS=forms,cache,sync,storage
+CACHE_STRATEGY=aggressive
+```
+
+### Benefícios do ❄️👁️ CrystalBox
+
+- ❄️👁️ **Nunca Falha**: Sistema sempre tenta se curar antes de retornar erro
+- 📱 **Notificação Instantânea**: Desenvolvedor recebe WhatsApp/Slack em tempo real
+- 🚀 **Early Hints**: Preload inteligente de recursos baseado no tema do usuário
+- 📱 **Offline-First**: Suporte automático para PWAs e aplicações offline
+- 🤖 **Healing Interativo**: Desenvolvedor pode intervir e corrigir problemas em tempo real
+- 📊 **Observabilidade Total**: Visibilidade completa do processo de healing
+
+### Testes Rápidos
+
+```bash
+# Modo Black Box (tradicional)
+curl -H "Accept: application/json" http://localhost:3000/api/v1/users/123
+
+# Modo Glass Box (streaming)
+curl -H "Accept: application/x-ndjson" http://localhost:3000/api/v1/users/123
+
+# Modo ❄️👁️ CrystalBox (interativo)
+curl -H "Accept: application/x-ndjson" \
+     -H "X-Crystal-Mode: interactive" \
+     -H "X-User-Theme: dark" \
+     http://localhost:3000/api/v1/users/123
+```
+
+Para mais detalhes, consulte: [docs/Observability.modes.md](./docs/Observability.modes.md)

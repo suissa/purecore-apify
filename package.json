@@ -1,6 +1,6 @@
 {
-  "name": "@purecore/apify",
-  "version": "0.7.0",
+  "name": "4pi",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,17 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "create:crud": "node dist/cli.js create crud"
+    "create:crud": "node dist/cli.js create crud",
+    "example:ddd": "bun run examples/run-ddd-generator.ts",
+    "example:ddd:test": "bun run examples/test-ddd-generator.ts",
+    "generate:schemas": "tsx generate-zod-schemas.ts",
+    "demo:schemas": "tsx examples/zod-schema-generation.ts",
+    "demo:fastify": "tsx examples/fastify-integration.ts",
+    "dev:fastify": "tsx examples/advanced-fastify-decorators.ts",
+    "dev:aon": "tsx examples/aon-example.ts",
+    "demo:aon": "tsx examples/aon-example.ts",
+    "demo:aon-simple": "node examples/simple-aon-demo.cjs",
+    "demo:crystalbox": "tsx examples/crystalbox-example.ts"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
@@ -33,6 +43,27 @@
     "cookie": "^1.0.2",
     "i18next": "^23.7.6",
     "jsonwebtoken": "^9.0.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@babel/runtime": "^7.23.2",
+    "buffer-equal-constant-time": "^1.0.1",
+    "safe-buffer": "^5.0.1",
+    "ecdsa-sig-formatter": "1.0.11",
+    "jwa": "^2.0.1",
+    "jws": "^4.0.1",
+    "lodash.includes": "^4.3.0",
+    "lodash.isboolean": "^3.0.3",
+    "lodash.isinteger": "^4.0.4",
+    "lodash.isnumber": "^3.0.3",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.isstring": "^4.0.1",
+    "lodash.once": "^4.0.0",
+    "ms": "^2.1.1",
+    "semver": "^7.5.4",
+    "@types/cookie": "^0.5.1",
+    "@types/ms": "*",
+    "undici-types": "~7.16.0",
+    "@types/node": "^24.10.1",
+    "@types/jsonwebtoken": "^9.0.2",
+    "typescript": "^5.9.3"
   }
 }

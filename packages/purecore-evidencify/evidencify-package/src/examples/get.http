@@ -1,0 +1,2 @@
+### Exemplo de request HTTP (VSCode/REST Client)
+GET http://localhost:4000/users/1
