@@ -1,5 +1,12 @@
 # 📋 CHANGELOG - @purecore/apify
 
+## [Release] v0.8.1-dependency-fix
+
+### What's Changed
+
+- 🐛 **Fix Dependencies** - Resolução de conflito de gerenciadores de pacote (npm vs bun) reinstalling with `bun`.
+- 🔧 **Clean Install** - Remoção de `node_modules` e `package-lock.json` para garantir integridade do `bun.lockb`.
+
 ## [Release] v0.8.0-advanced-filters
 
 ### What's Changed
