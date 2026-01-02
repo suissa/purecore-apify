@@ -1,0 +1,579 @@
+$ tsc
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(38,7): error TS6133: 'Encoder' is declared but its value is never read.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(39,7): error TS6133: 'Decoder' is declared but its value is never read.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(54,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(135,11): error TS6133: 'offset' is declared but its value is never read.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(194,17): error TS2769: No overload matches this call.
+  Overload 1 of 4, '(arrayBuffer: WithImplicitCoercion<ArrayBufferLike>, byteOffset?: number | undefined, length?: number | undefined): Buffer<ArrayBufferLike>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'WithImplicitCoercion<ArrayBufferLike>'.
+      Type 'undefined' is not assignable to type 'WithImplicitCoercion<ArrayBufferLike>'.
+  Overload 2 of 4, '(string: WithImplicitCoercion<string>, encoding?: BufferEncoding | undefined): Buffer<ArrayBuffer>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'WithImplicitCoercion<string>'.
+      Type 'undefined' is not assignable to type 'WithImplicitCoercion<string>'.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(202,54): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+node_modules/.bun/@purecore+one-jwt-4-all@1.3.0/node_modules/@purecore/one-jwt-4-all/src/index.ts(203,46): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+packages/i18next/index.ts(18,7): error TS6133: 'module' is declared but its value is never read.
+packages/i18next/index.ts(29,18): error TS6133: 'options' is declared but its value is never read.
+packages/zod/index.ts(21,58): error TS6133: 'Input' is declared but its value is never read.
+packages/zod/index.ts(281,25): error TS2532: Object is possibly 'undefined'.
+src/aon/crystal-box.ts(41,42): error TS2312: An interface can only extend an object type or intersection of object types with statically known members.
+src/aon/crystal-box.ts(76,11): error TS6133: 'healingAttempts' is declared but its value is never read.
+src/aon/crystal-box.ts(90,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(91,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(92,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(93,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(110,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(112,12): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(115,12): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(118,34): error TS2344: Type 'ProcessingStatusEvent' does not satisfy the constraint 'AONEvent'.
+  Type 'ProcessingStatusEvent' is missing the following properties from type 'AONErrorEvent': code, timestamp
+src/aon/crystal-box.ts(126,21): error TS2345: Argument of type 'ProcessingStatusEvent' is not assignable to parameter of type 'AONEvent'.
+  Type 'ProcessingStatusEvent' is missing the following properties from type 'AONErrorEvent': code, timestamp
+src/aon/crystal-box.ts(151,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(152,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(153,10): error TS2341: Property 'response' is private and only accessible within class 'NDJSONStreamWriter'.
+src/aon/crystal-box.ts(155,34): error TS2344: Type 'ProcessingStatusEvent' does not satisfy the constraint 'AONEvent'.
+  Type 'ProcessingStatusEvent' is missing the following properties from type 'AONErrorEvent': code, timestamp
+src/aon/crystal-box.ts(161,21): error TS2345: Argument of type 'ProcessingStatusEvent' is not assignable to parameter of type 'AONEvent'.
+  Type 'ProcessingStatusEvent' is missing the following properties from type 'AONErrorEvent': code, timestamp
+src/aon/crystal-box.ts(176,34): error TS2344: Type 'CrystalHealingEvent' does not satisfy the constraint 'AONEvent'.
+  Type 'CrystalHealingEvent' is missing the following properties from type 'AONErrorEvent': code, message, timestamp
+src/aon/crystal-box.ts(183,21): error TS2345: Argument of type 'CrystalHealingEvent' is not assignable to parameter of type 'AONEvent'.
+  Type 'CrystalHealingEvent' is missing the following properties from type 'AONErrorEvent': code, message, timestamp
+src/aon/crystal-box.ts(199,34): error TS2344: Type 'DevNotificationEvent' does not satisfy the constraint 'AONEvent'.
+  Type 'DevNotificationEvent' is missing the following properties from type 'AONErrorEvent': code, message, timestamp
+src/aon/crystal-box.ts(205,21): error TS2345: Argument of type 'DevNotificationEvent' is not assignable to parameter of type 'AONEvent'.
+  Type 'DevNotificationEvent' is missing the following properties from type 'AONErrorEvent': code, message, timestamp
+src/aon/crystal-middleware.ts(5,1): error TS6133: 'randomUUID' is declared but its value is never read.
+src/aon/crystal-middleware.ts(239,9): error TS6133: 'originalJson' is declared but its value is never read.
+src/aon/crystal-middleware.ts(240,9): error TS6133: 'originalSend' is declared but its value is never read.
+src/aon/crystal-middleware.ts(266,58): error TS6133: 'res' is declared but its value is never read.
+src/aon/interactive-healer.ts(155,52): error TS6133: 'description' is declared but its value is never read.
+src/aon/interactive-healer.ts(330,25): error TS6133: 'metadata' is declared but its value is never read.
+src/aon/interactive-healer.ts(339,25): error TS6133: 'metadata' is declared but its value is never read.
+src/aon/interactive-healer.ts(347,25): error TS6133: 'metadata' is declared but its value is never read.
+src/aon/middleware.ts(152,9): error TS6133: 'originalEnd' is declared but its value is never read.
+src/auto-generator-ddd.ts(33,29): error TS6133: 'CodeGenerator' is declared but its value is never read.
+src/auto-generator-ddd.ts(192,74): error TS18046: 'schemaError' is of type 'unknown'.
+src/auto-generator-ddd.ts(201,48): error TS18046: 'error' is of type 'unknown'.
+src/auto-generator-ddd.ts(230,5): error TS6133: 'originalFilePath' is declared but its value is never read.
+src/auto-generator-ddd.ts(584,31): error TS6133: 'metadata' is declared but its value is never read.
+src/auto-generator-ddd.ts(593,58): error TS6133: 'entityName' is declared but its value is never read.
+src/auto-generator-ddd.ts(1111,61): error TS6133: 'entityName' is declared but its value is never read.
+src/auto-generator-ddd.ts(1176,15): error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+src/auto-generator-ddd.ts(1189,15): error TS2552: Cannot find name 'input'. Did you mean 'oninput'?
+src/auto-generator-ddd.ts(1358,60): error TS6133: 'entityName' is declared but its value is never read.
+src/auto-generator-ddd.ts(1476,40): error TS6133: 'metadata' is declared but its value is never read.
+src/auto-generator-ddd.ts(1671,68): error TS6133: 'entityName' is declared but its value is never read.
+src/auto-generator-ddd.ts(1832,61): error TS6133: 'entityName' is declared but its value is never read.
+src/auto-generator.ts(153,5): error TS6133: 'originalFilePath' is declared but its value is never read.
+src/auto-routes.ts(4,10): error TS6133: 'Request' is declared but its value is never read.
+src/auto-routes.ts(4,19): error TS6133: 'Response' is declared but its value is never read.
+src/auto-routes.ts(4,29): error TS6133: 'NextFunction' is declared but its value is never read.
+src/auto-routes.ts(151,30): error TS2532: Object is possibly 'undefined'.
+src/auto-routes.ts(184,30): error TS2532: Object is possibly 'undefined'.
+src/benchmark.api.ts(3,29): error TS6133: 'NextFunction' is declared but its value is never read.
+src/benchmark.api.ts(23,23): error TS6133: 'req' is declared but its value is never read.
+src/benchmark.api.ts(48,32): error TS6133: 'req' is declared but its value is never read.
+src/benchmark.api.ts(65,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/benchmark.api.ts(96,25): error TS6133: 'req' is declared but its value is never read.
+src/cache/native-cache.ts(216,15): error TS2488: Type '[K, number] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/cli.ts(39,22): error TS18048: 'resourceArg' is possibly 'undefined'.
+src/cli.ts(59,36): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/decorators/catch.ts(48,20): error TS18046: 'error' is of type 'unknown'.
+src/decorators/catch.ts(49,20): error TS18046: 'error' is of type 'unknown'.
+src/decorators/catch.ts(223,10): error TS2304: Cannot find name 'errorLog'.
+src/decorators/catch.ts(230,3): error TS2304: Cannot find name 'errorLog'.
+src/decorators/config.ts(63,43): error TS6133: 'RequestHandler' is declared but its value is never read.
+src/decorators/config.ts(74,11): error TS6196: 'AuthJWTGuardOptions' is declared but never used.
+src/decorators/config.ts(241,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(263,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(276,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(294,3): error TS2322: Type 'MethodDecorator' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | symbol'.
+      Type 'undefined' is not assignable to type 'string | symbol'.
+src/decorators/config.ts(295,3): error TS2322: Type 'MethodDecorator' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | symbol'.
+      Type 'undefined' is not assignable to type 'string | symbol'.
+src/decorators/config.ts(307,3): error TS2322: Type 'MethodDecorator' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | symbol'.
+      Type 'undefined' is not assignable to type 'string | symbol'.
+src/decorators/config.ts(311,3): error TS2322: Type 'MethodDecorator' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | symbol'.
+      Type 'undefined' is not assignable to type 'string | symbol'.
+src/decorators/config.ts(312,5): error TS2322: Type 'true' is not assignable to type 'false | CSPGuardOptions | undefined'.
+src/decorators/config.ts(313,5): error TS2322: Type 'true' is not assignable to type 'false | HSTSOptions | undefined'.
+src/decorators/config.ts(314,5): error TS2322: Type 'true' is not assignable to type 'false | { action?: "DENY" | "SAMEORIGIN" | undefined; } | undefined'.
+src/decorators/config.ts(322,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(331,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(332,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(343,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(344,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(354,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(355,3): error TS2322: Type '(target: any, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor' is not assignable to type 'DecoratorFunction'.
+  Types of parameters 'propertyKey' and 'propertyKey' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/decorators/config.ts(535,5): error TS6133: 'data' is declared but its value is never read.
+src/decorators/config.ts(634,11): error TS6133: 'key' is declared but its value is never read.
+src/decorators/config.ts(635,11): error TS6133: 'key' is declared but its value is never read.
+src/decorators/config.ts(635,24): error TS6133: 'value' is declared but its value is never read.
+src/decorators/config.ts(642,13): error TS6133: 'sql' is declared but its value is never read.
+src/decorators/helmet.ts(379,69): error TS2339: Property 'directives' does not exist on type 'true | CSPGuardOptions'.
+  Property 'directives' does not exist on type 'true'.
+src/decorators/helmet.ts(380,41): error TS2339: Property 'reportOnly' does not exist on type 'true | CSPGuardOptions'.
+  Property 'reportOnly' does not exist on type 'true'.
+src/decorators/helmet.ts(397,59): error TS2339: Property 'policy' does not exist on type 'true | { policy?: "require-corp" | "credentialless" | undefined; }'.
+  Property 'policy' does not exist on type 'true'.
+src/decorators/helmet.ts(403,57): error TS2339: Property 'policy' does not exist on type 'true | { policy?: "same-origin" | "same-origin-allow-popups" | "unsafe-none" | undefined; }'.
+  Property 'policy' does not exist on type 'true'.
+src/decorators/helmet.ts(409,59): error TS2339: Property 'policy' does not exist on type 'true | { policy?: "same-origin" | "same-site" | "cross-origin" | undefined; }'.
+  Property 'policy' does not exist on type 'true'.
+src/decorators/helmet.ts(420,48): error TS2339: Property 'policy' does not exist on type 'true | ReferrerPolicyOptions'.
+  Property 'policy' does not exist on type 'true'.
+src/decorators/helmet.ts(427,49): error TS2339: Property 'maxAge' does not exist on type 'true | HSTSOptions'.
+  Property 'maxAge' does not exist on type 'true'.
+src/decorators/helmet.ts(428,49): error TS2339: Property 'includeSubDomains' does not exist on type 'true | HSTSOptions'.
+  Property 'includeSubDomains' does not exist on type 'true'.
+src/decorators/helmet.ts(429,39): error TS2339: Property 'preload' does not exist on type 'true | HSTSOptions'.
+  Property 'preload' does not exist on type 'true'.
+src/decorators/helmet.ts(445,52): error TS2339: Property 'allow' does not exist on type 'true | { allow?: boolean | undefined; }'.
+  Property 'allow' does not exist on type 'true'.
+src/decorators/helmet.ts(456,47): error TS2339: Property 'action' does not exist on type 'true | { action?: "DENY" | "SAMEORIGIN" | undefined; }'.
+  Property 'action' does not exist on type 'true'.
+src/decorators/helmet.ts(462,74): error TS2339: Property 'permittedPolicies' does not exist on type 'true | { permittedPolicies?: "none" | "master-only" | "by-content-type" | "all" | undefined; }'.
+  Property 'permittedPolicies' does not exist on type 'true'.
+src/decorators/helmet.ts(498,19): error TS6133: 'req' is declared but its value is never read.
+src/decorators/helmet.ts(498,33): error TS6133: 'res' is declared but its value is never read.
+src/decorators/helmet.ts(503,21): error TS2339: Property 'value' does not exist on type 'void | TypedPropertyDescriptor<(req: Request<ParamsDictionary, any, any, QueryDictionary>, res: Response<any>, next: NextFunction) => Promise<...>>'.
+  Property 'value' does not exist on type 'void'.
+src/decorators/index.ts(7,1): error TS2308: Module "./helmet" has already exported a member named 'HSTSGuard'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/index.ts(7,1): error TS2308: Module "./performance" has already exported a member named 'CQRS'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/index.ts(7,1): error TS2308: Module "./performance" has already exported a member named 'SmartCache'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/index.ts(7,1): error TS2308: Module "./security" has already exported a member named 'CSRFGuard'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/index.ts(7,1): error TS2308: Module "./security" has already exported a member named 'IdempotentGuard'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/index.ts(7,1): error TS2308: Module "./security" has already exported a member named 'XSSGuard'. Consider explicitly re-exporting to resolve the ambiguity.
+src/decorators/injection.ts(13,7): error TS6133: 'classDependencies' is declared but its value is never read.
+src/decorators/injection.ts(114,19): error TS6133: 'target' is declared but its value is never read.
+src/decorators/injection.ts(114,32): error TS6133: 'propertyKey' is declared but its value is never read.
+src/decorators/memoization.ts(76,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/decorators/memoization.ts(92,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/decorators/performance.ts(1,19): error TS6133: 'Response' is declared but its value is never read.
+src/decorators/performance.ts(1,29): error TS6133: 'NextFunction' is declared but its value is never read.
+src/decorators/preset.ts(20,16): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/decorators/preset.ts(20,16): error TS18048: 'decorator' is possibly 'undefined'.
+src/decorators/resilience.ts(149,14): error TS2339: Property 'then' does not exist on type 'void | Promise<void>'.
+  Property 'then' does not exist on type 'void'.
+src/decorators/resilience.ts(207,39): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(233,47): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(247,47): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(288,45): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(322,41): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(332,35): error TS2345: Argument of type 'AsyncChannel | null' is not assignable to parameter of type 'AsyncChannel'.
+  Type 'null' is not assignable to type 'AsyncChannel'.
+src/decorators/resilience.ts(449,3): error TS6133: 'next' is declared but its value is never read.
+src/decorators/resilience.ts(459,21): error TS2352: Conversion of type '{ status: (code: number) => any; json: (data: any) => { data: any; }; send: (data: any) => { data: any; }; statusCode: number; statusMessage: string; strictContentLength: boolean; req: IncomingMessage; ... 27 more ...; eventNames(): (string | symbol)[]; }' to type 'Response<any>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ status: (code: number) => any; json: (data: any) => { data: any; }; send: (data: any) => { data: any; }; statusCode: number; statusMessage: string; strictContentLength: boolean; req: IncomingMessage; ... 27 more ...; eventNames(): (string | symbol)[]; }' is missing the following properties from type 'Response<any>': assignSocket, detachSocket, writeContinue, writeEarlyHints, and 31 more.
+src/decorators/resilience.ts(477,8): error TS2339: Property 'then' does not exist on type 'void | Promise<void>'.
+  Property 'then' does not exist on type 'void'.
+src/decorators/resilience.ts(477,13): error TS7006: Parameter 'result' implicitly has an 'any' type.
+src/decorators/resilience.ts(481,14): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/decorators/schema-validator.ts(39,50): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(59,50): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(71,20): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(72,14): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(74,14): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(95,50): error TS18046: 'error' is of type 'unknown'.
+src/decorators/schema-validator.ts(105,19): error TS6133: 'target' is declared but its value is never read.
+src/decorators/schema-validator.ts(105,32): error TS6133: 'propertyKey' is declared but its value is never read.
+src/fastify-factory.ts(15,1): error TS6133: 'Router' is declared but its value is never read.
+src/fastify-factory.ts(16,24): error TS2305: Module '"./middlewares.js"' has no exported member 'jsonBodyParser'.
+src/fastify-factory.ts(94,75): error TS2554: Expected 3 arguments, but got 4.
+src/fastify-factory.ts(96,48): error TS2339: Property 'status' does not exist on type 'Promise<void>'.
+src/fastify-factory.ts(109,109): error TS2554: Expected 3 arguments, but got 4.
+src/fastify-factory.ts(111,49): error TS2339: Property 'status' does not exist on type 'Promise<void>'.
+src/fastify-factory.ts(312,50): error TS6133: 'res' is declared but its value is never read.
+src/fastify-factory.ts(335,33): error TS6133: 'req' is declared but its value is never read.
+src/fastify-factory.ts(347,51): error TS6133: 'options' is declared but its value is never read.
+src/healer.ts(132,28): error TS2532: Object is possibly 'undefined'.
+src/healer.ts(145,20): error TS2532: Object is possibly 'undefined'.
+src/healer.ts(205,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Url'.
+  Type 'string' is not assignable to type '{ __brand: "Url"; }'.
+src/healer.ts(256,36): error TS6133: 'req' is declared but its value is never read.
+src/i18n.ts(1,43): error TS6059: File '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/packages/i18next/index.ts' is not under 'rootDir' '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src'. 'rootDir' is expected to contain all source files.
+src/index.ts(88,25): error TS6133: 'method' is declared but its value is never read.
+src/index.ts(259,54): error TS2554: Expected 3 arguments, but got 4.
+src/index.ts(267,64): error TS2554: Expected 3 arguments, but got 4.
+src/libs/intent-router.ts(1,10): error TS6133: 'IncomingMessage' is declared but its value is never read.
+src/libs/intent-router.ts(12,41): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(16,11): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(16,11): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/libs/intent-router.ts(16,26): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(18,11): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(19,13): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(19,13): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(20,22): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(20,22): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(20,44): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(20,44): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(25,5): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/libs/intent-router.ts(25,12): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(79,23): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(20,7): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(26,11): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(26,11): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/libs/semantic-healer.ts(26,26): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(28,11): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(29,13): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(29,13): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(31,15): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(31,15): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(32,15): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(32,15): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(39,5): error TS2322: Type 'number | undefined' is not assignable to type 'number'.
+  Type 'undefined' is not assignable to type 'number'.
+src/libs/semantic-healer.ts(39,12): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(230,11): error TS6133: 'bestDist' is declared but its value is never read.
+src/libs/semantic-healer.ts(271,58): error TS2345: Argument of type 'ZodTypeAny | undefined' is not assignable to parameter of type 'ZodTypeAny'.
+  Type 'undefined' is not assignable to type 'ZodType<any, any, any>'.
+src/libs/semantic-healer.ts(284,53): error TS2345: Argument of type 'ZodTypeAny | undefined' is not assignable to parameter of type 'ZodTypeAny'.
+  Type 'undefined' is not assignable to type 'ZodType<any, any, any>'.
+src/libs/semantic-healer.ts(285,24): error TS18048: 'targetSchema' is possibly 'undefined'.
+src/libs/semantic-healer.ts(317,21): error TS2538: Type 'undefined' cannot be used as an index type.
+src/libs/semantic-healer.ts(317,39): error TS2538: Type 'undefined' cannot be used as an index type.
+src/libs/semantic-healer.ts(382,11): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/middlewares.ts(3,25): error TS6059: File '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/packages/cookie/index.ts' is not under 'rootDir' '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src'. 'rootDir' is expected to contain all source files.
+  The file is in the program because:
+    Imported via "cookie" from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/middlewares.ts'
+    Imported via "cookie" from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/decorators/security.ts'
+src/middlewares.ts(100,32): error TS6133: 'ResilientConfig' is declared but its value is never read.
+src/middlewares.ts(184,41): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares.ts(216,14): error TS2322: Type '(err: Error | HttpError, req: Request, res: Response, next: NextFunction) => Promise<void>' is not assignable to type 'RequestHandler'.
+  Target signature provides too few arguments. Expected 4 or more, but got 3.
+src/middlewares.ts(259,18): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares.ts(264,18): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares.ts(264,46): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares/filter-parser.ts(1,10): error TS6133: 'RawFilterString' is declared but its value is never read.
+src/middlewares/filter-parser.ts(140,34): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/filter-parser.ts(145,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(147,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(149,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(151,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(153,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(155,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(157,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/filter-parser.ts(159,18): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/get-intent.ts(1,1): error TS6192: All imports in import declaration are unused.
+src/middlewares/get-intent.ts(11,41): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(12,41): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(16,9): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(17,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(18,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(19,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(23,12): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(153,11): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(156,20): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(157,15): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(158,15): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(161,23): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(165,25): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(167,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(170,28): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(172,27): error TS18048: 'startOfValue' is possibly 'undefined'.
+src/middlewares/get-intent.ts(175,14): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(223,53): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(227,52): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(250,26): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(254,39): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(257,54): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(262,46): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string | RegExp'.
+      Type 'undefined' is not assignable to type 'string | RegExp'.
+src/middlewares/get-intent.ts(277,43): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/get-intent.ts(279,31): error TS18048: 'cleanKeyBase' is possibly 'undefined'.
+src/middlewares/get-intent.ts(288,44): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string | RegExp'.
+      Type 'undefined' is not assignable to type 'string | RegExp'.
+src/middlewares/get-intent.ts(301,57): error TS6133: 'separator' is declared but its value is never read.
+src/middlewares/get-intent.ts(348,38): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(349,21): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(349,37): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(351,19): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(353,19): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(357,22): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(360,19): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(362,27): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/get-intent.ts(375,1): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.
+src/middlewares/get-intent.ts(381,2): error TS1443: Module declaration names may only use ' or " quoted strings.
+src/middlewares/get-intent.ts(381,4): error TS2304: Cannot find name 'typescript'.
+src/middlewares/get-intent.ts(383,1): error TS2304: Cannot find name 'app'.
+src/middlewares/get-intent.ts(383,36): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/middlewares/get-intent.ts(383,41): error TS7006: Parameter 'res' implicitly has an 'any' type.
+src/middlewares/get-intent.ts(395,1): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.
+src/middlewares/get-intent.ts(395,3): error TS1443: Module declaration names may only use ' or " quoted strings.
+src/middlewares/get-intent.ts(400,2): error TS2304: Cannot find name 'GET'.
+src/middlewares/get-intent.ts(400,7): error TS2304: Cannot find name 'users'.
+src/middlewares/get-intent.ts(400,13): error TS2304: Cannot find name 'pge'.
+src/middlewares/get-intent.ts(400,19): error TS2304: Cannot find name 'limit'.
+src/middlewares/get-intent.ts(400,24): error TS1005: ':' expected.
+src/middlewares/get-intent.ts(400,28): error TS2304: Cannot find name 'age'.
+src/middlewares/get-intent.ts(400,28): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/middlewares/get-intent.ts(400,36): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/middlewares/get-intent.ts(400,42): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(400,43): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/middlewares/get-intent.ts(400,57): error TS2304: Cannot find name 'fields'.
+src/middlewares/get-intent.ts(400,63): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(400,64): error TS2304: Cannot find name 'id'.
+src/middlewares/get-intent.ts(400,64): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(400,64): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(400,68): error TS2304: Cannot find name 'nome_errado'.
+src/middlewares/get-intent.ts(400,82): error TS2304: Cannot find name 'email'.
+src/middlewares/get-intent.ts(400,88): error TS2304: Cannot find name 'sort'.
+src/middlewares/get-intent.ts(400,95): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(400,96): error TS2304: Cannot find name 'date'.
+src/middlewares/get-intent.ts(400,100): error TS1443: Module declaration names may only use ' or " quoted strings.
+src/middlewares/get-intent.ts(403,2): error TS7028: Unused label.
+src/middlewares/get-intent.ts(403,10): error TS2304: Cannot find name 'application'.
+src/middlewares/get-intent.ts(403,22): error TS2304: Cannot find name 'x'.
+src/middlewares/get-intent.ts(403,24): error TS2304: Cannot find name 'ndjson'.
+src/middlewares/get-intent.ts(407,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(407,8): error TS7028: Unused label.
+src/middlewares/get-intent.ts(407,14): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(407,24): error TS2304: Cannot find name 'msg'.
+src/middlewares/get-intent.ts(407,27): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(408,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(408,8): error TS7028: Unused label.
+src/middlewares/get-intent.ts(408,14): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(408,25): error TS2304: Cannot find name 'action'.
+src/middlewares/get-intent.ts(408,31): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(408,33): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(408,53): error TS2304: Cannot find name 'detail'.
+src/middlewares/get-intent.ts(408,59): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(409,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(409,8): error TS7028: Unused label.
+src/middlewares/get-intent.ts(409,14): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(409,25): error TS2304: Cannot find name 'action'.
+src/middlewares/get-intent.ts(409,31): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(409,33): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(409,53): error TS2304: Cannot find name 'detail'.
+src/middlewares/get-intent.ts(409,59): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(410,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(410,8): error TS7028: Unused label.
+src/middlewares/get-intent.ts(410,14): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(410,25): error TS2304: Cannot find name 'action'.
+src/middlewares/get-intent.ts(410,31): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(410,33): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(410,53): error TS2304: Cannot find name 'detail'.
+src/middlewares/get-intent.ts(410,59): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(411,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(411,8): error TS7028: Unused label.
+src/middlewares/get-intent.ts(411,14): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(411,24): error TS2304: Cannot find name 'data'.
+src/middlewares/get-intent.ts(411,28): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(411,32): error TS1128: Declaration or statement expected.
+src/middlewares/get-intent.ts(411,35): error TS1435: Unknown keyword or identifier. Did you mean 'object'?
+src/middlewares/get-intent.ts(411,35): error TS2304: Cannot find name 'objeto'.
+src/middlewares/get-intent.ts(411,42): error TS1435: Unknown keyword or identifier. Did you mean 'finally'?
+src/middlewares/get-intent.ts(411,42): error TS2304: Cannot find name 'final'.
+src/middlewares/get-intent.ts(411,47): error TS1128: Declaration or statement expected.
+src/middlewares/get-intent.ts(413,18): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(413,18): error TS2304: Cannot find name 'req'.
+src/middlewares/get-intent.ts(414,2): error TS1443: Module declaration names may only use ' or " quoted strings.
+src/middlewares/get-intent.ts(414,4): error TS2304: Cannot find name 'javascript'.
+src/middlewares/get-intent.ts(416,3): error TS7028: Unused label.
+src/middlewares/get-intent.ts(416,9): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(417,3): error TS2304: Cannot find name 'limit'.
+src/middlewares/get-intent.ts(417,8): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(417,10): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(418,3): error TS2304: Cannot find name 'age'.
+src/middlewares/get-intent.ts(418,6): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(418,8): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(419,3): error TS2304: Cannot find name '_operators'.
+src/middlewares/get-intent.ts(419,13): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(419,17): error TS7028: Unused label.
+src/middlewares/get-intent.ts(419,28): error TS1128: Declaration or statement expected.
+src/middlewares/get-intent.ts(420,3): error TS7028: Unused label.
+src/middlewares/get-intent.ts(420,11): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(421,3): error TS2304: Cannot find name 'fields'.
+src/middlewares/get-intent.ts(421,9): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(421,11): error TS2695: Left side of comma operator is unused and has no side effects.
+src/middlewares/get-intent.ts(422,3): error TS2304: Cannot find name 'sort'.
+src/middlewares/get-intent.ts(422,7): error TS1005: ';' expected.
+src/middlewares/get-intent.ts(422,11): error TS7028: Unused label.
+src/middlewares/native-multipart.ts(2,1): error TS6133: 'pipeline' is declared but its value is never read.
+src/middlewares/native-multipart.ts(3,1): error TS6133: 'createWriteStream' is declared but its value is never read.
+src/middlewares/native-multipart.ts(4,1): error TS6133: 'join' is declared but its value is never read.
+src/middlewares/native-multipart.ts(94,20): error TS2532: Object is possibly 'undefined'.
+src/middlewares/native-multipart.ts(133,64): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/native-multipart.ts(140,16): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/native-multipart.ts(219,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/native-multipart.ts(236,27): error TS6133: 'res' is declared but its value is never read.
+src/middlewares/pipe-filter.ts(76,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/pipe-filter.ts(103,21): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/pipe-filter.ts(103,52): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/pipe-filter.ts(118,33): error TS2322: Type 'Record<string, any> | undefined' is not assignable to type 'Record<string, any>'.
+  Type 'undefined' is not assignable to type 'Record<string, any>'.
+src/middlewares/storage-engines.ts(6,29): error TS6133: 'WriteStream' is declared but its value is never read.
+src/middlewares/storage-engines.ts(51,43): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(91,15): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(97,26): error TS2345: Argument of type '(error?: Error | undefined) => void' is not assignable to parameter of type 'NoParamCallback'.
+  Types of parameters 'error' and 'err' are incompatible.
+    Type 'ErrnoException | null' is not assignable to type 'Error | undefined'.
+      Type 'null' is not assignable to type 'Error | undefined'.
+src/middlewares/storage-engines.ts(106,15): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(143,42): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(158,15): error TS6133: 'buffer' is declared but its value is never read.
+src/middlewares/storage-engines.ts(184,15): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(184,25): error TS6133: 'file' is declared but its value is never read.
+src/middlewares/storage-engines.ts(209,42): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/storage-engines.ts(224,15): error TS6133: 'buffer' is declared but its value is never read.
+src/middlewares/symbolic-filter.ts(76,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/symbolic-filter.ts(103,21): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/symbolic-filter.ts(103,52): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/symbolic-filter.ts(118,33): error TS2322: Type 'Record<string, any> | undefined' is not assignable to type 'Record<string, any>'.
+  Type 'undefined' is not assignable to type 'Record<string, any>'.
+src/middlewares/uploadify/index.ts(1,55): error TS6133: 'Notification' is declared but its value is never read.
+src/middlewares/uploadify/index.ts(61,45): error TS6133: 'res' is declared but its value is never read.
+src/middlewares/uploadify/index.ts(221,21): error TS2322: Type 'string | undefined' is not assignable to type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+src/middlewares/uploadify/storage.ts(4,1): error TS6133: 'Stream' is declared but its value is never read.
+src/middlewares/uploadify/storage.ts(64,15): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/uploadify/storage.ts(78,17): error TS6133: 'req' is declared but its value is never read.
+src/middlewares/uploadify/storage.ts(91,17): error TS6133: 'req' is declared but its value is never read.
+src/modules/appointments/updateManyAppointmentsByDate.ts(6,13): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/modules/patients/listPatients.ts(25,67): error TS2339: Property 'toLowerCase' does not exist on type 'string | string[]'.
+  Property 'toLowerCase' does not exist on type 'string[]'.
+src/modules/patients/listPatients.ts(32,24): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/patients/listPatients.ts(33,25): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/products/routes.ts(7,26): error TS6133: 'req' is declared but its value is never read.
+src/modules/users/routes.ts(7,3): error TS2305: Module '"../../errors"' has no exported member 'error'.
+src/modules/users/routes.ts(14,23): error TS6133: 'req' is declared but its value is never read.
+src/modules/users/routes.ts(97,9): error TS6133: 'id' is declared but its value is never read.
+src/modules/users/routes.ts(98,19): error TS2554: Expected 1 arguments, but got 0.
+src/router.ts(45,39): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(49,11): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(49,37): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(52,11): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(53,9): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(60,13): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(68,41): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(71,29): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(80,72): error TS18048: 'layer' is possibly 'undefined'.
+src/router.ts(85,21): error TS6133: 'originalNext' is declared but its value is never read.
+src/router.ts(94,18): error TS18048: 'layer' is possibly 'undefined'.
+src/test-uploadify-full.ts(4,48): error TS6133: 'statSync' is declared but its value is never read.
+src/test-uploadify-full.ts(45,18): error TS6133: 'code' is declared but its value is never read.
+src/test-uploadify-full.ts(45,45): error TS6133: 'd' is declared but its value is never read.
+src/test-uploadify-full.ts(46,16): error TS6133: 'd' is declared but its value is never read.
+src/test-uploadify-full.ts(190,22): error TS6133: 'req' is declared but its value is never read.
+src/types.ts(44,3): error TS6133: 'ResBody' is declared but its value is never read.
+src/workers/cpu-worker.ts(187,45): error TS6133: 'options' is declared but its value is never read.
+src/zod-analyzer.ts(6,19): error TS6059: File '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/packages/zod/index.ts' is not under 'rootDir' '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src'. 'rootDir' is expected to contain all source files.
+  The file is in the program because:
+    Imported via "zod" from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/zod-analyzer.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/auto-routes.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/zod-interface-generator.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/zod-schema-generator.ts'
+    Imported via "zod" from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/libs/semantic-healer.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patient.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/appointments/updateManyAppointmentsByDate.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/createPatient.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/getPatient.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/getPatientByPhone.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/listPatients.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/removePatient.ts'
+    Imported via 'zod' from file '/mnt/d/www/Freelas/PROJETOS_OPENSOURCE/MEUS/@purecore/purecore-apify/src/modules/patients/updatePatient.ts'
+src/zod-analyzer.ts(77,20): error TS2532: Object is possibly 'undefined'.
+src/zod-analyzer.ts(294,17): error TS6133: 'nestedInterface' is declared but its value is never read.
+src/zod-interface-generator.ts(52,11): error TS6133: 'relationships' is declared but its value is never read.
+src/zod-interface-generator.ts(58,11): error TS6133: 'lines' is declared but its value is never read.
+src/zod-interface-generator.ts(75,26): error TS18048: 'fieldName' is possibly 'undefined'.
+src/zod-interface-generator.ts(76,30): error TS18048: 'fieldName' is possibly 'undefined'.
+src/zod-interface-generator.ts(79,23): error TS18048: 'fieldType' is possibly 'undefined'.
+src/zod-interface-generator.ts(80,25): error TS18048: 'fieldType' is possibly 'undefined'.
+src/zod-interface-generator.ts(107,50): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(108,66): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(109,52): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(112,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(651,8): error TS2551: Property 'generateRelationshipDiagram' does not exist on type 'ZodSchemaGenerator'. Did you mean 'generateRelationshipsFile'?
+src/zod-schema-generator.ts(196,17): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(291,17): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(292,24): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(309,52): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/zod-schema-generator.ts(309,57): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/zod-schema-generator.ts(334,17): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(335,17): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(447,12): error TS2551: Property 'enum' does not exist on type 'typeof z'. Did you mean 'enum_'?
+src/zod-schema-generator.ts(615,35): error TS2532: Object is possibly 'undefined'.
+src/zod-schema-generator.ts(616,42): error TS2532: Object is possibly 'undefined'.
+src/zod-schema-generator.ts(626,72): error TS2532: Object is possibly 'undefined'.
+error: script "build" exited with code 1

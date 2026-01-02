@@ -1,7 +1,7 @@
-import * as cookie from 'cookie';
-import * as jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction, RequestHandler } from '../types';
-import { createHandlerDecorator } from './base';
+import * as cookie from "cookie";
+import { jwtVerify } from "@purecore/one-jwt-4-all";
+import { Request, Response, NextFunction, RequestHandler } from "../types";
+import { createHandlerDecorator } from "./base";
 
 interface AuthRequest extends Request {
   user?: unknown;
@@ -12,7 +12,7 @@ export const AuthExpressGuard = (): MethodDecorator => {
     const execute = async (req: Request, res: Response, next: NextFunction) => {
       const authReq = req as AuthRequest;
       if (!authReq.user) {
-        return res.status(401).json({ error: 'Usuário não autenticado' });
+        return res.status(401).json({ error: "Usuário não autenticado" });
       }
       return handler(req, res, next);
     };
@@ -22,13 +22,13 @@ export const AuthExpressGuard = (): MethodDecorator => {
 };
 
 const sanitizeValue = (value: unknown): unknown => {
-  if (typeof value === 'string') {
-    return value.replace(/[<>"]/g, '');
+  if (typeof value === "string") {
+    return value.replace(/[<>"]/g, "");
   }
   if (Array.isArray(value)) {
     return value.map(sanitizeValue);
   }
-  if (value && typeof value === 'object') {
+  if (value && typeof value === "object") {
     const sanitized: Record<string, unknown> = {};
     Object.entries(value as Record<string, unknown>).forEach(([key, val]) => {
       sanitized[key] = sanitizeValue(val);
@@ -56,22 +56,24 @@ interface AuthJWTGuardOptions {
   secret?: string;
 }
 
-export const AuthJWTGuard = (options: AuthJWTGuardOptions = {}): MethodDecorator => {
-  const header = options.headerName ?? 'authorization';
-  const secret = options.secret ?? process.env.JWT_SECRET ?? 'fallback-secret';
+export const AuthJWTGuard = (
+  options: AuthJWTGuardOptions = {}
+): MethodDecorator => {
+  const header = options.headerName ?? "authorization";
+  const secret = options.secret ?? process.env.JWT_SECRET ?? "fallback-secret";
 
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
       const tokenHeader = req.headers[header] as string | undefined;
       if (!tokenHeader) {
-        return res.status(401).json({ error: 'Token não informado' });
+        return res.status(401).json({ error: "Token não informado" });
       }
-      const [, token] = tokenHeader.split(' ');
+      const [, token] = tokenHeader.split(" ");
       try {
-        const payload = jwt.verify(token ?? tokenHeader, secret);
+        const { payload } = await jwtVerify(token ?? tokenHeader, secret);
         (req as AuthRequest).user = payload;
       } catch (_err) {
-        return res.status(403).json({ error: 'Token inválido' });
+        return res.status(403).json({ error: "Token inválido" });
       }
       return handler(req, res, next);
     };
@@ -85,9 +87,13 @@ const idemStore = new Map<string, unknown>();
 export const IdempotentGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
-      const key = (req.headers['x-idempotency-key'] as string | undefined)?.trim();
+      const key = (
+        req.headers["x-idempotency-key"] as string | undefined
+      )?.trim();
       if (!key) {
-        return res.status(400).json({ error: 'Cabeçalho x-idempotency-key é obrigatório' });
+        return res
+          .status(400)
+          .json({ error: "Cabeçalho x-idempotency-key é obrigatório" });
       }
 
       if (idemStore.has(key)) {
@@ -117,16 +123,16 @@ interface CSRFGuardOptions {
 }
 
 export const CSRFGuard = (options: CSRFGuardOptions = {}): MethodDecorator => {
-  const headerName = options.headerName ?? 'x-csrf-token';
-  const cookieName = options.cookieName ?? 'csrf-token';
+  const headerName = options.headerName ?? "x-csrf-token";
+  const cookieName = options.cookieName ?? "csrf-token";
   return createHandlerDecorator((handler) => {
     const execute: RequestHandler = async (req, res, next) => {
       const headerToken = req.headers[headerName] as string | undefined;
-      const cookies = cookie.parse(req.headers.cookie ?? '');
+      const cookies = cookie.parse(req.headers.cookie ?? "");
       const cookieToken = cookies[cookieName];
 
       if (!headerToken || !cookieToken || headerToken !== cookieToken) {
-        return res.status(403).json({ error: 'Falha na validação CSRF' });
+        return res.status(403).json({ error: "Falha na validação CSRF" });
       }
 
       return handler(req, res, next);
@@ -135,4 +141,3 @@ export const CSRFGuard = (options: CSRFGuardOptions = {}): MethodDecorator => {
     return execute;
   });
 };
-

@@ -15,20 +15,28 @@
     "isolatedModules": true,
     "noEmitOnError": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "removeComments": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "allowUnusedLabels": false,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "paths": {
+      "zod": ["./packages/zod/index.ts"],
+      "cookie": ["./packages/cookie/index.ts"],
+      "i18next": ["./packages/i18next/index.ts"],
+      "@purecore/one-jwt-4-all": [
+        "./node_modules/@purecore/one-jwt-4-all/src/index.ts"
+      ]
+    }
   },
-  "include": ["src/**/*", "tests/**/*"],
+  "include": ["src/**/*", "tests/**/*", "packages/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
