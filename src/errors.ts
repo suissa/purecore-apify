@@ -328,7 +328,7 @@ export function isHttpError(error: any): error is HttpError {
 }
 
 // --- Função helper simples para criar erro a partir de status code ---
-export function error(statusCode: number, message?: string): HttpError {
+export function httpError(statusCode: number, message?: string): HttpError {
   return createHttpErrorFromStatus(statusCode, message);
 }
 
