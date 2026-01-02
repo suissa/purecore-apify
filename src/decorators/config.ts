@@ -639,7 +639,7 @@ export function setupCommonDependencies() {
   // Registrar database
   registerDependency("database", {
     connect: () => Promise.resolve(),
-    query: (sql: string) => Promise.resolve([],
+    query: (sql: string) => Promise.resolve([]),
   });
 }
 
