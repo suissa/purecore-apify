@@ -1,36 +1,17 @@
-import { Router } from '../../router';
-import { Request, Response } from '../../types';
+import { Router } from "../../router";
+import { ProductController } from "./controllers/ProductController";
+import { authMiddleware } from "../../middlewares";
 
-const productsRouter = new Router();
+const productRouter = new Router();
+const controller = new ProductController();
 
-// Lista todos os produtos
-productsRouter.get('/', (req: Request, res: Response) => {
-  res.json({
-    total: 0,
-    data: [],
-    message: 'Lista de produtos'
-  });
-});
+productRouter.get("/", (req, res) => controller.list(req, res));
+productRouter.get("/:id", (req, res) => controller.get(req, res));
 
-// Busca produto por ID
-productsRouter.get('/:id', (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.json({
-    id,
-    name: `Produto ${id}`,
-    price: 99.99,
-    category: 'Eletrônicos'
-  });
-});
+// Protected routes (Create)
+// We could force admin role here, but keeping it simple as 'authenticated'
+productRouter.post("/", authMiddleware, (req, res) =>
+  controller.create(req, res)
+);
 
-// Cria produto
-productsRouter.post('/', (req: Request, res: Response) => {
-  const productData = req.body;
-  res.status(201).json({
-    id: Date.now(),
-    ...productData,
-    createdAt: new Date()
-  });
-});
-
-export { productsRouter };
+export default productRouter;
