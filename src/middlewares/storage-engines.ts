@@ -138,6 +138,7 @@ export class S3StorageEngine implements StorageEngine {
     region?: string;
     key?: (req: any, file: FileInfo) => string;
   }) {
+    if (!options.bucket) throw new Error('S3 Storage Engine requires a "bucket" option');
     this.bucket = options.bucket;
     this.region = options.region || 'us-east-1';
     this.keyGenerator = options.key || ((req, file) => `uploads/${Date.now()}-${file.originalname}`);
@@ -205,6 +206,7 @@ export class GCSStorageEngine implements StorageEngine {
     bucket: string;
     key?: (req: any, file: FileInfo) => string;
   }) {
+    if (!options.bucket) throw new Error('GCS Storage Engine requires a "bucket" option');
     this.bucketName = options.bucket;
     this.keyGenerator = options.key || ((req, file) => `uploads/${Date.now()}-${file.originalname}`);
   }
@@ -285,9 +287,12 @@ export class StorageUtils {
    * Gera nome de arquivo seguro
    */
   static safeFilename(originalname: string): string {
-    const ext = originalname.split('.').pop() || '';
-    const name = originalname.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
-    return `${name}_${Date.now()}_${randomUUID().slice(0, 8)}.${ext}`;
+    // Remove path components if any
+    const basename = originalname.split(/[\\/]/).pop() || 'file';
+    const parts = basename.split('.');
+    const ext = parts.length > 1 ? parts.pop()?.replace(/[^a-zA-Z0-9]/g, '') : '';
+    const name = parts.join('.').replace(/[^a-zA-Z0-9]/g, '_') || 'file';
+    return `${name}_${Date.now()}_${randomUUID().slice(0, 8)}${ext ? '.' + ext : ''}`;
   }
 
   /**

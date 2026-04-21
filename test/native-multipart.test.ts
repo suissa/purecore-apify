@@ -206,7 +206,8 @@ describe('Security Features', () => {
     
     ok(!safeName.includes('../'));
     ok(!safeName.includes('/'));
-    ok(safeName.includes('___etc_passwd'));
+    ok(!safeName.includes('etc')); // Should have been stripped as part of path
+    ok(safeName.startsWith('passwd_'));
   });
 
   it('should validate file extensions', () => {
