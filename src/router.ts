@@ -48,7 +48,7 @@ export class Router implements IRouter {
   }
 
   /**
-   * Lógica principal de execução (O antigo handleRequest da Apify)
+   * Lógica principal de execução (O antigo handleRequest da FourPi)
    * Agora ele processa apenas a lógica, sem saber de 'createServer'
    */
   async handle(req: Request, res: Response, done: NextFunction): Promise<void> {

@@ -1,11 +1,11 @@
 /**
- * Fastify-like Factory para PureCore Apify
+ * Fastify-like Factory para PureCore FourPi
  * Implementa interface compatível com Fastify mas usa decorators e validators internos
  *
  * Funcionalidades:
  * - API compatível com Fastify (get, post, put, delete, patch)
  * - Suporte a plugins e middlewares do Fastify
- * - Integração com decorators do PureCore Apify
+ * - Integração com decorators do PureCore FourPi
  * - Validação automática com schemas Zod
  * - Sistema de hooks do Fastify
  */
@@ -17,7 +17,7 @@ import {
   ServerResponse,
 } from "node:http";
 import {
-  Apify,
+  FourPi,
   Request,
   Response,
   NextFunction,
@@ -26,6 +26,7 @@ import {
 import { Router } from "./router.js";
 import { errorHandler, jsonBodyParser } from "./middlewares.js";
 import { NotFoundError } from "./errors.js";
+
 
 // =========================================
 // TIPOS E INTERFACES
@@ -72,51 +73,51 @@ export interface FastifyPluginOptions {
 // =========================================
 
 export class PureCoreFastify implements FastifyInstance {
-  private app: Apify;
+  private app: FourPi;
   private hooks: Map<string, Function[]> = new Map();
   public decorators: Record<string, any> = {};
   public server: Server;
 
   constructor(options: any = {}) {
-    this.app = new Apify(options.resilientConfig);
+    this.app = new FourPi(options.resilientConfig);
 
     // Inicializa servidor HTTP
     this.server = createServer(
       async (req: IncomingMessage, res: ServerResponse) => {
         try {
-          // Converte para tipos do Apify
-          const apifyReq = req as Request;
-          const apifyRes = res as Response;
+          // Converte para tipos do FourPi
+          const fourPiReq = req as Request;
+          const fourPiRes = res as Response;
 
           // Inicializa propriedades se não existirem
-          if (!apifyReq.params) apifyReq.params = {};
-          if (!apifyReq.query) apifyReq.query = {};
-          if (!apifyReq.body) apifyReq.body = {};
+          if (!fourPiReq.params) fourPiReq.params = {};
+          if (!fourPiReq.query) fourPiReq.query = {};
+          if (!fourPiReq.body) fourPiReq.body = {};
 
           // Executa hooks 'onRequest'
-          await this.executeHooks("onRequest", apifyReq, apifyRes);
+          await this.executeHooks("onRequest", fourPiReq, fourPiRes);
 
-          // Processa através do Apify
-          await this.app.handle(apifyReq, apifyRes, async (err?: any) => {
+          // Processa através do FourPi
+          await this.app.handle(fourPiReq, fourPiRes, async (err?: any) => {
             if (err) {
               // Executa hooks 'onError'
-              await this.executeHooks("onError", apifyReq, apifyRes, err);
+              await this.executeHooks("onError", fourPiReq, fourPiRes, err);
 
               if (!res.headersSent) {
-                await errorHandler(err, apifyReq, apifyRes, () => {});
+                await errorHandler(err, fourPiReq, fourPiRes, () => {});
               }
               return;
             }
 
             // Executa hooks 'onResponse'
-            await this.executeHooks("onResponse", apifyReq, apifyRes);
+            await this.executeHooks("onResponse", fourPiReq, fourPiRes);
 
             // Se não houve resposta, retorna 404
             if (!res.headersSent) {
               await errorHandler(
                 new NotFoundError("Route not found"),
-                apifyReq,
-                apifyRes,
+                fourPiReq,
+                fourPiRes,
                 () => {}
               );
             }
@@ -311,7 +312,7 @@ export interface PureCoreFastifyOptions {
 }
 
 /**
- * Factory para criar instâncias Fastify-like do PureCore Apify
+ * Factory para criar instâncias Fastify-like do PureCore FourPi
  */
 export function createPureCoreFastify(
   options: PureCoreFastifyOptions = {}
@@ -423,7 +424,7 @@ export function createValidatedHandler(schema: any, handler: Function) {
 }
 
 /**
- * Helper para integrar decorators do PureCore Apify
+ * Helper para integrar decorators do PureCore FourPi
  */
 export function withDecorators(
   decorators: any[],

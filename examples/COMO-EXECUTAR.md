@@ -15,7 +15,7 @@ Os scripts não estão sendo executados no terminal atual. Isso pode ser devido 
 
 **Passo 1:** Abra um novo terminal/cmd e navegue até o projeto:
 ```bash
-cd D:\www\Freelas\PROJETOS_OPENSOURCE\MEUS\@purecore\purecore-apify
+cd D:\www\Freelas\PROJETOS_OPENSOURCE\MEUS\@purecore\4pi
 ```
 
 **Passo 2:** Crie um arquivo temporário `temp-run.mjs`:

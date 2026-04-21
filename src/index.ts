@@ -16,7 +16,7 @@ import { autoGenerateFromZodSchemas } from "./auto-generator";
 import { AONConfig } from "./aon/index.js";
 // Import will be conditional to avoid build issues if file doesn't exist
 
-export class Apify extends Router {
+export class FourPi extends Router {
   private apiPrefix: string = "/api/v1";
   private modulesLoaded: boolean = false;
   private i18nInitialized: boolean = false;
@@ -322,7 +322,7 @@ export async function autoRoutesFromModules(): Promise<Router> {
     const { autoGenerateRoutes } = await import("./auto-routes");
     await autoGenerateRoutes(modulesRouter);
   } catch (error) {
-    console.warn("[Apify] Auto-routes not available:", error);
+    console.warn("[FourPi] Auto-routes not available:", error);
   }
 
   return modulesRouter;

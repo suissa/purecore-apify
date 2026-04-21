@@ -1,6 +1,6 @@
 /**
  * Minimal Zod Implementation (Nominal Typing)
- * Expanded to support purecore-apify requirements
+ * Expanded to support @purecore-br/4pi requirements
  */
 
 export class ZodError extends Error {

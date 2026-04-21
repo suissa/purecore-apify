@@ -1,6 +1,6 @@
 {
   "name": "@purecore-br/4pi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,22 +56,19 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@prisma/client": "5",
-    "@purecore/one-jwt-4-all": "^1.3.0",
-    "@purecore/reqify": "workspace:*",
+    "@purecore-br/jwt": "^0.1.0",
+    "@purecore-br/p3g": "^0.2.1",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-slot": "^1.2.4",
-    "@types/node": "^25.0.3",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cookie": "workspace:*",
-    "i18next": "workspace:*",
+    "cookie": "^0.6.0",
+    "i18next": "^23.10.1",
     "lucide-react": "^0.562.0",
-    "prisma": "5",
     "react-router-dom": "^7.11.0",
     "tailwind-merge": "^3.4.0",
     "undici-types": "^7.16.0",
-    "zod": "workspace:*"
+    "zod": "^3.23.8"
   }
 }

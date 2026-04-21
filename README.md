@@ -5,7 +5,7 @@
 <div align="left">
 <h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Visão geral</h2>
 
-<p><code>@purecore-br/4pi</code> expõe a classe <code>Apify</code>, que herda de um roteador compatível com Express.</p>
+<p><code>@purecore-br/4pi</code> expõe a classe <code>FourPi</code>, que herda de um roteador compatível com Express.</p>
 
 <p>Você monta sua aplicação exatamente como faria com <code>{ express: () =&gt; app }</code>: registra middlewares com <code>app.use(...)</code>, define <code>app.get/post/put/delete/patch(...)</code> e finaliza com <code>app.listen(...)</code>.</p>
 
@@ -32,9 +32,9 @@ pnpm add @purecore-br/4pi
 
 Confira todas as mudanças e atualizações: [CHANGELOG.md](./CHANGELOG.md)
 
-<pre><code>import { Apify, jsonBodyParser } from '@purecore-br/4pi';
+<pre><code>import { FourPi, jsonBodyParser } from '@purecore-br/4pi';
 
-const app = new Apify();
+const app = new FourPi();
 
 // Middleware global (body parser, logger, etc.)
 app.use(jsonBodyParser);
@@ -47,7 +47,7 @@ app.get('/users/:id', (req, res) =&gt; {
 });
 
 // Sub-router (igual express.Router)
-const apiRouter = new Apify();
+const apiRouter = new FourPi();
 apiRouter.get('/status', (req, res) =&gt; res.json({ status: 'ok' }));
 app.use('/api', apiRouter);
 
@@ -153,7 +153,7 @@ class UsersController {
 
 ## Visão geral
 
-`@purecore-br/4pi` expõe a classe `Apify`, que herda de um roteador compatível com Express.
+`@purecore-br/4pi` expõe a classe `FourPi`, que herda de um roteador compatível com Express.
 
 Você monta sua aplicação exatamente como faria com `{ express: () => app }`: registra middlewares com `app.use(...)`, define `app.get/post/put/delete/patch(...)` e finaliza com `app.listen(...)`.
 
@@ -176,9 +176,9 @@ pnpm add @purecore-br/4pi
 ```
 
 ```ts
-import { Apify, jsonBodyParser } from '@purecore-br/4pi';
+import { FourPi, jsonBodyParser } from '@purecore-br/4pi';
 
-const app = new Apify();
+const app = new FourPi();
 
 // Middleware global (body parser, logger, etc.)
 app.use(jsonBodyParser);
@@ -191,7 +191,7 @@ app.get('/users/:id', (req, res) => {
 });
 
 // Sub-router (igual express.Router)
-const apiRouter = new Apify();
+const apiRouter = new FourPi();
 apiRouter.get('/status', (req, res) => res.json({ status: 'ok' }));
 app.use('/api', apiRouter);
 
@@ -393,16 +393,16 @@ export class PatientService {
 }
 ```
 
-### Controller com ApifyCompleteSentinel
+### Controller com FourPiCompleteSentinel
 
 ```ts
 export class PatientController {
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async list(req: Request, res: Response) {
     // Circuit Breaker + Timeout + JWT + XSS + Cache + Logs + Metrics
   }
 
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async create(req: Request, res: Response) {
     // Tudo automático!
   }
@@ -496,9 +496,9 @@ src/
 ### Uso Automático
 
 ```ts
-import { Apify } from '@purecore-br/4pi';
+import { FourPi } from '@purecore-br/4pi';
 
-const app = new Apify();
+const app = new FourPi();
 // ✅ Prefixo '/api/v1' configurado automaticamente
 // ✅ Módulos carregados automaticamente
 
@@ -690,15 +690,15 @@ export { testGeneration };
 
 ## Configuração Padrão Completa ⭐
 
-O `@purecore-br/4pi` agora vem com uma **configuração padrão completa** que ativa **TODOS** os decorators automaticamente! Basta usar o `ApifyCompleteSentinel` e sua API estará completamente equipada com resiliência, observabilidade, segurança e performance.
+O `@purecore-br/4pi` agora vem com uma **configuração padrão completa** que ativa **TODOS** os decorators automaticamente! Basta usar o `FourPiCompleteSentinel` e sua API estará completamente equipada com resiliência, observabilidade, segurança e performance.
 
-### ApifyCompleteSentinel - Tudo Incluído
+### FourPiCompleteSentinel - Tudo Incluído
 
 ```ts
-import { ApifyCompleteSentinel } from '@purecore-br/4pi';
+import { FourPiCompleteSentinel } from '@purecore-br/4pi';
 
 class UsersController {
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async list(req, res) {
     // ✨ Circuit Breaker + Timeout 30s + WS Retry Channel
     // 📊 Logger + Metrics + TraceSpan

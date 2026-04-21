@@ -126,7 +126,7 @@ WS_RETRY_TIMEOUT=5000
 # CONFIGURAÇÕES DE BANCO DE DADOS
 # =========================================
 # String de conexão do banco (exemplo MongoDB)
-# DATABASE_URL=mongodb://localhost:27017/apify
+# DATABASE_URL=mongodb://localhost:27017/4pi
 
 # =========================================
 # CONFIGURAÇÕES DE LOG
@@ -135,7 +135,7 @@ WS_RETRY_TIMEOUT=5000
 LOG_LEVEL=info
 
 # Arquivo de log (opcional)
-# LOG_FILE=logs/apify.log
+# LOG_FILE=logs/4pi.log
 
 # =========================================
 # CONFIGURAÇÕES DE MONITORAMENTO

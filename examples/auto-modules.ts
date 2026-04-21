@@ -1,6 +1,6 @@
-import { Apify } from '../src/index.js';
+import { FourPi } from '../src/index.js';
 
-const app = new Apify();
+const app = new FourPi();
 
 // O prefixo padrão '/api/v1' já está configurado automaticamente
 // E os módulos em src/modules são carregados automaticamente

@@ -1,9 +1,9 @@
 /**
- * Demonstração Avançada: Fastify + PureCore Apify + Zod Validators + Decorators
+ * Demonstração Avançada: Fastify + PureCore FourPi + Zod Validators + Decorators
  *
  * Este exemplo mostra a integração completa:
  * - API Fastify-like
- * - Decorators de segurança do PureCore Apify
+ * - Decorators de segurança do PureCore FourPi
  * - Validação automática com schemas Zod
  * - Plugins e middlewares Fastify
  * - Sistema de autenticação JWT
@@ -13,7 +13,7 @@
 import { createPureCoreFastify, createValidatedHandler } from '../src/fastify-factory.js';
 import { corsPlugin, jwtPlugin } from '../src/fastify-factory.js';
 import {
-  ApifyCompleteSentinel,
+  FourPiCompleteSentinel,
   SecuritySentinel,
   PerformanceSentinel,
   CQRS,
@@ -175,7 +175,7 @@ app.decorate('services', {
 app.use((req: any, res: any, next: any) => {
   // Headers de segurança globais
   res.setHeader('X-API-Version', '2.0.0');
-  res.setHeader('X-Powered-By', 'PureCore-Apify-Fastify');
+  res.setHeader('X-Powered-By', 'PureCore-FourPi-Fastify');
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   next();
@@ -510,11 +510,11 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log('🚀 ==========================================');
-  console.log('🔥 PureCore Fastify + Apify + Zod Integration');
+  console.log('🔥 PureCore Fastify + FourPi + Zod Integration');
   console.log(`📡 Servidor rodando na porta ${PORT}`);
   console.log('📊 Stack Tecnológico:');
   console.log('   ✅ Fastify-like API');
-  console.log('   ✅ PureCore Apify Decorators');
+  console.log('   ✅ PureCore FourPi Decorators');
   console.log('   ✅ Zod Schema Validation');
   console.log('   ✅ JWT Authentication');
   console.log('   ✅ CQRS Pattern');

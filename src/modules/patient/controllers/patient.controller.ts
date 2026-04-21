@@ -1,7 +1,7 @@
 import { Request, Response } from '../../types';
 import { PatientService } from '../services/patient.service';
 import { PatientDTO } from '../types/dto';
-import { ApifyCompleteSentinel } from '../../decorators';
+import { FourPiCompleteSentinel } from '../../decorators';
 
 export class PatientController {
   constructor(private patientService: PatientService) {}
@@ -9,7 +9,7 @@ export class PatientController {
   /**
    * Lista entidades com paginação
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async list(req: Request, res: Response) {
     try {
       const {
@@ -49,7 +49,7 @@ export class PatientController {
   /**
    * Busca entidade por ID
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -72,7 +72,7 @@ export class PatientController {
   /**
    * Cria nova entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async create(req: Request, res: Response) {
     try {
       const entity = await this.patientService.create(req.body);
@@ -93,7 +93,7 @@ export class PatientController {
   /**
    * Atualiza entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -117,7 +117,7 @@ export class PatientController {
   /**
    * Remove entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;

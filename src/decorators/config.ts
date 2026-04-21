@@ -267,9 +267,9 @@ export const PerformanceSentinel = PresetDecoratorFactory([
 ]);
 
 /**
- * Apify Sentinel - Preset completo para APIs @purecore-br/4pi
+ * FourPi Sentinel - Preset completo para APIs @purecore-br/4pi
  */
-export const ApifySentinel = PresetDecoratorFactory([
+export const FourPiSentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   TraceSpan,
@@ -281,10 +281,10 @@ export const ApifySentinel = PresetDecoratorFactory([
 ]);
 
 /**
- * Apify Complete Sentinel - Configuração padrão completa com todos os decorators ativados
+ * FourPi Complete Sentinel - Configuração padrão completa com todos os decorators ativados
  * Inclui: Circuit Breaker, Timeout 30s, WS Retry Channel, Logger, Metrics, TraceSpan, Auth, JWT, XSS, Helmet Security
  */
-export const ApifyCompleteSentinel = PresetDecoratorFactory([
+export const FourPiCompleteSentinel = PresetDecoratorFactory([
   // Observabilidade
   Logs,
   Metrics,
@@ -666,13 +666,13 @@ export function initializeDecorators() {
   console.log("  • AutoescaleSentinel - Alta disponibilidade");
   console.log("  • SecuritySentinel - Segurança máxima");
   console.log("  • PerformanceSentinel - Performance otimizada");
-  console.log("  • ApifySentinel - Preset completo");
+  console.log("  • FourPiSentinel - Preset completo");
   console.log("  • ApiSentinel - Para endpoints REST");
   console.log("  • DatabaseSentinel - Para operações DB");
   console.log("  • ExternalApiSentinel - Para APIs externas");
-  console.log("  • ApifyCompleteSentinel - ⭐ CONFIGURAÇÃO PADRÃO COMPLETA ⭐");
+  console.log("  • FourPiCompleteSentinel - ⭐ CONFIGURAÇÃO PADRÃO COMPLETA ⭐");
 
-  console.log("\n🚀 ApifyCompleteSentinel inclui:");
+  console.log("\n🚀 FourPiCompleteSentinel inclui:");
   console.log("  • Circuit Breaker (5 falhas, reset 10s)");
   console.log("  • Timeout (30s, max 60s, 3 retries)");
   console.log("  • WS Retry Channel para processamento paralelo");

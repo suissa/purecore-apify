@@ -3,13 +3,13 @@
  * Demonstra como usar o sistema de observabilidade adaptativa
  */
 
-import { Apify, withAON, analyzeIntent, performHealing, reportStatus } from '../src/index.js';
+import { FourPi, withAON, analyzeIntent, performHealing, reportStatus } from '../src/index.js';
 
 // =========================================
 // CONFIGURAÇÃO DO SERVIDOR
 // =========================================
 
-const app = new Apify();
+const app = new FourPi();
 
 // Configura AON para desenvolvimento
 app.setAONConfig({

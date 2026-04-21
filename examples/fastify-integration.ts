@@ -1,12 +1,12 @@
 /**
  * Demonstração: Integração PureCore Fastify com Decorators e Validators
  *
- * Este exemplo mostra como usar a factory Fastify-like do PureCore Apify
+ * Este exemplo mostra como usar a factory Fastify-like do PureCore FourPi
  * integrada com decorators de segurança, validação Zod e plugins Fastify
  */
 
 import { createPureCoreFastify, corsPlugin, jwtPlugin, createValidatedHandler, withDecorators } from '../src/fastify-factory.js';
-import { ApifyCompleteSentinel, SecuritySentinel } from '../src/decorators/config.js';
+import { FourPiCompleteSentinel, SecuritySentinel } from '../src/decorators/config.js';
 import { ProductValidator, validateProductName, validateProductPrice } from './product.schema.js';
 import { OrderValidator } from './order.schema.js';
 
@@ -178,14 +178,14 @@ app.delete('/products/:id', async (req: any, res: any) => {
 });
 
 // =========================================
-// ROTAS COM DECORATORS DO PURECORE APIFY
+// ROTAS COM DECORATORS DO PURECORE FOURPI
 // =========================================
 
 // POST /secure/products - Rota com decorators de segurança
-app.post('/secure/products', withDecorators([ApifyCompleteSentinel], createValidatedHandler(
+app.post('/secure/products', withDecorators([FourPiCompleteSentinel], createValidatedHandler(
   ProductValidator.validate,
   async (req: any, res: any) => {
-    console.log('🔒 Rota segura executada com ApifyCompleteSentinel');
+    console.log('🔒 Rota segura executada com FourPiCompleteSentinel');
 
     const productData = req.body;
     const newProduct = await req.server.decorators.productService.create(productData);
@@ -193,7 +193,7 @@ app.post('/secure/products', withDecorators([ApifyCompleteSentinel], createValid
     res.status(201).json({
       message: 'Produto criado com segurança máxima',
       product: newProduct,
-      decorators: 'ApifyCompleteSentinel aplicado'
+      decorators: 'FourPiCompleteSentinel aplicado'
     });
   }
 )));
@@ -282,7 +282,7 @@ app.post('/admin/products', async (req: any, res: any) => {
 app.use((req: any, res: any, next: any) => {
   // Middleware global
   res.setHeader('X-API-Version', '1.0.0');
-  res.setHeader('X-Powered-By', 'PureCore-Apify-Fastify');
+  res.setHeader('X-Powered-By', 'PureCore-FourPi-Fastify');
 
   next();
 });
@@ -333,7 +333,7 @@ app.listen(PORT, () => {
   console.log('   ✅ Hooks Fastify funcionando');
   console.log('   ✅ Decorators Fastify disponíveis');
   console.log('   ✅ Validação Zod automática');
-  console.log('   ✅ Decorators PureCore Apify');
+  console.log('   ✅ Decorators PureCore FourPi');
   console.log('   ✅ Sistema de autenticação');
   console.log('==========================================\n');
 

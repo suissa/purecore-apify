@@ -524,7 +524,7 @@ import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(
       name
     )}.service';
 import { ${dtoName} } from '../types/dto';
-import { ApifyCompleteSentinel } from '../../decorators';
+import { FourPiCompleteSentinel } from '../../decorators';
 
 export class ${controllerName} {
   constructor(private ${ZodSchemaAnalyzer.toCamelCase(
@@ -534,7 +534,7 @@ export class ${controllerName} {
   /**
    * Lista entidades com paginação
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async list(req: Request, res: Response) {
     try {
       const {
@@ -576,7 +576,7 @@ export class ${controllerName} {
   /**
    * Busca entidade por ID
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -601,7 +601,7 @@ export class ${controllerName} {
   /**
    * Cria nova entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async create(req: Request, res: Response) {
     try {
       const entity = await this.${ZodSchemaAnalyzer.toCamelCase(
@@ -624,7 +624,7 @@ export class ${controllerName} {
   /**
    * Atualiza entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -650,7 +650,7 @@ export class ${controllerName} {
   /**
    * Remove entidade
    */
-  @ApifyCompleteSentinel
+  @FourPiCompleteSentinel
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
