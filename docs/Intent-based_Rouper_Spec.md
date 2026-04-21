@@ -6,7 +6,7 @@ Version: 1.0.0
 
 Context: Full Agent Stack Initiative
 
-Package: @purecore/apify
+Package: @purecore-br/4pi
 
 1. Abstract
 

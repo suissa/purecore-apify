@@ -5,7 +5,7 @@
 <div align="left">
 <h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Visão geral</h2>
 
-<p><code>@purecore/apify</code> expõe a classe <code>Apify</code>, que herda de um roteador compatível com Express.</p>
+<p><code>@purecore-br/4pi</code> expõe a classe <code>Apify</code>, que herda de um roteador compatível com Express.</p>
 
 <p>Você monta sua aplicação exatamente como faria com <code>{ express: () =&gt; app }</code>: registra middlewares com <code>app.use(...)</code>, define <code>app.get/post/put/delete/patch(...)</code> e finaliza com <code>app.listen(...)</code>.</p>
 
@@ -19,20 +19,20 @@
 
 <p>Instalação:</p>
 
-<pre><code>npm i @purecore/apify
+<pre><code>npm i @purecore-br/4pi
 
-yarn add @purecore/apify
+yarn add @purecore-br/4pi
 
-bun add @purecore/apify
+bun add @purecore-br/4pi
 
-pnpm add @purecore/apify
+pnpm add @purecore-br/4pi
 </code></pre>
 
 ## 📋 CHANGELOG
 
 Confira todas as mudanças e atualizações: [CHANGELOG.md](./CHANGELOG.md)
 
-<pre><code>import { Apify, jsonBodyParser } from '@purecore/apify';
+<pre><code>import { Apify, jsonBodyParser } from '@purecore-br/4pi';
 
 const app = new Apify();
 
@@ -51,7 +51,7 @@ const apiRouter = new Apify();
 apiRouter.get('/status', (req, res) =&gt; res.json({ status: 'ok' }));
 app.use('/api', apiRouter);
 
-app.listen(3344, () =&gt; console.log('@purecore/apify rodando na porta 3344'));
+app.listen(3344, () =&gt; console.log('@purecore-br/4pi rodando na porta 3344'));
 </code></pre>
 
 <h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Template</h2>
@@ -79,7 +79,7 @@ app.use('/users', usersRouter);
 
 <p>Você pode criar módulos automaticamente com:</p>
 
-<pre><code>npx @purecore/apify create crud users
+<pre><code>npx @purecore-br/4pi create crud users
 </code></pre>
 
 <p>O comando fará duas coisas:</p>
@@ -91,7 +91,7 @@ app.use('/users', usersRouter);
 
 <p>Caso seu arquivo principal esteja em outro caminho, passe <code>--entry</code>:</p>
 
-<pre><code>npx @purecore/apify create crud billing --entry apps/api/src/main.ts
+<pre><code>npx @purecore-br/4pi create crud billing --entry apps/api/src/main.ts
 </code></pre>
 
 <h2 style="color: rgb(0, 213, 255); font-size: 48px; text-align: center; font-weight: bold;">Decorators disponíveis</h2>
@@ -106,7 +106,7 @@ app.use('/users', usersRouter);
   TraceSpan,
   SmartCache,
   AuthJWTGuard,
-} from '@purecore/apify';
+} from '@purecore-br/4pi';
 
 class UsersController {
   @Logs()
@@ -153,7 +153,7 @@ class UsersController {
 
 ## Visão geral
 
-`@purecore/apify` expõe a classe `Apify`, que herda de um roteador compatível com Express.
+`@purecore-br/4pi` expõe a classe `Apify`, que herda de um roteador compatível com Express.
 
 Você monta sua aplicação exatamente como faria com `{ express: () => app }`: registra middlewares com `app.use(...)`, define `app.get/post/put/delete/patch(...)` e finaliza com `app.listen(...)`.
 
@@ -166,17 +166,17 @@ Os objetos `Request` e `Response` carregam `params`, `query`, `body`, `baseUrl`,
 Instalação:
 
 ```sh
-npm i @purecore/apify
+npm i @purecore-br/4pi
 
-yarn add @purecore/apify
+yarn add @purecore-br/4pi
 
-bun add @purecore/apify
+bun add @purecore-br/4pi
 
-pnpm add @purecore/apify
+pnpm add @purecore-br/4pi
 ```
 
 ```ts
-import { Apify, jsonBodyParser } from '@purecore/apify';
+import { Apify, jsonBodyParser } from '@purecore-br/4pi';
 
 const app = new Apify();
 
@@ -195,7 +195,7 @@ const apiRouter = new Apify();
 apiRouter.get('/status', (req, res) => res.json({ status: 'ok' }));
 app.use('/api', apiRouter);
 
-app.listen(3344, () => console.log('@purecore/apify rodando na porta 3344'));
+app.listen(3344, () => console.log('@purecore-br/4pi rodando na porta 3344'));
 ```
 
 ## Template `modules/<resource>/routes.ts`
@@ -222,7 +222,7 @@ app.use('/users', usersRouter);
 Você pode criar módulos automaticamente com:
 
 ```bash
-npx @purecore/apify create crud users
+npx @purecore-br/4pi create crud users
 ```
 
 O comando fará duas coisas:
@@ -233,12 +233,12 @@ O comando fará duas coisas:
 Caso seu arquivo principal esteja em outro caminho, passe `--entry`:
 
 ```bash
-npx @purecore/apify create crud billing --entry apps/api/src/main.ts
+npx @purecore-br/4pi create crud billing --entry apps/api/src/main.ts
 ```
 
 ## Auto-Geração de Código Baseado em Schemas Zod 🚀
 
-O `@purecore/apify` possui um sistema inédito de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
+O `@purecore-br/4pi` possui um sistema inédito de **auto-geração de código** baseado em schemas Zod! Basta definir um schema Zod simples e o sistema gera automaticamente:
 
 - **Repository** com operações CRUD completas
 - **Service** com regras de negócio
@@ -480,7 +480,7 @@ EOF
 
 ## Auto-Carregamento de Módulos
 
-O `@purecore/apify` detecta automaticamente todas as pastas dentro de `src/modules` e carrega suas rotas com o prefixo padrão `/api/v1`.
+O `@purecore-br/4pi` detecta automaticamente todas as pastas dentro de `src/modules` e carrega suas rotas com o prefixo padrão `/api/v1`.
 
 ### Estrutura de Módulos
 
@@ -496,7 +496,7 @@ src/
 ### Uso Automático
 
 ```ts
-import { Apify } from '@purecore/apify';
+import { Apify } from '@purecore-br/4pi';
 
 const app = new Apify();
 // ✅ Prefixo '/api/v1' configurado automaticamente
@@ -515,7 +515,7 @@ Os módulos podem exportar o router de diferentes formas:
 
 ```ts
 // routes.ts
-import { Router } from '@purecore/apify';
+import { Router } from '@purecore-br/4pi';
 
 const usersRouter = new Router();
 // ... definir rotas ...
@@ -526,7 +526,7 @@ export { usersRouter }; // ✅ Detectado automaticamente
 
 ## Tratamento de Erro Robusto
 
-O `@purecore/apify` inclui um sistema completo de tratamento de erro com status codes apropriados e formatação consistente.
+O `@purecore-br/4pi` inclui um sistema completo de tratamento de erro com status codes apropriados e formatação consistente.
 
 ### Classes de Erro Disponíveis
 
@@ -539,13 +539,13 @@ import {
   ForbiddenError,       // 403
   ConflictError,        // 409
   InternalServerError   // 500
-} from '@purecore/apify';
+} from '@purecore-br/4pi';
 ```
 
 ### Uso Básico
 
 ```typescript
-import { NotFoundError, ValidationError } from '@purecore/apify';
+import { NotFoundError, ValidationError } from '@purecore-br/4pi';
 
 app.get('/users/:id', (req, res) => {
   const { id } = req.params;
@@ -566,7 +566,7 @@ app.get('/users/:id', (req, res) => {
 ### Middleware de Tratamento de Erro
 
 ```typescript
-import { errorHandler } from '@purecore/apify';
+import { errorHandler } from '@purecore-br/4pi';
 
 // Deve ser o ÚLTIMO middleware registrado
 app.use(errorHandler);
@@ -575,7 +575,7 @@ app.use(errorHandler);
 ### Funções Helper
 
 ```typescript
-import { error, validationError } from '@purecore/apify';
+import { error, validationError } from '@purecore-br/4pi';
 
 // Atalho para lançar erro por status code
 throw error(404, 'Recurso não encontrado');
@@ -690,12 +690,12 @@ export { testGeneration };
 
 ## Configuração Padrão Completa ⭐
 
-O `@purecore/apify` agora vem com uma **configuração padrão completa** que ativa **TODOS** os decorators automaticamente! Basta usar o `ApifyCompleteSentinel` e sua API estará completamente equipada com resiliência, observabilidade, segurança e performance.
+O `@purecore-br/4pi` agora vem com uma **configuração padrão completa** que ativa **TODOS** os decorators automaticamente! Basta usar o `ApifyCompleteSentinel` e sua API estará completamente equipada com resiliência, observabilidade, segurança e performance.
 
 ### ApifyCompleteSentinel - Tudo Incluído
 
 ```ts
-import { ApifyCompleteSentinel } from '@purecore/apify';
+import { ApifyCompleteSentinel } from '@purecore-br/4pi';
 
 class UsersController {
   @ApifyCompleteSentinel
@@ -743,7 +743,7 @@ import {
   TraceSpan,
   SmartCache,
   AuthJWTGuard,
-} from '@purecore/apify';
+} from '@purecore-br/4pi';
 
 class UsersController {
   @Logs()
@@ -777,7 +777,7 @@ class UsersController {
 
 ## Helmet.js - Segurança HTTP Nativa
 
-O `@purecore/apify` inclui uma implementação **nativa e completa** de todos os headers de segurança HTTP do [Helmet.js](https://github.com/helmetjs/helmet), sem dependências externas. Todos os headers estão disponíveis como decorators individuais ou através do `HelmetGuard` que combina tudo automaticamente.
+O `@purecore-br/4pi` inclui uma implementação **nativa e completa** de todos os headers de segurança HTTP do [Helmet.js](https://github.com/helmetjs/helmet), sem dependências externas. Todos os headers estão disponíveis como decorators individuais ou através do `HelmetGuard` que combina tudo automaticamente.
 
 ### Headers de Segurança Incluídos
 
@@ -798,7 +798,7 @@ O `@purecore/apify` inclui uma implementação **nativa e completa** de todos os
 ### Uso do HelmetGuard Completo
 
 ```ts
-import { HelmetGuard } from '@purecore/apify';
+import { HelmetGuard } from '@purecore-br/4pi';
 
 class SecureController {
   @HelmetGuard({
@@ -830,7 +830,7 @@ import {
   HSTSGuard,
   XFrameOptionsGuard,
   ReferrerPolicyGuard
-} from '@purecore/apify';
+} from '@purecore-br/4pi';
 
 class ApiController {
   // Content Security Policy personalizado
@@ -872,7 +872,7 @@ class ApiController {
 ### Uso como Middleware
 
 ```ts
-import { helmet } from '@purecore/apify';
+import { helmet } from '@purecore-br/4pi';
 
 // Middleware completo
 app.use(helmet());
@@ -923,7 +923,7 @@ CORP_POLICY=same-origin
 
 ## ❄️👁️ AON & CrystalBox - Observabilidade Adaptativa
 
-O `@purecore/apify` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **❄️👁️ CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
+O `@purecore-br/4pi` implementa o padrão **AON (Adaptive Observability Negotiation)** com o inédito **❄️👁️ CrystalBox Mode**, oferecendo três modos de observabilidade baseados na negociação de conteúdo HTTP.
 
 ### Modos de Observabilidade
 
@@ -965,7 +965,7 @@ X-Early-Hints: 103
 ### Configuração Básica
 
 ```typescript
-import { aonMiddleware, crystalBoxMiddleware } from '@purecore/apify';
+import { aonMiddleware, crystalBoxMiddleware } from '@purecore-br/4pi';
 
 // AON básico (Glass Box)
 app.use(aonMiddleware({
@@ -998,7 +998,7 @@ app.use(crystalBoxMiddleware({
 ### Uso em Rotas
 
 ```typescript
-import { withCrystalBox, requestInteractiveHealing, sendEarlyHints } from '@purecore/apify';
+import { withCrystalBox, requestInteractiveHealing, sendEarlyHints } from '@purecore-br/4pi';
 
 app.get('/api/users/:id', withCrystalBox(async (req, res) => {
   // Envia Early Hints (103) para preload

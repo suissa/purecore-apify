@@ -1,4 +1,4 @@
-# 📋 CHANGELOG - @purecore/apify
+# 📋 CHANGELOG - @purecore-br/4pi
 
 ## [Release] v0.8.1-dependency-fix
 
@@ -68,7 +68,7 @@ async getUsers(req: Request, res: Response) {
 ### Factory Usage
 
 ```typescript
-import { createPureCoreFastify } from "@purecore/apify";
+import { createPureCoreFastify } from "@purecore-br/4pi";
 
 const app = createPureCoreFastify({
   logger: true,
@@ -98,7 +98,7 @@ app.listen(3000, () => {
 
 ### New Contributors
 
-- [@purecore/apify/fastify-factory](https://github.com/suissa/purecore-apify) - Factory Fastify-like
+- [@purecore-br/4pi/fastify-factory](https://github.com/suissa/purecore-apify) - Factory Fastify-like
 - [Fastify](https://fastify.dev/) - Web framework compatibility
 
 ## [Release] v0.5.0-auto-router
@@ -119,7 +119,7 @@ app.listen(3000, () => {
 
 ### New Contributors
 
-- [@purecore/apify](https://github.com/suissa/purecore-apify) - Framework completo de decorators para APIs Node.js/Express
+- [@purecore-br/4pi](https://github.com/suissa/purecore-apify) - Framework completo de decorators para APIs Node.js/Express
 
 ## [Release] v0.6.0-zod-generator
 
@@ -177,6 +177,6 @@ export class ProductValidator {
 
 ### New Contributors
 
-- [@purecore/apify/zod-generator](https://github.com/suissa/purecore-apify) - Gerador automático de schemas Zod
+- [@purecore-br/4pi/zod-generator](https://github.com/suissa/purecore-apify) - Gerador automático de schemas Zod
 - [Zod](https://zod.dev/) - Schema validation with TypeScript
 - [TypeScript Compiler API](https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API) - Interface parsing

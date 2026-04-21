@@ -27,7 +27,7 @@ curl -H "Accept: application/x-ndjson" http://localhost:3000/api/v1/users/123   
 ### Configuração Básica
 
 ```typescript
-import { Apify, createAONMiddleware } from '@purecore/apify';
+import { Apify, createAONMiddleware } from '@purecore-br/4pi';
 
 const app = new Apify();
 
@@ -47,7 +47,7 @@ app.setAONConfig({
 ### Configurações Predefinidas
 
 ```typescript
-import { AON_DEV_CONFIG, AON_PROD_CONFIG, AON_MINIMAL_CONFIG } from '@purecore/apify';
+import { AON_DEV_CONFIG, AON_PROD_CONFIG, AON_MINIMAL_CONFIG } from '@purecore-br/4pi';
 
 // Desenvolvimento - telemetria detalhada
 app.setAONConfig(AON_DEV_CONFIG);
@@ -64,7 +64,7 @@ app.setAONConfig(AON_MINIMAL_CONFIG);
 ### Rota com AON Explícito
 
 ```typescript
-import { withAON, reportStatus, performHealing, analyzeIntent } from '@purecore/apify';
+import { withAON, reportStatus, performHealing, analyzeIntent } from '@purecore-br/4pi';
 
 app.get('/api/users/:id', withAON(async (req, res) => {
   const userId = req.params.id;
@@ -184,7 +184,7 @@ await performHealing(req, 'refresh_token', 'Token expirado', {
 ### Custom Healing Actions
 
 ```typescript
-import { createAONHealer } from '@purecore/apify';
+import { createAONHealer } from '@purecore-br/4pi';
 
 const healer = createAONHealer(writer);
 

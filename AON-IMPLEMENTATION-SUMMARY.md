@@ -96,7 +96,7 @@ curl -H "Accept: application/x-ndjson" http://localhost:3000/api/v1/users/123
 
 #### 1. **Configuração Básica**
 ```typescript
-import { Apify, createAONMiddleware } from '@purecore/apify';
+import { Apify, createAONMiddleware } from '@purecore-br/4pi';
 
 const app = new Apify();
 app.use(createAONMiddleware()); // Auto-configuração baseada no ambiente
@@ -104,7 +104,7 @@ app.use(createAONMiddleware()); // Auto-configuração baseada no ambiente
 
 #### 2. **Rota com AON**
 ```typescript
-import { withAON, reportStatus, performHealing } from '@purecore/apify';
+import { withAON, reportStatus, performHealing } from '@purecore-br/4pi';
 
 app.get('/users/:id', withAON(async (req, res) => {
   reportStatus(req, 'Buscando usuário...');

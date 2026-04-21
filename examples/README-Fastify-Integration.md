@@ -18,7 +18,7 @@ A integração Fastify do PureCore Apify oferece:
 ### Factory Fastify-like
 
 ```typescript
-import { createPureCoreFastify } from '@purecore/apify';
+import { createPureCoreFastify } from '@purecore-br/4pi';
 
 const app = createPureCoreFastify({
   logger: true,
@@ -74,7 +74,7 @@ app.decorate('db', myDatabaseConnection);
 ### Decorators de Segurança
 
 ```typescript
-import { ApifyCompleteSentinel, SecuritySentinel } from '@purecore/apify';
+import { ApifyCompleteSentinel, SecuritySentinel } from '@purecore-br/4pi';
 
 app.post('/secure-route',
   withDecorators([ApifyCompleteSentinel], async (req, res) => {
@@ -114,7 +114,7 @@ DatabaseSentinel
 ### Handlers com Validação Automática
 
 ```typescript
-import { createValidatedHandler } from '@purecore/apify';
+import { createValidatedHandler } from '@purecore-br/4pi';
 import { ProductValidator } from './product.schema.js';
 
 // Handler com validação automática
@@ -173,7 +173,7 @@ export class ProductValidator {
 ### 1. Setup da Aplicação
 
 ```typescript
-import { createPureCoreFastify, corsPlugin, jwtPlugin } from '@purecore/apify';
+import { createPureCoreFastify, corsPlugin, jwtPlugin } from '@purecore-br/4pi';
 
 const app = createPureCoreFastify();
 

@@ -1,7 +1,7 @@
 import { t } from "./i18n.js";
 
 /**
- * Classes de erro específicas para @purecore/apify
+ * Classes de erro específicas para @purecore-br/4pi
  * Cada erro inclui o status code HTTP apropriado
  * Suporte completo a i18n com pt-BR
  */

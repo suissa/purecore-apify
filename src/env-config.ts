@@ -1,10 +1,10 @@
 /**
- * Configuração padrão de ambiente para @purecore/apify
+ * Configuração padrão de ambiente para @purecore-br/4pi
  * Este arquivo contém todas as configurações padrão que ativam TODOS os decorators
  */
 
 export const DEFAULT_ENV_CONFIG = `# =========================================
-# @purecore/apify - Configuração Padrão
+# @purecore-br/4pi - Configuração Padrão
 # =========================================
 # Esta configuração ativa TODOS os decorators por padrão
 # A biblioteca vem "completa" sem que o dev precise fazer nada

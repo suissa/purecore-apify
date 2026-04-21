@@ -6,7 +6,7 @@ Version: 1.0.0
 
 Context: Full Agent Stack Initiative
 
-Package: @purecore/apify
+Package: @purecore-br/4pi
 
 1. Abstract
 
@@ -131,7 +131,7 @@ Business Logic (Sua Função)
 
 Exemplo de como o roteador é instanciado e utilizado na Full Agent Stack.
 
-import { Apify, Get, Post, Body, Security } from '@purecore/apify';
+import { Apify, Get, Post, Body, Security } from '@purecore-br/4pi';
 
 // 1. Inicialização (Zero Config)
 const app = new Apify({

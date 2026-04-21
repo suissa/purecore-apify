@@ -346,7 +346,7 @@ export const PerformanceSentinel = PresetDecoratorFactory([
 ]);
 
 /**
- * Apify Sentinel - Preset completo para APIs @purecore/apify
+ * Apify Sentinel - Preset completo para APIs @purecore-br/4pi
  */
 export const ApifySentinel = PresetDecoratorFactory([
   Logs,
@@ -736,7 +736,7 @@ export function setupCommonDependencies() {
  * Inicialização completa do sistema de decorators
  */
 export function initializeDecorators() {
-  console.log('🎨 Sistema de Decorators @purecore/apify inicializado');
+  console.log('🎨 Sistema de Decorators @purecore-br/4pi inicializado');
 
   // Registrar dependências comuns
   setupCommonDependencies();
