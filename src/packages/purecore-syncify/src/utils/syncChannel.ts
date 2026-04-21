@@ -143,7 +143,7 @@ export class SyncChannel<TSend = unknown, TReceive = unknown> {
       return false;
     }
 
-    this.peer.receiveMessage(message as unknown as ChannelMessage<TReceive>);
+    this.peer.receiveMessage(message as any);
     return true;
   }
 
@@ -179,7 +179,7 @@ export class SyncChannel<TSend = unknown, TReceive = unknown> {
         timeout: timeoutId
       });
 
-      this.peer!.receiveMessage(message as unknown as ChannelMessage<TReceive>);
+      this.peer!.receiveMessage(message as any);
     });
   }
 
@@ -214,7 +214,7 @@ export class SyncChannel<TSend = unknown, TReceive = unknown> {
             timestamp: new Date(),
             correlationId: message.correlationId
           };
-          this.peer.receiveMessage(responseMessage as ChannelMessage<TReceive>);
+          this.peer.receiveMessage(responseMessage as any);
         }
 
       } catch (error) {
@@ -275,7 +275,7 @@ export class SyncChannel<TSend = unknown, TReceive = unknown> {
 
     while (this.buffer.length > 0) {
       const message = this.buffer.shift()!;
-      this.peer.receiveMessage(message as unknown as ChannelMessage<TReceive>);
+      this.peer.receiveMessage(message as any);
     }
   }
 

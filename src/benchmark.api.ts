@@ -62,7 +62,8 @@ app.get('/api/io-wait', async (req: Request, res: Response) => {
 import { executeCpuTask } from './workers/cpu-worker.js';
 
 app.get('/api/cpu-heavy/:level', async (req: Request, res: Response) => {
-  const level = parseInt(req.params.level) || 10;
+  const levelParam = req.params.level;
+  const level = Number.isFinite(Number(levelParam)) ? parseInt(levelParam as string, 10) : 10;
   
   // Nível de segurança para não travar seu PC no benchmark
   const n = Math.min(level, 35); 

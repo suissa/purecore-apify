@@ -6,14 +6,14 @@ export interface PatientServiceCreateInput {
   email: string;
   phone: string;
   birthDate: string;
-  address?: object;
+  address?: string;
 }
 
 export interface PatientServiceUpdateInput {
   email?: string;
   phone?: string;
   birthDate?: string;
-  address?: object;
+  address?: string;
 }
 
 export class PatientService {

@@ -266,6 +266,8 @@ export class Api extends Router {
             );
             return errorHandler(notFoundError, appReq, appRes, () => {});
           }
+
+          return;
         };
 
         // 4. Passa a bola para a lógica do Router (herdada!)

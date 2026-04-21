@@ -3,5 +3,5 @@ export interface IPatient {
   email: string;
   phone: string;
   birthDate: string;
-  address?: Address;
+  address?: string;
 }

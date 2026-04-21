@@ -95,11 +95,11 @@ export interface IRouter {
   use(handler: RequestHandler | IRouter): void;
   use(path: string, handler: RequestHandler | IRouter): void;
 
-  get(path: string, handler: RequestHandler): void;
-  post(path: string, handler: RequestHandler): void;
-  put(path: string, handler: RequestHandler): void;
-  delete(path: string, handler: RequestHandler): void;
-  patch(path: string, handler: RequestHandler): void;
+  get(path: string, ...handlers: RequestHandler[]): void;
+  post(path: string, ...handlers: RequestHandler[]): void;
+  put(path: string, ...handlers: RequestHandler[]): void;
+  delete(path: string, ...handlers: RequestHandler[]): void;
+  patch(path: string, ...handlers: RequestHandler[]): void;
   // Se quiser ser compatível com o erro 'all', adicione aqui ou implemente na classe:
   // all(path: string, handler: RequestHandler): void;
 }

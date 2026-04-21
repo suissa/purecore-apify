@@ -593,5 +593,13 @@ export const helmet = (options?: HelmetOptions): RequestHandler => {
     },
   });
 
-  return descriptor.value;
+  const maybeDescriptor =
+    descriptor && typeof descriptor === "object" ? (descriptor as any) : undefined;
+
+  if (maybeDescriptor?.value && typeof maybeDescriptor.value === "function") {
+    return maybeDescriptor.value as RequestHandler;
+  }
+
+  // Fallback seguro: não aplica headers, mas mantém compatibilidade de runtime.
+  return (_req, _res, next) => next();
 };

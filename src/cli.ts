@@ -25,7 +25,9 @@ if (args.length < 3) {
   fatal('Argumentos insuficientes.');
 }
 
-const [command, templateArg, resourceArg] = args;
+const command = args[0]!;
+const templateArg = args[1]!;
+const resourceArg = args[2]!;
 
 if (command !== 'create') {
   fatal(`Comando "${command}" não suportado.`);
@@ -43,7 +45,9 @@ if (!resourceName) {
 
 const entryFlagIndex = args.indexOf('--entry');
 const configuredEntry =
-  entryFlagIndex >= 0 && args[entryFlagIndex + 1] ? args[entryFlagIndex + 1] : 'src/index.ts';
+  entryFlagIndex >= 0 && args[entryFlagIndex + 1]
+    ? (args[entryFlagIndex + 1] as string)
+    : 'src/index.ts';
 
 const cwd = process.cwd();
 const modulesDir = join(cwd, 'modules', resourceName);

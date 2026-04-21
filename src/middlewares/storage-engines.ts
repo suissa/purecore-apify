@@ -94,7 +94,7 @@ export class DiskStorageEngine implements StorageEngine {
     }
 
     import('node:fs').then(({ unlink }) => {
-      unlink(file.path!, callback);
+      unlink(file.path!, (err) => callback(err || undefined));
     }).catch(callback);
   }
 }

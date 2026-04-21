@@ -1,5 +1,5 @@
 import { prisma } from "../../../lib/prisma";
-import { SignJWT } from "@purecore/one-jwt-4-all"; // Assuming this export exists
+import { SignJWT } from "@purecore-br/jwt";
 import { BadRequestError } from "../../../errors";
 
 export class AuthService {
@@ -9,7 +9,7 @@ export class AuthService {
     });
     if (existing) throw new BadRequestError("Email already in use");
 
-    const hashedPassword = await Bun.password.hash(data.password);
+    const hashedPassword = await (Bun as any).password.hash(data.password);
 
     // Create user
     const user = await prisma.user.create({
@@ -28,7 +28,7 @@ export class AuthService {
     const user = await prisma.user.findUnique({ where: { email: data.email } });
     if (!user) throw new BadRequestError("Invalid credentials");
 
-    const valid = await Bun.password.verify(data.password, user.password);
+    const valid = await (Bun as any).password.verify(data.password, user.password);
     if (!valid) throw new BadRequestError("Invalid credentials");
 
     return this.generateResponse(user);
@@ -38,11 +38,11 @@ export class AuthService {
     const secret = new TextEncoder().encode(
       process.env.JWT_SECRET || "default_secret_change_me"
     );
-    const token = await new SignJWT({ id: user.id, role: user.role })
+    const token = await new (SignJWT as any)({ id: user.id, role: user.role })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("24h")
-      .sign(secret);
+      .sign(Buffer.from(secret));
 
     return {
       token,

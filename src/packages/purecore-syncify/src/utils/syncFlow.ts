@@ -107,7 +107,7 @@ export async function syncFlow<T, R>(
   };
 
   for (let i = 0; i < fns.length; i++) {
-    const stepResult = await executeWithTimeout(fns[i], currentValue, i);
+    const stepResult = await executeWithTimeout(fns[i]!, currentValue, i);
     steps.push(stepResult);
 
     if (!stepResult.success) {
@@ -236,7 +236,7 @@ export async function syncFlowWithController<T, R>(
     const stepStart = Date.now();
 
     try {
-      const result = await fns[i](currentValue);
+      const result = await fns[i]!(currentValue);
       
       const stepResult: ExecutionResult<unknown> = {
         success: true,

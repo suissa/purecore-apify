@@ -91,7 +91,8 @@ export class NativeMultipartParser {
 
   private extractBoundary(contentType: string): string | null {
     const match = contentType.match(/boundary=(.+)$/);
-    return match ? match[1].replace(/"/g, '') : null;
+    const boundary = match?.[1];
+    return boundary ? boundary.replace(/"/g, '') : null;
   }
 
   private async parseMultipartBuffer(buffer: Buffer, boundary: string): Promise<{ fields: Record<string, string>, files: UploadedFile[] }> {
@@ -115,10 +116,12 @@ export class NativeMultipartParser {
       if (!nameMatch) continue;
 
       const fieldName = nameMatch[1];
+      if (!fieldName) continue;
 
       if (filenameMatch) {
         // É um arquivo
         const filename = filenameMatch[1];
+        if (!filename) continue;
         const contentType = headers['content-type'] || 'application/octet-stream';
         
         if (this.options.allowedMimeTypes.length > 0 && 
@@ -208,17 +211,20 @@ export class NativeMultipartParser {
           return;
         }
 
+        const finalFilename =
+          info?.filename || `${Date.now()}-${randomUUID()}-${originalName}`;
+        const finalDestination = info?.destination || this.options.uploadDir;
+        const finalPath = info?.path || join(finalDestination, finalFilename);
+
         const uploadedFile: UploadedFile = {
           fieldname: fieldName,
           originalname: originalName,
           encoding: '7bit',
           mimetype: mimeType,
           size: buffer.length,
-          destination: info?.destination || this.options.uploadDir,
-          filename: info?.filename || `${Date.now()}-${randomUUID()}-${originalName}`,
-          path: info?.path,
-          buffer: info?.buffer,
-          location: info?.location
+          destination: finalDestination,
+          filename: finalFilename,
+          path: finalPath
         };
 
         resolve(uploadedFile);

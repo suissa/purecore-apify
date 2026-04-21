@@ -1,9 +1,9 @@
 export class PatientDTO {
-  name: string;
-  email: string;
-  phone: string;
-  birthDate: string;
-  address?: Address;
+  name!: string;
+  email!: string;
+  phone!: string;
+  birthDate!: string;
+  address?: string;
 
   constructor(data: Partial<PatientDTO>) {
     Object.assign(this, data);

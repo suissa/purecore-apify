@@ -72,8 +72,8 @@ const parseCondition = (
     return negate ? { [condition]: { $ne: true } } : { [condition]: true };
   }
 
-  const [, key, op, rawVal] = match;
-  const value = inferValue(rawVal);
+  const [, key, op, rawVal] = match!;
+  const value = inferValue(rawVal!);
   let queryOp: Record<string, any> = {};
 
   switch (op) {
@@ -100,7 +100,7 @@ const parseCondition = (
       break;
   }
 
-  return negate ? { [key]: { $not: queryOp } } : { [key]: queryOp };
+  return negate ? { [key!]: { $not: queryOp } } : { [key!]: queryOp };
 };
 
 /**
@@ -115,7 +115,7 @@ const parseAndGroup = (groupStr: string): Record<string, any> => {
     return parseCondition(cleanPart, isNegated);
   });
 
-  return queries.length === 1 ? queries[0] : { $and: queries };
+  return queries.length === 1 ? queries[0]! : { $and: queries };
 };
 
 /**
@@ -132,7 +132,7 @@ export const parseSymbolicFilter = (filter: RawFilterString): MongoQuery => {
 
   const result = orGroups.map(parseAndGroup);
 
-  const finalQuery = result.length === 1 ? result[0] : { $or: result };
+  const finalQuery = result.length === 1 ? result[0]! : { $or: result };
 
   return finalQuery as MongoQuery;
 };

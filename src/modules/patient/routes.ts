@@ -1,7 +1,7 @@
 import { Router } from '../../router';
-import { PatientController } from '../controllers/patient.controller';
-import { PatientService } from '../services/patient.service';
-import { PatientRepository } from '../database/repository';
+import { PatientController } from './controllers/patient.controller';
+import { PatientService } from './services/patient.service';
+import { PatientRepository } from './database/repository';
 
 // Instâncias dos serviços
 const patientRepository = new PatientRepository();

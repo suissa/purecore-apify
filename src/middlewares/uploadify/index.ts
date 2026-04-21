@@ -61,7 +61,7 @@ class Uploadify {
   private async handleRequest(req: Request, res: Response, next: NextFunction, mode: string, config: any) {
     if (!req.headers['content-type']?.includes('multipart/form-data')) return next();
 
-    const boundary = this.getBoundary(req.headers['content-type']);
+    const boundary = this.getBoundary(req.headers['content-type']!);
     if (!boundary) {
       this.addNotification(req, 'INVALID_BOUNDARY', 'Could not find boundary');
       return next();
@@ -218,7 +218,7 @@ class Uploadify {
 
   private getBoundary(contentType: string): string | null {
     const match = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
-    return match ? (match[1] || match[2]) : null;
+    return match ? (match[1] || match[2] || null) : null;
   }
 
   private addNotification(req: Request, code: string, message: string) {

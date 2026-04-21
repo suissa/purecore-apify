@@ -85,7 +85,8 @@ class IntentHealer {
     currentPath: string
   ): { corrected: string; confidence: number } | null {
     // Remove query string e trailing slash para comparação
-    const cleanPath = currentPath.split("?")[0].replace(/\/+$/, "");
+    const cleanPath = (currentPath.split("?")[0] ?? "").replace(/\/+$/, "");
+    if (!cleanPath) return null;
 
     // Se já é válido, ignora
     if (this.options.validRoutes.includes(cleanPath)) return null;

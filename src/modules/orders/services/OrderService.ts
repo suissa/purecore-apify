@@ -11,7 +11,7 @@ export class OrderService {
 
     // Fetch products to calculate total and check validity
     let total = 0;
-    const orderItemsData = [];
+    const orderItemsData: { productId: string; quantity: number; price: number }[] = [];
 
     for (const item of items) {
       const product = await prisma.product.findUnique({
@@ -35,7 +35,7 @@ export class OrderService {
     }
 
     // Transaction: Create Order & Items, Update Stock
-    return prisma.$transaction(async (tx) => {
+    return (prisma as any).$transaction(async (tx: any) => {
       // Create Order
       const order = await tx.order.create({
         data: {

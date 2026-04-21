@@ -147,14 +147,14 @@ export class AutoRoutesGenerator {
       case 'read':
         // Verifica se tem "By" para identificador customizado
         const byMatch = fileName.match(/By([A-Z]\w*)$/);
-        if (byMatch) {
-          const identifier = byMatch[1].toLowerCase();
+        const readIdentifier = byMatch?.[1]?.toLowerCase();
+        if (readIdentifier) {
           configs.push({
             entity,
             action,
             method: 'GET',
-            path: `${basePath}/${identifier}/:${identifier}`,
-            identifier,
+            path: `${basePath}/${readIdentifier}/:${readIdentifier}`,
+            identifier: readIdentifier,
           });
         } else {
           // GET padrão com ID
@@ -180,14 +180,14 @@ export class AutoRoutesGenerator {
         const updateByMatch = fileName.match(/By([A-Z]\w*)$/);
         const isMany = fileName.includes('Many');
 
-        if (updateByMatch) {
-          const identifier = updateByMatch[1].toLowerCase();
+        const updateIdentifier = updateByMatch?.[1]?.toLowerCase();
+        if (updateIdentifier) {
           configs.push({
             entity,
             action: isMany ? 'updateMany' : 'update',
             method: 'PUT',
-            path: `${basePath}/${identifier}/:${identifier}`,
-            identifier,
+            path: `${basePath}/${updateIdentifier}/:${updateIdentifier}`,
+            identifier: updateIdentifier,
             isMany,
           });
         } else {

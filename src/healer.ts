@@ -129,7 +129,7 @@ export class HealerAgent {
    */
   private simpleRouteMatching(errorPath: string, method: string, availableRoutes: string[]): RouteMapping | null {
     // Remove parâmetros da URL para comparação
-    const cleanErrorPath = errorPath.split('?')[0].split('/').filter(Boolean);
+    const cleanErrorPath = (errorPath.split('?')[0] ?? '').split('/').filter(Boolean);
     let bestMatch: { path: string; score: number } | null = null;
 
     for (const route of availableRoutes) {
@@ -139,10 +139,14 @@ export class HealerAgent {
 
       // Compara segmento por segmento
       for (let i = 0; i < Math.min(cleanErrorPath.length, cleanRoute.length); i++) {
-        if (cleanErrorPath[i] === cleanRoute[i]) {
+        const errorSeg = cleanErrorPath[i];
+        const routeSeg = cleanRoute[i];
+        if (!errorSeg || !routeSeg) continue;
+
+        if (errorSeg === routeSeg) {
           matches++;
           score += 1;
-        } else if (cleanRoute[i].startsWith(':')) {
+        } else if (routeSeg.startsWith(':')) {
           // Parâmetro dinâmico vale pontos
           score += 0.8;
         }
@@ -163,7 +167,7 @@ export class HealerAgent {
         originalPath: errorPath,
         correctedPath: bestMatch.path,
         method,
-        confidence: Math.min(bestMatch.score / cleanErrorPath.length, 1),
+        confidence: Math.min(bestMatch.score / Math.max(cleanErrorPath.length, 1), 1),
         createdAt: new Date(),
         usageCount: 1
       };
@@ -202,7 +206,7 @@ Exemplos:
 - Se não houver similar, retorne: "null"
 `;
 
-      const response = await reqify.post(this.config.llmApiUrl!, {
+      const response = await reqify.post(this.config.llmApiUrl! as any, {
         model: this.config.llmModel,
         messages: [{ role: 'user', content: prompt }],
         max_tokens: 100,

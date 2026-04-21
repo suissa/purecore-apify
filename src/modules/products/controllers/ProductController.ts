@@ -12,6 +12,10 @@ export class ProductController {
 
   async get(req: Request, res: Response) {
     const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ error: "ID is required" });
+      return;
+    }
     const product = await productService.getById(id);
     res.json(product);
   }

@@ -36,7 +36,7 @@ export async function syncRace<T>(
   const wrappedFns = fns.map((fn, index) => 
     new Promise<{ result: T; index: number; duration: number }>((resolve, reject) => {
       const fnStart = Date.now();
-      const signal = abortControllers[index].signal;
+      const signal = abortControllers[index]!.signal;
 
       // Checa se já foi cancelado
       if (signal.aborted) {

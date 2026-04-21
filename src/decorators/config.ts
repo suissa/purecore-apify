@@ -158,16 +158,16 @@ export const CORSGuard = (options: CORSOptions = {}): MethodDecorator => {
 };
 
 // HSTS Guard - Reutiliza implementação do helmet.ts
-export const HSTSGuard = HSTSGuardHelmet;
+export const HSTSGuard: (options?: any) => MethodDecorator = HSTSGuardHelmet as any;
 
 // XSS Guard - Reutiliza implementação do security.ts
 export const XSSGuard = XSSGuardSecurity;
 
 // CSRF Guard - Reutiliza implementação do security.ts
-export const CSRFGuard = CSRFGuardSecurity;
+export const CSRFGuard: (options?: any) => MethodDecorator = CSRFGuardSecurity as any;
 
 // Auth Guards - Reutiliza implementação do security.ts
-export const AuthJwtGuard = AuthJWTGuard;
+export const AuthJwtGuard: (options?: any) => MethodDecorator = AuthJWTGuard as any;
 
 // Idempotent Guard - Reutiliza implementação do security.ts
 export const IdempotentGuard = IdempotentGuardSecurity;
@@ -325,7 +325,7 @@ export const ApiCompleteSentinel = PresetDecoratorFactory([
 /**
  * API Sentinel - Para endpoints REST com validação e cache
  */
-export const ApiSentinel = PresetDecoratorFactory([
+export const ApiRestSentinel = PresetDecoratorFactory([
   Logs,
   Metrics,
   ApiCache(300), // 5 minutos de cache

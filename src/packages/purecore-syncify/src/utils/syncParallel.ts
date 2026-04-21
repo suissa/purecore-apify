@@ -130,7 +130,7 @@ async function executeWithConcurrency<T>(
   const workers = Array.from({ length: concurrency }, async () => {
     while (currentIndex < fns.length) {
       const index = currentIndex++;
-      results[index] = await executor(fns[index], index);
+      results[index] = await executor(fns[index]!, index);
     }
   });
 

@@ -68,12 +68,12 @@ class MemoryCache<T = any> {
   private evict(): void {
     if (this.cache.size === 0) return;
 
-    let keyToRemove: string;
+    let keyToRemove: string | undefined;
 
     switch (this.strategy) {
       case 'fifo':
         // Remove o mais antigo (primeiro inserido)
-        keyToRemove = this.cache.keys().next().value;
+        keyToRemove = this.cache.keys().next().value as string | undefined;
         break;
       case 'lru':
         // Remove o menos recentemente usado
@@ -93,7 +93,13 @@ class MemoryCache<T = any> {
         break;
     }
 
-    this.cache.delete(keyToRemove!);
+    // Garantia extra para `noUncheckedIndexedAccess`
+    if (!keyToRemove) {
+      keyToRemove = this.cache.keys().next().value as string | undefined;
+    }
+    if (keyToRemove) {
+      this.cache.delete(keyToRemove);
+    }
   }
 }
 

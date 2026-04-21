@@ -73,7 +73,7 @@ export class NativeMultipartParser {
 
   private extractBoundary(contentType: string): string | null {
     const match = contentType.match(/boundary=(.+)$/);
-    return match ? match[1].replace(/"/g, '') : null;
+    return match ? match[1]!.replace(/"/g, '') : null;
   }
 
   private parseMultipartBuffer(buffer: Buffer, boundary: string): { fields: Field[], files: FileInfo[] } {
@@ -107,7 +107,7 @@ export class NativeMultipartParser {
         throw new MulterError('MISSING_FIELD_NAME');
       }
 
-      const fieldName = nameMatch[1];
+      const fieldName = nameMatch[1]!;
 
       if (fieldName.length > this.limits.fieldNameSize) {
         throw new MulterError('LIMIT_FIELD_KEY', fieldName);
@@ -124,7 +124,7 @@ export class NativeMultipartParser {
           throw new MulterError('LIMIT_FILE_SIZE', fieldName);
         }
 
-        const filename = filenameMatch[1];
+        const filename = filenameMatch[1]!;
         const contentType = headers['content-type'] || 'application/octet-stream';
         
         const stream = Readable.from(body);

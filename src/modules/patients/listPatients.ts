@@ -11,7 +11,9 @@ export const schema = z.object({
 export default async function listPatients(req: Request, res: Response) {
   try {
     // Parâmetros de query já estão em req.query automaticamente
-    const { page = '1', limit = '10', search } = req.query;
+    const page = typeof req.query.page === 'string' ? req.query.page : '1';
+    const limit = typeof req.query.limit === 'string' ? req.query.limit : '10';
+    const search = typeof req.query.search === 'string' ? req.query.search : undefined;
 
     // Simulação de listagem com paginação
     const patients = [

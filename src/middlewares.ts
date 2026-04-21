@@ -160,6 +160,7 @@ export const sessionMiddleware: RequestHandler = (
 // --- 2. JWT Auth Middleware ---
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
+const JWT_SECRET_KEY = Buffer.from(JWT_SECRET);
 
 export const authMiddleware: RequestHandler = async (
   req: Request,
@@ -179,9 +180,12 @@ export const authMiddleware: RequestHandler = async (
   }
 
   const token = parts[1];
+  if (!token) {
+    return res.status(401).json({ error: "Token não fornecido" });
+  }
 
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, JWT_SECRET_KEY);
     authReq.user = payload as UserPayload; // Usuário disponível!
     next();
   } catch (err) {
@@ -219,6 +223,7 @@ export const errorHandler = async (
   res: Response,
   next: NextFunction
 ) => {
+  const errAny = err as any;
   // Se headers já foram enviados, passa adiante
   if (res.headersSent) {
     return next(err);
@@ -256,12 +261,12 @@ export const errorHandler = async (
     statusCode = 400;
     message = "ID ou parâmetro inválido";
     errorType = "BadRequestError";
-  } else if (err.code === 11000) {
+  } else if (errAny?.code === 11000) {
     // Erro de duplicata (MongoDB)
     statusCode = 409;
     message = "Registro já existe";
     errorType = "ConflictError";
-  } else if (err.code === "ENOTFOUND" || err.code === "ECONNREFUSED") {
+  } else if (errAny?.code === "ENOTFOUND" || errAny?.code === "ECONNREFUSED") {
     // Erro de conectividade
     statusCode = 503;
     message = "Serviço temporariamente indisponível";

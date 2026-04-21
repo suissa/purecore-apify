@@ -31,20 +31,20 @@ export class Router implements IRouter {
     this.addLayer("ALL", path, handler as RequestHandler | IRouter);
   }
 
-  get(path: string, handler: RequestHandler) {
-    this.addLayer("GET", path, handler);
+  get(path: string, ...handlers: RequestHandler[]) {
+    handlers.forEach(handler => this.addLayer("GET", path, handler));
   }
-  post(path: string, handler: RequestHandler) {
-    this.addLayer("POST", path, handler);
+  post(path: string, ...handlers: RequestHandler[]) {
+    handlers.forEach(handler => this.addLayer("POST", path, handler));
   }
-  put(path: string, handler: RequestHandler) {
-    this.addLayer("PUT", path, handler);
+  put(path: string, ...handlers: RequestHandler[]) {
+    handlers.forEach(handler => this.addLayer("PUT", path, handler));
   }
-  delete(path: string, handler: RequestHandler) {
-    this.addLayer("DELETE", path, handler);
+  delete(path: string, ...handlers: RequestHandler[]) {
+    handlers.forEach(handler => this.addLayer("DELETE", path, handler));
   }
-  patch(path: string, handler: RequestHandler) {
-    this.addLayer("PATCH", path, handler);
+  patch(path: string, ...handlers: RequestHandler[]) {
+    handlers.forEach(handler => this.addLayer("PATCH", path, handler));
   }
 
   /**

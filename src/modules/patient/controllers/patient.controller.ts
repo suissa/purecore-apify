@@ -1,7 +1,7 @@
-import { Request, Response } from '../../types';
+import { Request, Response } from '../../../types';
 import { PatientService } from '../services/patient.service';
 import { PatientDTO } from '../types/dto';
-import { ApiCompleteSentinel } from '../../decorators';
+import { ApiCompleteSentinel } from '../../../decorators';
 
 export class PatientController {
   constructor(private patientService: PatientService) {}
@@ -53,6 +53,9 @@ export class PatientController {
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      }
 
       const entity = await this.patientService.getById(id);
 
@@ -97,6 +100,9 @@ export class PatientController {
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      }
 
       const entity = await this.patientService.update(id, req.body);
 
@@ -121,10 +127,13 @@ export class PatientController {
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ success: false, error: 'ID é obrigatório' });
+      }
 
       await this.patientService.delete(id);
 
-      res.status(204).send();
+      res.status(204).send(null);
     } catch (error) {
       const statusCode = error instanceof Error && error.message.includes('não encontrado') ? 404 : 500;
       res.status(statusCode).json({

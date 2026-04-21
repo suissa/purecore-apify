@@ -74,7 +74,7 @@ export class ZodSchemaAnalyzer {
     // Define chave primária
     let primaryKey = "id";
     if (!hasId && fields.length > 0) {
-      primaryKey = fields[0].name; // Primeiro campo como PK se não houver id
+      primaryKey = fields[0]!.name; // Primeiro campo como PK se não houver id
     }
 
     return {

@@ -213,7 +213,9 @@ export class NativeCache<K, V> {
       const toRemove = Math.ceil(this.options.maxSize * 0.1); // Remove 10%
       
       for (let i = 0; i < toRemove && i < sortedByAccess.length; i++) {
-        const [key] = sortedByAccess[i];
+        const pair = sortedByAccess[i];
+        if (!pair) break;
+        const [key] = pair;
         this.delete(key);
       }
     }

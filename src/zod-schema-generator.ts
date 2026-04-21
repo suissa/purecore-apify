@@ -306,7 +306,11 @@ export class ZodSchemaGenerator {
       }
     ).refine(
       (data) => {
-        const calculatedTotal = data.items.reduce((sum, item) => sum + item.totalPrice, 0) +
+        const calculatedTotal =
+          data.items.reduce(
+            (sum: number, item: { totalPrice: number }) => sum + item.totalPrice,
+            0
+          ) +
                               data.shippingAmount + data.taxAmount - data.discountAmount;
         return Math.abs(data.totalAmount - calculatedTotal) < 0.01; // Tolerância de 1 centavo
       },
@@ -612,8 +616,8 @@ export class EcommerceExample {
 
     console.log('🛒 Product -> Order:');
     console.log(`   ${validatedProduct.name} foi pedido por ${validatedOrder.customerName}`);
-    console.log(`   Quantidade: ${validatedOrder.items[0].quantity} unidades`);
-    console.log(`   Valor unitário: R$ ${validatedOrder.items[0].unitPrice.toFixed(2)}\n`);
+    console.log(`   Quantidade: ${validatedOrder.items[0]!.quantity} unidades`);
+    console.log(`   Valor unitário: R$ ${validatedOrder.items[0]!.unitPrice.toFixed(2)}\n`);
 
     console.log('💰 Order -> Payment:');
     console.log(`   Pedido ${validatedOrder.id} foi pago via ${validatedPayment.method}`);
@@ -623,7 +627,7 @@ export class EcommerceExample {
     console.log('🔄 Payment -> Stock (Atualização):');
     console.log(`   Após pagamento, estoque de ${validatedProduct.name} será reduzido`);
     console.log(`   Quantidade atual: ${validatedStock.quantity}`);
-    console.log(`   Quantidade após venda: ${validatedStock.quantity - validatedOrder.items[0].quantity}\n`);
+    console.log(`   Quantidade após venda: ${validatedStock.quantity - validatedOrder.items[0]!.quantity}\n`);
 
     // 6. Usar funções de validação individuais
     console.log('🔍 Usando funções de validação individuais:');

@@ -216,7 +216,7 @@ export class Multer {
             if (!filesByField[file.fieldname]) {
               filesByField[file.fieldname] = [];
             }
-            filesByField[file.fieldname].push(file);
+            filesByField[file.fieldname]!.push(file);
           }
           req.files = filesByField;
         }

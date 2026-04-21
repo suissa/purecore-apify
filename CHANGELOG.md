@@ -1,5 +1,19 @@
 # 📋 CHANGELOG - @purecore-br/4pi
 
+## [Release] v0.8.2-build-fix
+
+### What's Changed
+
+- [x] 🐛 **Build (tsc)** - Correção de erros de `strict`/`noUncheckedIndexedAccess` que impediam o `bun run build`.
+- [x] 🐛 **JWT typing shim** - Adicionado shim de tipos para `@purecore-br/jwt` para o TypeScript resolver o módulo durante o build.
+- [x] ♻️ **Decorators exports** - Ajuste de re-exports em `src/decorators/config.ts` para evitar `TS4023` na emissão de `.d.ts`.
+- [x] 🐛 **Native multipart types** - Garantias de `string` (boundary/filename/path) para satisfazer `strict` e manter compatibilidade.
+- [x] 🔧 **Bun lockfile** - `bun install` regenerou `bun.lock` após erro de parsing por caminho duplicado.
+
+### New Contributors
+
+- Nenhum
+
 ## [Release] v0.8.1-dependency-fix
 
 ### What's Changed
