@@ -1,6 +1,6 @@
-import { FourPi } from '../src/index.js';
+import { Api } from '../src/index.js';
 
-const app = new FourPi();
+const app = new Api();
 
 // O prefixo padrão '/api/v1' já está configurado automaticamente
 // E os módulos em src/modules são carregados automaticamente

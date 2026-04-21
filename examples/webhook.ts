@@ -2,10 +2,10 @@
  * Exemplo simples de uma API com apenas uma rota de Webhook
  */
 
-import { FourPi } from '../src/index.js';
+import { Api } from '../src/index.js';
 
 // Inicializa a aplicação
-const app = new FourPi();
+const app = new Api();
 
 // Rota GET para verificação do webhook
 app.get('/webhook', async (req, res) => {

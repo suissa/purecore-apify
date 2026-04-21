@@ -1,6 +1,6 @@
 /**
  * Módulo AON (Adaptive Observability Negotiation)
- * Implementação completa do padrão AONP para PureCore FourPi
+ * Implementação completa do padrão AONP para PureCore Api
  * Inclui CrystalBox Mode - Observabilidade Interativa
  * 
  * @see docs/AONP.md - Especificação AON

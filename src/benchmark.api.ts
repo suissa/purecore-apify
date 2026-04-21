@@ -1,10 +1,10 @@
 import { randomBytes, createHash } from 'node:crypto';
-import { FourPi } from './index';
+import { Api } from './index';
 import { Request, Response, NextFunction } from './types';
 import { Router } from './router';
 const app = new Router();
 const PORT = 3344;
-const fourPi = new FourPi();
+const api = new Api();
 // =============================================================================
 // Cenario 2: JSON Serialization (Memória e CPU leve)
 // Testa a velocidade de alocar objetos e transformar em string (JSON.stringify)
@@ -123,7 +123,7 @@ app.post('/api/echo', (req: Request, res: Response) => {
 });
 
 // Inicia o servidor
-fourPi.listen(PORT, () => {
+api.listen(PORT, () => {
   console.log('=================================================');
   console.log(`🚀 SERVIDOR DE BENCHMARK RODANDO NA PORTA ${PORT}`);
   console.log('=================================================');

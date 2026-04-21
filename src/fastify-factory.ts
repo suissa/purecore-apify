@@ -1,11 +1,11 @@
 /**
- * Fastify-like Factory para PureCore FourPi
+ * Fastify-like Factory para PureCore Api
  * Implementa interface compatível com Fastify mas usa decorators e validators internos
  *
  * Funcionalidades:
  * - API compatível com Fastify (get, post, put, delete, patch)
  * - Suporte a plugins e middlewares do Fastify
- * - Integração com decorators do PureCore FourPi
+ * - Integração com decorators do PureCore Api
  * - Validação automática com schemas Zod
  * - Sistema de hooks do Fastify
  */
@@ -17,7 +17,7 @@ import {
   ServerResponse,
 } from "node:http";
 import {
-  FourPi,
+  Api,
   Request,
   Response,
   NextFunction,
@@ -73,51 +73,51 @@ export interface FastifyPluginOptions {
 // =========================================
 
 export class PureCoreFastify implements FastifyInstance {
-  private app: FourPi;
+  private app: Api;
   private hooks: Map<string, Function[]> = new Map();
   public decorators: Record<string, any> = {};
   public server: Server;
 
   constructor(options: any = {}) {
-    this.app = new FourPi(options.resilientConfig);
+    this.app = new Api(options.resilientConfig);
 
     // Inicializa servidor HTTP
     this.server = createServer(
       async (req: IncomingMessage, res: ServerResponse) => {
         try {
-          // Converte para tipos do FourPi
-          const fourPiReq = req as Request;
-          const fourPiRes = res as Response;
+          // Converte para tipos do Api
+          const apiReq = req as Request;
+          const apiRes = res as Response;
 
           // Inicializa propriedades se não existirem
-          if (!fourPiReq.params) fourPiReq.params = {};
-          if (!fourPiReq.query) fourPiReq.query = {};
-          if (!fourPiReq.body) fourPiReq.body = {};
+          if (!apiReq.params) apiReq.params = {};
+          if (!apiReq.query) apiReq.query = {};
+          if (!apiReq.body) apiReq.body = {};
 
           // Executa hooks 'onRequest'
-          await this.executeHooks("onRequest", fourPiReq, fourPiRes);
+          await this.executeHooks("onRequest", apiReq, apiRes);
 
-          // Processa através do FourPi
-          await this.app.handle(fourPiReq, fourPiRes, async (err?: any) => {
+          // Processa através do Api
+          await this.app.handle(apiReq, apiRes, async (err?: any) => {
             if (err) {
               // Executa hooks 'onError'
-              await this.executeHooks("onError", fourPiReq, fourPiRes, err);
+              await this.executeHooks("onError", apiReq, apiRes, err);
 
               if (!res.headersSent) {
-                await errorHandler(err, fourPiReq, fourPiRes, () => {});
+                await errorHandler(err, apiReq, apiRes, () => {});
               }
               return;
             }
 
             // Executa hooks 'onResponse'
-            await this.executeHooks("onResponse", fourPiReq, fourPiRes);
+            await this.executeHooks("onResponse", apiReq, apiRes);
 
             // Se não houve resposta, retorna 404
             if (!res.headersSent) {
               await errorHandler(
                 new NotFoundError("Route not found"),
-                fourPiReq,
-                fourPiRes,
+                apiReq,
+                apiRes,
                 () => {}
               );
             }
@@ -312,7 +312,7 @@ export interface PureCoreFastifyOptions {
 }
 
 /**
- * Factory para criar instâncias Fastify-like do PureCore FourPi
+ * Factory para criar instâncias Fastify-like do PureCore Api
  */
 export function createPureCoreFastify(
   options: PureCoreFastifyOptions = {}
@@ -424,7 +424,7 @@ export function createValidatedHandler(schema: any, handler: Function) {
 }
 
 /**
- * Helper para integrar decorators do PureCore FourPi
+ * Helper para integrar decorators do PureCore Api
  */
 export function withDecorators(
   decorators: any[],

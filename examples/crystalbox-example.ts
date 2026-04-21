@@ -3,13 +3,13 @@
  * Demonstra healing interativo com notificação de desenvolvedor
  */
 
-import { FourPi, crystalBoxMiddleware, withCrystalBox, requestInteractiveHealing, sendEarlyHints } from '../src/index.js';
+import { Api, crystalBoxMiddleware, withCrystalBox, requestInteractiveHealing, sendEarlyHints } from '../src/index.js';
 
 // =========================================
 // CONFIGURAÇÃO DO SERVIDOR
 // =========================================
 
-const app = new FourPi();
+const app = new Api();
 
 // Configura CrystalBox middleware
 app.use(crystalBoxMiddleware({
