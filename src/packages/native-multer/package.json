@@ -1,0 +1,75 @@
+{
+  "name": "@purecore/native-multer",
+  "version": "1.0.0",
+  "description": "Native Node.js multipart/form-data parser - Drop-in replacement for Multer with superior performance and zero dependencies",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./storage": {
+      "import": "./dist/storage/index.js",
+      "types": "./dist/storage/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node --test test/*.test.js",
+    "test:coverage": "c8 node --test test/*.test.js",
+    "benchmark": "node benchmarks/compare-multer.js",
+    "prepublishOnly": "npm run build && npm test",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "multer",
+    "multipart",
+    "form-data",
+    "file-upload",
+    "native",
+    "zero-dependencies",
+    "performance",
+    "typescript",
+    "node.js",
+    "express",
+    "fastify"
+  ],
+  "author": {
+    "name": "PureCore Team",
+    "email": "team@purecore.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/purecore/native-multer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/purecore/native-multer/issues"
+  },
+  "homepage": "https://github.com/purecore/native-multer#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "c8": "^10.1.2",
+    "rimraf": "^6.0.1"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
+  }
+}

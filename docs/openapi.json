@@ -1,0 +1,159 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Purecore E-commerce API",
+    "version": "1.0.0",
+    "description": "API for E-commerce system built with Purecore/Apify"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" },
+                  "name": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login user",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "List all products",
+        "tags": ["Products"],
+        "responses": {
+          "200": { "description": "List of products" }
+        }
+      },
+      "post": {
+        "summary": "Create a product",
+        "tags": ["Products"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "price": { "type": "number" },
+                  "description": { "type": "string" },
+                  "stock": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Product created" }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Get product details",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Product details" }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "summary": "List user orders",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of orders" }
+        }
+      },
+      "post": {
+        "summary": "Create an order",
+        "tags": ["Orders"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "productId": { "type": "string" },
+                        "quantity": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Order created" }
+        }
+      }
+    }
+  }
+}

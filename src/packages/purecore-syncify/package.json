@@ -1,0 +1,49 @@
+{
+  "name": "@purecore/syncify",
+  "version": "1.0.0",
+  "description": "Biblioteca de utilidades para sincronização de funções assíncronas - syncFlow, syncParallel, syncRace, syncRetry, syncQueue, syncPubSub, syncChannel",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "dev": "bun run src/index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "sync",
+    "async",
+    "flow",
+    "pipe",
+    "parallel",
+    "race",
+    "retry",
+    "queue",
+    "pubsub",
+    "channel",
+    "websocket",
+    "typescript",
+    "decorator"
+  ],
+  "author": "Suissa",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.7.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
+

@@ -1,6 +1,6 @@
 {
-  "name": "@purecore/apify",
-  "version": "0.3.0",
+  "name": "4pi",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,20 +10,68 @@
     "type": "git",
     "url": "https://github.com/suissa/purecore-apify"
   },
+  "bin": {
+    "purecore-apify": "dist/cli.js"
+  },
   "keywords": [
     "api",
-    "purecore"
+    "purecore",
+    "modern-node",
+    "performance",
+    "workers"
   ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js"
+    "dev": "bun run src/index.ts",
+    "start": "node dist/index.js",
+    "create:crud": "node dist/cli.js create crud",
+    "example:ddd": "bun run examples/run-ddd-generator.ts",
+    "example:ddd:test": "bun run examples/test-ddd-generator.ts",
+    "generate:schemas": "tsx generate-zod-schemas.ts",
+    "demo:schemas": "tsx examples/zod-schema-generation.ts",
+    "demo:fastify": "tsx examples/fastify-integration.ts",
+    "dev:fastify": "tsx examples/advanced-fastify-decorators.ts",
+    "dev:aon": "tsx examples/aon-example.ts",
+    "demo:aon": "tsx examples/aon-example.ts",
+    "demo:aon-simple": "node examples/simple-aon-demo.cjs",
+    "demo:crystalbox": "tsx examples/crystalbox-example.ts",
+    "benchmark": "node dist/benchmark.api.js",
+    "test": "node --test test/*.test.js",
+    "test:native": "tsx test/native-multipart.test.ts",
+    "test:performance": "node --test test/performance.test.js",
+    "monitor": "node --inspect dist/index.js"
   },
+  "workspaces": [
+    "src/packages/*",
+    "frontend"
+  ],
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "typescript": "^5.5.3"
+    "@types/node": "^22.10.2",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "cookie": "^1.0.2",
-    "jsonwebtoken": "^9.0.2"
+    "@prisma/client": "5",
+    "@purecore/one-jwt-4-all": "^1.3.0",
+    "@purecore/reqify": "workspace:*",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@types/node": "^25.0.3",
+    "axios": "^1.13.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cookie": "workspace:*",
+    "i18next": "workspace:*",
+    "lucide-react": "^0.562.0",
+    "prisma": "5",
+    "react-router-dom": "^7.11.0",
+    "tailwind-merge": "^3.4.0",
+    "undici-types": "^7.16.0",
+    "zod": "workspace:*"
   }
 }

@@ -8,3 +8,8 @@ dist
 .env.development
 .env.test
 .env.production
+
+packages/**/node_modules
+
+**/package-lock.json
+package-lock.json
