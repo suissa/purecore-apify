@@ -10,9 +10,9 @@
  * - Exemplos completos: Product, Stock, Order, Payment
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { z } from 'zod';
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { z } from "zod";
 
 // =========================================
 // TIPOS E INTERFACES
@@ -37,7 +37,7 @@ export interface InterfaceMetadata {
 }
 
 export interface Relationship {
-  type: 'belongsTo' | 'hasMany' | 'hasOne' | 'manyToMany';
+  type: "belongsTo" | "hasMany" | "hasOne" | "manyToMany";
   targetEntity: string;
   fieldName: string;
   foreignKey?: string;
@@ -55,14 +55,14 @@ export class ZodInterfaceGenerator {
    * Analisa uma interface TypeScript e gera schema Zod
    */
   parseInterface(interfaceCode: string): InterfaceMetadata {
-    const lines = interfaceCode.split('\n');
+    const lines = interfaceCode.split("\n");
     const interfaceMatch = interfaceCode.match(/interface\s+(\w+)/);
 
-    if (!interfaceMatch) {
-      throw new Error('Interface não encontrada no código');
+    if (!interfaceMatch || !interfaceMatch[1]) {
+      throw new Error("Interface não encontrada no código");
     }
 
-    const interfaceName = interfaceMatch[1];
+    const interfaceName: string = interfaceMatch[1];
     const fields: FieldValidation[] = [];
     const relationships: Relationship[] = [];
 
@@ -72,16 +72,23 @@ export class ZodInterfaceGenerator {
     let match;
     while ((match = fieldRegex.exec(interfaceCode)) !== null) {
       const [, fieldName, fieldType] = match;
-      const isOptional = fieldName.endsWith('?');
-      const cleanFieldName = fieldName.replace('?', '');
+      if (!fieldName || !fieldType) continue;
+
+      const isOptional = fieldName.endsWith("?");
+      const cleanFieldName = fieldName.replace("?", "");
 
       // Detecta se é array
-      const isArray = fieldType.trim().endsWith('[]');
-      const cleanType = fieldType.trim().replace('[]', '');
+      const isArray = fieldType.trim().endsWith("[]");
+      const cleanType = fieldType.trim().replace("[]", "");
 
       // Gera schema Zod baseado no tipo
       const zodSchema = this.generateZodSchema(cleanType, isOptional, isArray);
-      const validateFunction = this.generateValidateFunction(cleanFieldName, cleanType, isOptional, isArray);
+      const validateFunction = this.generateValidateFunction(
+        cleanFieldName,
+        cleanType,
+        isOptional,
+        isArray
+      );
 
       fields.push({
         fieldName: cleanFieldName,
@@ -89,24 +96,31 @@ export class ZodInterfaceGenerator {
         isOptional,
         isArray,
         zodSchema,
-        validateFunction
+        validateFunction,
       });
 
       // Detecta relacionamentos
       if (this.isRelationshipType(cleanType)) {
         relationships.push({
           type: this.detectRelationshipType(cleanType, isArray),
-          targetEntity: cleanType.replace(/\[?\]?/g, ''),
+          targetEntity: cleanType.replace(/\[?\]?/g, ""),
           fieldName: cleanFieldName,
-          foreignKey: `${cleanFieldName}Id`
+          foreignKey: `${cleanFieldName}Id`,
         });
       }
     }
 
     // Gera código completo
     const zodSchema = this.generateFullZodSchema(interfaceName, fields);
-    const validationFunctions = this.generateValidationFunctions(interfaceName, fields);
-    const fullSchema = this.generateCompleteSchema(interfaceName, fields, relationships);
+    const validationFunctions = this.generateValidationFunctions(
+      interfaceName,
+      fields
+    );
+    const fullSchema = this.generateCompleteSchema(
+      interfaceName,
+      fields,
+      relationships
+    );
 
     return {
       name: interfaceName,
@@ -114,36 +128,40 @@ export class ZodInterfaceGenerator {
       relationships,
       zodSchema,
       validationFunctions,
-      fullSchema
+      fullSchema,
     };
   }
 
   /**
    * Gera schema Zod para um tipo específico
    */
-  private generateZodSchema(type: string, isOptional: boolean, isArray: boolean): z.ZodTypeAny {
+  private generateZodSchema(
+    type: string,
+    isOptional: boolean,
+    isArray: boolean
+  ): z.ZodTypeAny {
     let schema: z.ZodTypeAny;
 
     switch (type.toLowerCase()) {
-      case 'string':
+      case "string":
         schema = z.string();
         break;
-      case 'number':
+      case "number":
         schema = z.number();
         break;
-      case 'boolean':
+      case "boolean":
         schema = z.boolean();
         break;
-      case 'date':
+      case "date":
         schema = z.date();
         break;
-      case 'uuid':
+      case "uuid":
         schema = z.string().uuid();
         break;
-      case 'email':
+      case "email":
         schema = z.string().email();
         break;
-      case 'url':
+      case "url":
         schema = z.string().url();
         break;
       default:
@@ -169,38 +187,45 @@ export class ZodInterfaceGenerator {
   /**
    * Gera função de validação para um campo específico
    */
-  private generateValidateFunction(fieldName: string, type: string, isOptional: boolean, isArray: boolean): string {
-    const functionName = `validate${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`;
+  private generateValidateFunction(
+    fieldName: string,
+    type: string,
+    isOptional: boolean,
+    isArray: boolean
+  ): string {
+    const functionName = `validate${
+      fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+    }`;
 
-    let schemaCode = '';
+    let schemaCode = "";
 
     switch (type.toLowerCase()) {
-      case 'string':
-        schemaCode = `z.string()${!isOptional ? '' : '.optional()'}`;
+      case "string":
+        schemaCode = `z.string()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'number':
-        schemaCode = `z.number()${!isOptional ? '' : '.optional()'}`;
+      case "number":
+        schemaCode = `z.number()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'boolean':
-        schemaCode = `z.boolean()${!isOptional ? '' : '.optional()'}`;
+      case "boolean":
+        schemaCode = `z.boolean()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'date':
-        schemaCode = `z.date()${!isOptional ? '' : '.optional()'}`;
+      case "date":
+        schemaCode = `z.date()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'uuid':
-        schemaCode = `z.string().uuid()${!isOptional ? '' : '.optional()'}`;
+      case "uuid":
+        schemaCode = `z.string().uuid()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'email':
-        schemaCode = `z.string().email()${!isOptional ? '' : '.optional()'}`;
+      case "email":
+        schemaCode = `z.string().email()${!isOptional ? "" : ".optional()"}`;
         break;
-      case 'url':
-        schemaCode = `z.string().url()${!isOptional ? '' : '.optional()'}`;
+      case "url":
+        schemaCode = `z.string().url()${!isOptional ? "" : ".optional()"}`;
         break;
       default:
         if (this.isRelationshipType(type)) {
-          schemaCode = `z.string().uuid()${!isOptional ? '' : '.optional()'}`;
+          schemaCode = `z.string().uuid()${!isOptional ? "" : ".optional()"}`;
         } else {
-          schemaCode = `z.any()${!isOptional ? '' : '.optional()'}`;
+          schemaCode = `z.any()${!isOptional ? "" : ".optional()"}`;
         }
     }
 
@@ -216,50 +241,55 @@ export const ${functionName}Validator = (value: any) => ${functionName}.safePars
   /**
    * Gera schema Zod completo para a interface
    */
-  private generateFullZodSchema(interfaceName: string, fields: FieldValidation[]): string {
-    const schemaFields = fields.map(field => {
-      let fieldSchema = '';
+  private generateFullZodSchema(
+    interfaceName: string,
+    fields: FieldValidation[]
+  ): string {
+    const schemaFields = fields
+      .map((field) => {
+        let fieldSchema = "";
 
-      switch (field.fieldType.toLowerCase()) {
-        case 'string':
-          fieldSchema = 'z.string()';
-          break;
-        case 'number':
-          fieldSchema = 'z.number()';
-          break;
-        case 'boolean':
-          fieldSchema = 'z.boolean()';
-          break;
-        case 'date':
-          fieldSchema = 'z.date()';
-          break;
-        case 'uuid':
-          fieldSchema = 'z.string().uuid()';
-          break;
-        case 'email':
-          fieldSchema = 'z.string().email()';
-          break;
-        case 'url':
-          fieldSchema = 'z.string().url()';
-          break;
-        default:
-          if (this.isRelationshipType(field.fieldType)) {
-            fieldSchema = 'z.string().uuid()';
-          } else {
-            fieldSchema = 'z.any()';
-          }
-      }
+        switch (field.fieldType.toLowerCase()) {
+          case "string":
+            fieldSchema = "z.string()";
+            break;
+          case "number":
+            fieldSchema = "z.number()";
+            break;
+          case "boolean":
+            fieldSchema = "z.boolean()";
+            break;
+          case "date":
+            fieldSchema = "z.date()";
+            break;
+          case "uuid":
+            fieldSchema = "z.string().uuid()";
+            break;
+          case "email":
+            fieldSchema = "z.string().email()";
+            break;
+          case "url":
+            fieldSchema = "z.string().url()";
+            break;
+          default:
+            if (this.isRelationshipType(field.fieldType)) {
+              fieldSchema = "z.string().uuid()";
+            } else {
+              fieldSchema = "z.any()";
+            }
+        }
 
-      if (field.isArray) {
-        fieldSchema = `z.array(${fieldSchema})`;
-      }
+        if (field.isArray) {
+          fieldSchema = `z.array(${fieldSchema})`;
+        }
 
-      if (field.isOptional) {
-        fieldSchema += '.optional()';
-      }
+        if (field.isOptional) {
+          fieldSchema += ".optional()";
+        }
 
-      return `  ${field.fieldName}: ${fieldSchema},`;
-    }).join('\n');
+        return `  ${field.fieldName}: ${fieldSchema},`;
+      })
+      .join("\n");
 
     return `
 export const ${interfaceName}Schema = z.object({
@@ -272,8 +302,11 @@ export type ${interfaceName} = z.infer<typeof ${interfaceName}Schema>;`;
   /**
    * Gera todas as funções de validação
    */
-  private generateValidationFunctions(interfaceName: string, fields: FieldValidation[]): string {
-    const functions = fields.map(field => field.validateFunction).join('\n');
+  private generateValidationFunctions(
+    interfaceName: string,
+    fields: FieldValidation[]
+  ): string {
+    const functions = fields.map((field) => field.validateFunction).join("\n");
 
     return `
 // =========================================
@@ -293,24 +326,38 @@ export const validate${interfaceName}Strict = (data: any) => ${interfaceName}Sch
   /**
    * Gera schema completo com relacionamentos
    */
-  private generateCompleteSchema(interfaceName: string, fields: FieldValidation[], relationships: Relationship[]): string {
+  private generateCompleteSchema(
+    interfaceName: string,
+    fields: FieldValidation[],
+    relationships: Relationship[]
+  ): string {
     const zodSchema = this.generateFullZodSchema(interfaceName, fields);
-    const validationFunctions = this.generateValidationFunctions(interfaceName, fields);
+    const validationFunctions = this.generateValidationFunctions(
+      interfaceName,
+      fields
+    );
 
-    const relationshipsCode = relationships.length > 0 ? `
+    const relationshipsCode =
+      relationships.length > 0
+        ? `
 // =========================================
 // RELACIONAMENTOS - ${interfaceName}
 // =========================================
 
 export const ${interfaceName}Relationships = {
-${relationships.map(rel => `  ${rel.fieldName}: {
+${relationships
+  .map(
+    (rel) => `  ${rel.fieldName}: {
     type: '${rel.type}' as const,
     targetEntity: '${rel.targetEntity}',
     foreignKey: '${rel.foreignKey}',
-    inverseField: '${rel.inverseField || 'N/A'}'
-  },`).join('\n')}
+    inverseField: '${rel.inverseField || "N/A"}'
+  },`
+  )
+  .join("\n")}
 } as const;
-` : '';
+`
+        : "";
 
     return `${zodSchema}${validationFunctions}${relationshipsCode}`;
   }
@@ -320,18 +367,29 @@ ${relationships.map(rel => `  ${rel.fieldName}: {
    */
   private isRelationshipType(type: string): boolean {
     // Tipos que consideramos como relacionamentos
-    const relationshipTypes = ['Product', 'Stock', 'Order', 'Payment', 'User', 'Customer', 'Category'];
-    return relationshipTypes.includes(type) || type.endsWith('[]');
+    const relationshipTypes = [
+      "Product",
+      "Stock",
+      "Order",
+      "Payment",
+      "User",
+      "Customer",
+      "Category",
+    ];
+    return relationshipTypes.includes(type) || type.endsWith("[]");
   }
 
   /**
    * Detecta o tipo de relacionamento
    */
-  private detectRelationshipType(type: string, isArray: boolean): Relationship['type'] {
+  private detectRelationshipType(
+    type: string,
+    isArray: boolean
+  ): Relationship["type"] {
     if (isArray) {
-      return type.toLowerCase().includes('order') ? 'hasMany' : 'hasMany';
+      return type.toLowerCase().includes("order") ? "hasMany" : "hasMany";
     } else {
-      return type.toLowerCase().includes('order') ? 'belongsTo' : 'belongsTo';
+      return type.toLowerCase().includes("order") ? "belongsTo" : "belongsTo";
     }
   }
 
@@ -365,7 +423,14 @@ export class ${metadata.name}Validator {
 
   static validateField(fieldName: string, value: any) {
     const fieldValidators: Record<string, z.ZodTypeAny> = {
-${metadata.fields.map(field => `      ${field.fieldName}: validate${field.fieldName.charAt(0).toUpperCase() + field.fieldName.slice(1)},`).join('\n')}
+${metadata.fields
+  .map(
+    (field) =>
+      `      ${field.fieldName}: validate${
+        field.fieldName.charAt(0).toUpperCase() + field.fieldName.slice(1)
+      },`
+  )
+  .join("\n")}
     };
 
     const validator = fieldValidators[fieldName];
@@ -392,7 +457,7 @@ export default ${metadata.name}Validator;
 
     // Escreve o arquivo
     const filePath = join(dir, `${metadata.name.toLowerCase()}.schema.ts`);
-    writeFileSync(filePath, fileContent, 'utf-8');
+    writeFileSync(filePath, fileContent, "utf-8");
 
     console.log(`✅ Schema Zod gerado: ${filePath}`);
   }
@@ -490,7 +555,7 @@ interface Payment {
 }
 
 type PaymentMethod = 'credit_card' | 'debit_card' | 'pix' | 'boleto' | 'bank_transfer';
-type PaymentStatus = 'pending' | 'processing' | 'approved' | 'rejected' | 'refunded' | 'cancelled';`
+type PaymentStatus = 'pending' | 'processing' | 'approved' | 'rejected' | 'refunded' | 'cancelled';`,
 };
 
 // =========================================
@@ -503,7 +568,10 @@ export class RelationshipManager {
   /**
    * Registra relacionamentos entre entidades
    */
-  registerRelationships(entityName: string, relationships: Relationship[]): void {
+  registerRelationships(
+    entityName: string,
+    relationships: Relationship[]
+  ): void {
     this.relationships.set(entityName, relationships);
   }
 
@@ -517,17 +585,22 @@ export class RelationshipManager {
   /**
    * Valida relacionamentos entre entidades
    */
-  validateRelationships(data: Record<string, any>): { valid: boolean; errors: string[] } {
+  validateRelationships(data: Record<string, any>): {
+    valid: boolean;
+    errors: string[];
+  } {
     const errors: string[] = [];
 
     for (const [entityName, entityData] of Object.entries(data)) {
       const relationships = this.getRelationships(entityName);
 
       for (const rel of relationships) {
-        if (rel.type === 'belongsTo') {
+        if (rel.type === "belongsTo") {
           const foreignKeyValue = entityData[rel.foreignKey!];
           if (!foreignKeyValue) {
-            errors.push(`${entityName}.${rel.foreignKey} é obrigatório para relacionamento belongsTo`);
+            errors.push(
+              `${entityName}.${rel.foreignKey} é obrigatório para relacionamento belongsTo`
+            );
           }
         }
       }
@@ -535,7 +608,7 @@ export class RelationshipManager {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -547,15 +620,18 @@ export class RelationshipManager {
 
     for (const [entityName, relationships] of this.relationships.entries()) {
       const foreignKeys = relationships
-        .filter(rel => rel.foreignKey)
-        .map(rel => `  FOREIGN KEY (${rel.foreignKey}) REFERENCES ${rel.targetEntity}(id)`)
-        .join(',\n');
+        .filter((rel) => rel.foreignKey)
+        .map(
+          (rel) =>
+            `  FOREIGN KEY (${rel.foreignKey}) REFERENCES ${rel.targetEntity}(id)`
+        )
+        .join(",\n");
 
       const tableSQL = `
 CREATE TABLE ${entityName.toLowerCase()} (
   id VARCHAR(36) PRIMARY KEY,
   -- outros campos aqui
-${foreignKeys ? foreignKeys + ',' : ''}
+${foreignKeys ? foreignKeys + "," : ""}
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );`;
@@ -563,27 +639,32 @@ ${foreignKeys ? foreignKeys + ',' : ''}
       tables.push(tableSQL);
     }
 
-    return tables.join('\n');
+    return tables.join("\n");
   }
 
   /**
    * Gera diagramas de relacionamento em texto
    */
   generateRelationshipDiagram(): string {
-    let diagram = '📊 DIAGRAMA DE RELACIONAMENTOS\n\n';
+    let diagram = "📊 DIAGRAMA DE RELACIONAMENTOS\n\n";
 
     for (const [entityName, relationships] of this.relationships.entries()) {
       diagram += `${entityName}\n`;
 
       for (const rel of relationships) {
-        const arrow = rel.type === 'belongsTo' ? '←' :
-                     rel.type === 'hasMany' ? '→' :
-                     rel.type === 'hasOne' ? '―' : '↔';
+        const arrow =
+          rel.type === "belongsTo"
+            ? "←"
+            : rel.type === "hasMany"
+            ? "→"
+            : rel.type === "hasOne"
+            ? "―"
+            : "↔";
 
         diagram += `  ${arrow} ${rel.targetEntity} (${rel.fieldName})\n`;
       }
 
-      diagram += '\n';
+      diagram += "\n";
     }
 
     return diagram;
@@ -601,8 +682,13 @@ export class ZodSchemaGenerator {
   /**
    * Gera schemas completos para múltiplas interfaces
    */
-  generateSchemas(interfaces: Record<string, string>, outputPath: string): void {
-    console.log('🚀 Gerando schemas Zod a partir de interfaces TypeScript...\n');
+  generateSchemas(
+    interfaces: Record<string, string>,
+    outputPath: string
+  ): void {
+    console.log(
+      "🚀 Gerando schemas Zod a partir de interfaces TypeScript...\n"
+    );
 
     for (const [entityName, interfaceCode] of Object.entries(interfaces)) {
       console.log(`📝 Processando interface: ${entityName}`);
@@ -612,7 +698,10 @@ export class ZodSchemaGenerator {
 
         // Registra relacionamentos
         const metadata = this.generator.parseInterface(interfaceCode);
-        this.relationshipManager.registerRelationships(entityName, metadata.relationships);
+        this.relationshipManager.registerRelationships(
+          entityName,
+          metadata.relationships
+        );
 
         console.log(`✅ Schema gerado para ${entityName}`);
       } catch (error) {
@@ -623,7 +712,7 @@ export class ZodSchemaGenerator {
     // Gera arquivo de relacionamentos
     this.generateRelationshipsFile(outputPath);
 
-    console.log('\n🎉 Todos os schemas foram gerados com sucesso!');
+    console.log("\n🎉 Todos os schemas foram gerados com sucesso!");
     console.log(`📂 Arquivos salvos em: ${outputPath}`);
   }
 
@@ -642,13 +731,20 @@ import { RelationshipManager } from './zod-interface-generator';
 export const relationshipManager = new RelationshipManager();
 
 // Registrar relacionamentos automaticamente
-${Array.from(this.relationshipManager['relationships'].entries()).map(([entityName, relationships]) =>
-  `relationshipManager.registerRelationships('${entityName}', ${JSON.stringify(relationships, null, 2)});`
-).join('\n')}
+${Array.from(this.relationshipManager["relationships"].entries())
+  .map(
+    ([entityName, relationships]) =>
+      `relationshipManager.registerRelationships('${entityName}', ${JSON.stringify(
+        relationships,
+        null,
+        2
+      )});`
+  )
+  .join("\n")}
 
 // Diagrama de relacionamentos
 export const relationshipDiagram = \`
-${this.generateRelationshipDiagram()}
+${this.relationshipManager.generateRelationshipDiagram()}
 \`;
 
 // Validação de relacionamentos
@@ -660,8 +756,8 @@ export const generateTablesSQL = relationshipManager.generateSQLTables.bind(rela
 export default relationshipManager;
 `;
 
-    const filePath = join(outputPath, 'relationships.ts');
-    writeFileSync(filePath, relationshipCode, 'utf-8');
+    const filePath = join(outputPath, "relationships.ts");
+    writeFileSync(filePath, relationshipCode, "utf-8");
     console.log(`✅ Arquivo de relacionamentos gerado: ${filePath}`);
   }
 
@@ -669,100 +765,101 @@ export default relationshipManager;
    * Demonstra uso completo com exemplos
    */
   demonstrateUsage(): void {
-    console.log('\n🎯 DEMONSTRAÇÃO DE USO\n');
+    console.log("\n🎯 DEMONSTRAÇÃO DE USO\n");
 
     // Simula dados de exemplo
     const sampleData = {
       Product: {
-        id: 'prod-123',
-        name: 'Notebook Dell',
-        description: 'Notebook de alta performance',
-        price: 3500.00,
-        category: 'eletronicos',
-        sku: 'NOTE-DELL-001',
-        tags: ['notebook', 'dell', 'gamer'],
+        id: "prod-123",
+        name: "Notebook Dell",
+        description: "Notebook de alta performance",
+        price: 3500.0,
+        category: "eletronicos",
+        sku: "NOTE-DELL-001",
+        tags: ["notebook", "dell", "gamer"],
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
 
       Stock: {
-        id: 'stock-456',
-        productId: 'prod-123',
-        warehouseId: 'wh-001',
+        id: "stock-456",
+        productId: "prod-123",
+        warehouseId: "wh-001",
         quantity: 50,
         reservedQuantity: 5,
         availableQuantity: 45,
         minThreshold: 10,
         maxThreshold: 100,
-        location: 'Prateleira A-12',
-        lastUpdated: new Date()
+        location: "Prateleira A-12",
+        lastUpdated: new Date(),
       },
 
       Order: {
-        id: 'order-789',
-        customerId: 'cust-001',
+        id: "order-789",
+        customerId: "cust-001",
         products: [
           {
-            productId: 'prod-123',
+            productId: "prod-123",
             quantity: 2,
-            unitPrice: 3500.00,
-            totalPrice: 7000.00
-          }
+            unitPrice: 3500.0,
+            totalPrice: 7000.0,
+          },
         ],
-        totalAmount: 7000.00,
-        status: 'confirmed' as const,
+        totalAmount: 7000.0,
+        status: "confirmed" as const,
         shippingAddress: {
-          street: 'Rua das Flores',
-          number: '123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
-          country: 'Brasil'
+          street: "Rua das Flores",
+          number: "123",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
+          country: "Brasil",
         },
         billingAddress: {
-          street: 'Rua das Flores',
-          number: '123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
-          country: 'Brasil'
+          street: "Rua das Flores",
+          number: "123",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
+          country: "Brasil",
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
 
       Payment: {
-        id: 'pay-999',
-        orderId: 'order-789',
-        customerId: 'cust-001',
-        amount: 7000.00,
-        currency: 'BRL',
-        method: 'credit_card' as const,
-        status: 'approved' as const,
-        transactionId: 'txn-123456',
+        id: "pay-999",
+        orderId: "order-789",
+        customerId: "cust-001",
+        amount: 7000.0,
+        currency: "BRL",
+        method: "credit_card" as const,
+        status: "approved" as const,
+        transactionId: "txn-123456",
         installments: 3,
         installmentValue: 2333.33,
         createdAt: new Date(),
-        processedAt: new Date()
-      }
+        processedAt: new Date(),
+      },
     };
 
-    console.log('📦 Dados de exemplo criados');
-    console.log('🔗 Relacionamentos: Product → Stock → Order → Payment');
+    console.log("📦 Dados de exemplo criados");
+    console.log("🔗 Relacionamentos: Product → Stock → Order → Payment");
 
     // Valida relacionamentos
-    const validation = this.relationshipManager.validateRelationships(sampleData);
+    const validation =
+      this.relationshipManager.validateRelationships(sampleData);
     if (validation.valid) {
-      console.log('✅ Relacionamentos válidos');
+      console.log("✅ Relacionamentos válidos");
     } else {
-      console.log('❌ Problemas nos relacionamentos:', validation.errors);
+      console.log("❌ Problemas nos relacionamentos:", validation.errors);
     }
 
-    console.log('\n📊 Diagrama de Relacionamentos:');
+    console.log("\n📊 Diagrama de Relacionamentos:");
     console.log(this.relationshipManager.generateRelationshipDiagram());
 
-    console.log('\n🗄️ SQL das Tabelas:');
+    console.log("\n🗄️ SQL das Tabelas:");
     console.log(this.relationshipManager.generateSQLTables());
   }
 }
@@ -772,7 +869,7 @@ export default relationshipManager;
 // =========================================
 
 export function demonstrateZodSchemaGeneration(): void {
-  console.log('🎨 DEMONSTRAÇÃO DO GERADOR DE SCHEMAS ZOD\n');
+  console.log("🎨 DEMONSTRAÇÃO DO GERADOR DE SCHEMAS ZOD\n");
 
   const generator = new ZodSchemaGenerator();
 
@@ -780,8 +877,10 @@ export function demonstrateZodSchemaGeneration(): void {
   generator.demonstrateUsage();
 
   // Gera schemas (opcional - desabilitado por padrão)
-  console.log('\n💡 Para gerar os arquivos, execute:');
-  console.log('generator.generateSchemas(EXAMPLE_INTERFACES, "./generated-schemas")');
+  console.log("\n💡 Para gerar os arquivos, execute:");
+  console.log(
+    'generator.generateSchemas(EXAMPLE_INTERFACES, "./generated-schemas")'
+  );
 }
 
 // Executa demonstração se for arquivo principal

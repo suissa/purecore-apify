@@ -1,19 +1,23 @@
-import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http';
-import { readdirSync, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { Router } from './router';
-import { Request, Response, NextFunction, RequestHandler } from './types';
-import { errorHandler, autoAONMiddleware } from './middlewares';
-import { NotFoundError } from './errors';
-import { initI18n } from './i18n';
-import { getResilientFallback, ResilientConfig } from './healer';
-import { autoGenerateFromZodSchemas } from './auto-generator';
-import { AONConfig } from './aon/index.js';
+import {
+  createServer,
+  Server,
+  IncomingMessage,
+  ServerResponse,
+} from "node:http";
+import { readdirSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
+import { Router } from "./router";
+import { Request, Response, NextFunction, RequestHandler } from "./types";
+import { errorHandler, autoAONMiddleware } from "./middlewares";
+import { NotFoundError } from "./errors";
+import { initI18n } from "./i18n";
+import { getResilientFallback, ResilientConfig } from "./healer";
+import { autoGenerateFromZodSchemas } from "./auto-generator";
+import { AONConfig } from "./aon/index.js";
 // Import will be conditional to avoid build issues if file doesn't exist
 
 export class Apify extends Router {
-
-  private apiPrefix: string = '/api/v1';
+  private apiPrefix: string = "/api/v1";
   private modulesLoaded: boolean = false;
   private i18nInitialized: boolean = false;
   private resilientConfig: ResilientConfig = {};
@@ -37,9 +41,9 @@ export class Apify extends Router {
     try {
       await initI18n();
       this.i18nInitialized = true;
-      console.log('✅ Sistema de internacionalização inicializado (pt-BR)');
+      console.log("✅ Sistema de internacionalização inicializado (pt-BR)");
     } catch (error) {
-      console.warn('⚠️  Erro ao inicializar i18n:', (error as Error).message);
+      console.warn("⚠️  Erro ao inicializar i18n:", (error as Error).message);
     }
   }
 
@@ -47,7 +51,7 @@ export class Apify extends Router {
    * Define um novo prefixo para a API
    */
   setApiPrefix(prefix: string): void {
-    this.apiPrefix = prefix.startsWith('/') ? prefix : `/${prefix}`;
+    this.apiPrefix = prefix.startsWith("/") ? prefix : `/${prefix}`;
   }
 
   /**
@@ -95,30 +99,31 @@ export class Apify extends Router {
     if (this.modulesLoaded) return;
 
     const modulesRouter = new Router();
-    const modulesPath = join(process.cwd(), 'src', 'modules');
+    const modulesPath = join(process.cwd(), "src", "modules");
 
     try {
       // Executa auto-geração baseada em schemas Zod antes de carregar módulos
-      console.log('🔧 Verificando necessidade de auto-geração de código...');
+      console.log("🔧 Verificando necessidade de auto-geração de código...");
       await autoGenerateFromZodSchemas({
-        modulesPath: 'src/modules',
+        modulesPath: "src/modules",
         verbose: true,
         force: false,
-        dryRun: false
+        dryRun: false,
       });
 
-      const moduleFolders = readdirSync(modulesPath)
-        .filter((item: string) => statSync(join(modulesPath, item)).isDirectory());
+      const moduleFolders = readdirSync(modulesPath).filter((item: string) =>
+        statSync(join(modulesPath, item)).isDirectory()
+      );
 
       for (const moduleName of moduleFolders) {
         try {
           // Tenta importar routes.ts primeiro, depois routes/index.ts
           let routesPath: string;
           try {
-            routesPath = join(modulesPath, moduleName, 'routes.ts');
+            routesPath = join(modulesPath, moduleName, "routes.ts");
             statSync(routesPath); // Verifica se existe
           } catch {
-            routesPath = join(modulesPath, moduleName, 'routes', 'index.ts');
+            routesPath = join(modulesPath, moduleName, "routes", "index.ts");
             statSync(routesPath); // Verifica se existe
           }
 
@@ -132,11 +137,16 @@ export class Apify extends Router {
             router = module.default;
           } else if (module.router && module.router instanceof Router) {
             router = module.router;
-          } else if (module[`${moduleName}Router`] && module[`${moduleName}Router`] instanceof Router) {
+          } else if (
+            module[`${moduleName}Router`] &&
+            module[`${moduleName}Router`] instanceof Router
+          ) {
             router = module[`${moduleName}Router`];
           } else {
             // Se não encontrou um router específico, assume que o primeiro export é um Router
-            const firstExport = Object.values(module).find(exp => exp instanceof Router);
+            const firstExport = Object.values(module).find(
+              (exp) => exp instanceof Router
+            );
             if (firstExport) {
               router = firstExport as Router;
             } else {
@@ -147,19 +157,25 @@ export class Apify extends Router {
 
           // Registra o router do módulo
           modulesRouter.use(`/${moduleName}`, router);
-          console.log(`✅ Módulo ${moduleName} carregado em ${this.apiPrefix}/${moduleName}`);
-
+          console.log(
+            `✅ Módulo ${moduleName} carregado em ${this.apiPrefix}/${moduleName}`
+          );
         } catch (error) {
-          console.warn(`❌ Erro ao carregar módulo ${moduleName}:`, (error as Error).message);
+          console.warn(
+            `❌ Erro ao carregar módulo ${moduleName}:`,
+            (error as Error).message
+          );
         }
       }
 
       // Registra o router de módulos com o prefixo da API
       this.use(this.apiPrefix, modulesRouter);
       this.modulesLoaded = true;
-
     } catch (error) {
-      console.warn('⚠️  Pasta src/modules não encontrada ou erro ao ler módulos:', (error as Error).message);
+      console.warn(
+        "⚠️  Pasta src/modules não encontrada ou erro ao ler módulos:",
+        (error as Error).message
+      );
     }
   }
 
@@ -167,28 +183,33 @@ export class Apify extends Router {
    * Override dos métodos HTTP para registrar rotas
    */
   get(path: string, handler: RequestHandler): Router {
-    this.registerRoute('GET', path);
-    return super.get(path, handler);
+    this.registerRoute("GET", path);
+    super.get(path, handler);
+    return this;
   }
 
   post(path: string, handler: RequestHandler): Router {
-    this.registerRoute('POST', path);
-    return super.post(path, handler);
+    this.registerRoute("POST", path);
+    super.post(path, handler);
+    return this;
   }
 
   put(path: string, handler: RequestHandler): Router {
-    this.registerRoute('PUT', path);
-    return super.put(path, handler);
+    this.registerRoute("PUT", path);
+    super.put(path, handler);
+    return this;
   }
 
   delete(path: string, handler: RequestHandler): Router {
-    this.registerRoute('DELETE', path);
-    return super.delete(path, handler);
+    this.registerRoute("DELETE", path);
+    super.delete(path, handler);
+    return this;
   }
 
   patch(path: string, handler: RequestHandler): Router {
-    this.registerRoute('PATCH', path);
-    return super.patch(path, handler);
+    this.registerRoute("PATCH", path);
+    super.patch(path, handler);
+    return this;
   }
 
   /**
@@ -202,49 +223,55 @@ export class Apify extends Router {
     const resilientFallback = getResilientFallback(this.resilientConfig);
     resilientFallback.setAvailableRoutes(this.registeredRoutes);
 
-    console.log(`🛡️ Sistema resiliente ativado: ${this.registeredRoutes.length} rotas registradas`);
+    console.log(
+      `🛡️ Sistema resiliente ativado: ${this.registeredRoutes.length} rotas registradas`
+    );
 
-    const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
-      // 1. "Upgrade" dos objetos nativos
-      const appReq = req as Request;
-      const appRes = res as Response;
+    const server = createServer(
+      async (req: IncomingMessage, res: ServerResponse) => {
+        // 1. "Upgrade" dos objetos nativos
+        const appReq = req as Request;
+        const appRes = res as Response;
 
-      // Inicializa propriedades do Request/Response
-      this.augmentRequest(appReq);
-      this.augmentResponse(appRes);
+        // Inicializa propriedades do Request/Response
+        this.augmentRequest(appReq);
+        this.augmentResponse(appRes);
 
-      // 2. Aplica middleware AON se habilitado
-      if (this.aonEnabled) {
-        try {
-          await new Promise<void>((resolve, reject) => {
-            autoAONMiddleware(appReq, appRes, (err?: any) => {
-              if (err) reject(err);
-              else resolve();
+        // 2. Aplica middleware AON se habilitado
+        if (this.aonEnabled) {
+          try {
+            await new Promise<void>((resolve, reject) => {
+              autoAONMiddleware(appReq, appRes, (err?: any) => {
+                if (err) reject(err);
+                else resolve();
+              });
             });
-          });
-        } catch (aonError) {
-          console.warn('⚠️ Erro no middleware AON:', aonError);
-          // Continua sem AON em caso de erro
+          } catch (aonError) {
+            console.warn("⚠️ Erro no middleware AON:", aonError);
+            // Continua sem AON em caso de erro
+          }
         }
+
+        // 3. Handler Final (Caso nenhuma rota do Router responda)
+        const finalHandler: NextFunction = (err) => {
+          if (err) {
+            // Usa o errorHandler middleware para tratamento robusto
+            return errorHandler(err, appReq, appRes, () => {});
+          }
+
+          // Se não houve erro mas nenhuma rota respondeu, é 404
+          if (!res.writableEnded) {
+            const notFoundError = new NotFoundError(
+              `Cannot ${req.method} ${appReq.originalUrl}`
+            );
+            return errorHandler(notFoundError, appReq, appRes, () => {});
+          }
+        };
+
+        // 4. Passa a bola para a lógica do Router (herdada!)
+        await this.handle(appReq, appRes, finalHandler);
       }
-
-      // 3. Handler Final (Caso nenhuma rota do Router responda)
-      const finalHandler: NextFunction = (err) => {
-        if (err) {
-          // Usa o errorHandler middleware para tratamento robusto
-          return errorHandler(err, appReq, appRes, () => {});
-        }
-
-        // Se não houve erro mas nenhuma rota respondeu, é 404
-        if (!res.writableEnded) {
-          const notFoundError = new NotFoundError(`Cannot ${req.method} ${appReq.originalUrl}`);
-          return errorHandler(notFoundError, appReq, appRes, () => {});
-        }
-      };
-
-      // 4. Passa a bola para a lógica do Router (herdada!)
-      await this.handle(appReq, appRes, finalHandler);
-    });
+    );
 
     return server.listen(port, callback);
   }
@@ -252,14 +279,17 @@ export class Apify extends Router {
   // --- Helpers Privados ---
 
   private augmentRequest(req: Request) {
-    req.originalUrl = (req as any).url || '/';
-    req.baseUrl = '';
+    req.originalUrl = (req as any).url || "/";
+    req.baseUrl = "";
     req.params = {};
     req.query = {};
     // req.body será preenchido automaticamente pelo bodyParserMiddleware quando necessário
 
     // Parse Query String
-    const urlObj = new URL((req as any).url || '/', `http://${(req as any).headers.host}`);
+    const urlObj = new URL(
+      (req as any).url || "/",
+      `http://${(req as any).headers.host}`
+    );
     req.query = Object.fromEntries(urlObj.searchParams);
     (req as any).url = urlObj.pathname; // URL interna trabalha só com o pathname
   }
@@ -270,11 +300,11 @@ export class Apify extends Router {
       return res;
     };
     res.json = (data) => {
-      (res as any).setHeader('Content-Type', 'application/json');
+      (res as any).setHeader("Content-Type", "application/json");
       (res as any).end(JSON.stringify(data));
     };
     res.send = (data) => {
-      if (typeof data === 'object') return res.json(data);
+      if (typeof data === "object") return res.json(data);
       (res as any).end(data);
     };
   }
@@ -289,10 +319,10 @@ export async function autoRoutesFromModules(): Promise<Router> {
 
   try {
     // Import dinâmico para evitar problemas de build se o arquivo não existir
-    const { autoGenerateRoutes } = await import('./auto-routes');
+    const { autoGenerateRoutes } = await import("./auto-routes");
     await autoGenerateRoutes(modulesRouter);
   } catch (error) {
-    console.warn('[Apify] Auto-routes not available:', error);
+    console.warn("[Apify] Auto-routes not available:", error);
   }
 
   return modulesRouter;
@@ -303,21 +333,22 @@ export async function autoRoutesFromModules(): Promise<Router> {
  */
 export async function routesFromModules(): Promise<Router> {
   const modulesRouter = new Router();
-  const modulesPath = join(process.cwd(), 'src', 'modules');
+  const modulesPath = join(process.cwd(), "src", "modules");
 
   try {
-    const moduleFolders = readdirSync(modulesPath)
-      .filter((item: string) => statSync(join(modulesPath, item)).isDirectory());
+    const moduleFolders = readdirSync(modulesPath).filter((item: string) =>
+      statSync(join(modulesPath, item)).isDirectory()
+    );
 
     for (const moduleName of moduleFolders) {
       try {
         // Tenta importar routes.ts primeiro, depois routes/index.ts
         let routesPath: string;
         try {
-          routesPath = join(modulesPath, moduleName, 'routes.ts');
+          routesPath = join(modulesPath, moduleName, "routes.ts");
           statSync(routesPath); // Verifica se existe
         } catch {
-          routesPath = join(modulesPath, moduleName, 'routes', 'index.ts');
+          routesPath = join(modulesPath, moduleName, "routes", "index.ts");
           statSync(routesPath); // Verifica se existe
         }
 
@@ -331,10 +362,15 @@ export async function routesFromModules(): Promise<Router> {
           router = module.default;
         } else if (module.router && module.router instanceof Router) {
           router = module.router;
-        } else if (module[`${moduleName}Router`] && module[`${moduleName}Router`] instanceof Router) {
+        } else if (
+          module[`${moduleName}Router`] &&
+          module[`${moduleName}Router`] instanceof Router
+        ) {
           router = module[`${moduleName}Router`];
         } else {
-          const firstExport = Object.values(module).find(exp => exp instanceof Router);
+          const firstExport = Object.values(module).find(
+            (exp) => exp instanceof Router
+          );
           if (firstExport) {
             router = firstExport as Router;
           } else {
@@ -346,29 +382,34 @@ export async function routesFromModules(): Promise<Router> {
         // Registra o router do módulo
         modulesRouter.use(`/${moduleName}`, router);
         console.log(`✅ Módulo ${moduleName} carregado`);
-
       } catch (error) {
-        console.warn(`❌ Erro ao carregar módulo ${moduleName}:`, (error as Error).message);
+        console.warn(
+          `❌ Erro ao carregar módulo ${moduleName}:`,
+          (error as Error).message
+        );
       }
     }
   } catch (error) {
-    console.warn('⚠️  Pasta src/modules não encontrada:', (error as Error).message);
+    console.warn(
+      "⚠️  Pasta src/modules não encontrada:",
+      (error as Error).message
+    );
   }
 
   return modulesRouter;
 }
 
-export { Router } from './router';
-export type { Request, Response, NextFunction, RequestHandler } from './types';
-export type { ResilientConfig, HealerConfig } from './healer';
-export { adapt } from './utils';
-export * from './middlewares';
-export * from './decorators';
-export * from './errors';
-export * from './i18n';
-export * from './healer';
-export * from './aon';
+export { Router } from "./router";
+export type { Request, Response, NextFunction, RequestHandler } from "./types";
+export type { ResilientConfig, HealerConfig } from "./healer";
+export { adapt } from "./utils";
+export * from "./middlewares";
+export * from "./decorators";
+export * from "./errors";
+export * from "./i18n";
+export * from "./healer";
+export * from "./aon";
 
 // Inicializa o sistema de decorators
-import { initializeDecorators } from './decorators/config.js';
+import { initializeDecorators } from "./decorators/config.js";
 initializeDecorators();

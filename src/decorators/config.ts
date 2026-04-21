@@ -4,17 +4,40 @@
  */
 
 // Imports de decorators existentes
-import { Logs, Metrics, TraceSpan } from './observability.js';
-import { CircuitBreaker, Timeout, Failover } from './resilience.js';
-import { AuthExpressGuard, XSSGuard as XSSGuardSecurity, CSRFGuard as CSRFGuardSecurity, AuthJWTGuard, IdempotentGuard as IdempotentGuardSecurity } from './security.js';
-import { CQRS as CQRSPerformance } from './performance.js';
+import { Logs, Metrics, TraceSpan } from "./observability.js";
+import { CircuitBreaker, Timeout, Failover } from "./resilience.js";
+import {
+  AuthExpressGuard,
+  XSSGuard as XSSGuardSecurity,
+  CSRFGuard as CSRFGuardSecurity,
+  AuthJWTGuard,
+  IdempotentGuard as IdempotentGuardSecurity,
+} from "./security.js";
+import { CQRS as CQRSPerformance } from "./performance.js";
 
 // Imports dos novos decorators
-import { PresetDecoratorFactory } from './preset.js';
-import { SchemaValidator, ZodValidator, JoiValidator, YupValidator, AjvValidator } from './schema-validator.js';
-import { Memoization, SmartCache, ApiCache } from './memoization.js';
-import { Inject, LazyInject, InjectMethod, registerDependency, resolveDependency } from './injection.js';
-import { Catch, CatchHttpErrors, CatchValidationErrors, CatchWithRetry } from './catch.js';
+import { PresetDecoratorFactory } from "./preset.js";
+import {
+  SchemaValidator,
+  ZodValidator,
+  JoiValidator,
+  YupValidator,
+  AjvValidator,
+} from "./schema-validator.js";
+import { Memoization, SmartCache, ApiCache } from "./memoization.js";
+import {
+  Inject,
+  LazyInject,
+  InjectMethod,
+  registerDependency,
+  resolveDependency,
+} from "./injection.js";
+import {
+  Catch,
+  CatchHttpErrors,
+  CatchValidationErrors,
+  CatchWithRetry,
+} from "./catch.js";
 
 // Imports dos decorators Helmet (segurança HTTP)
 import {
@@ -33,13 +56,12 @@ import {
   XPermittedCrossDomainPoliciesGuard,
   XPoweredByGuard,
   XXSSProtectionGuard,
-  helmet
-} from './helmet.js';
+  helmet,
+} from "./helmet.js";
 
 // Imports de tipos e JWT
-import { Request, Response, NextFunction, RequestHandler } from '../types';
-import { createHandlerDecorator } from './base';
-import * as jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction, RequestHandler } from "../types";
+import { createHandlerDecorator } from "./base";
 
 // =========================================
 // INTERFACES E TIPOS
@@ -74,13 +96,13 @@ export const CQRS = CQRSPerformance;
 // CORS Guard - Implementação completa de CORS
 export const CORSGuard = (options: CORSOptions = {}): MethodDecorator => {
   const {
-    origin = '*',
-    methods = ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With'],
+    origin = "*",
+    methods = ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders = ["Content-Type", "Authorization", "X-Requested-With"],
     exposedHeaders = [],
     credentials = false,
     maxAge = 86400, // 24 hours
-    optionsSuccessStatus = 204
+    optionsSuccessStatus = 204,
   } = options;
 
   return createHandlerDecorator((handler) => {
@@ -89,38 +111,41 @@ export const CORSGuard = (options: CORSOptions = {}): MethodDecorator => {
       const requestOrigin = req.headers.origin;
 
       // Handle origin
-      if (origin === '*') {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-      } else if (typeof origin === 'string') {
+      if (origin === "*") {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+      } else if (typeof origin === "string") {
         if (origin === requestOrigin) {
-          res.setHeader('Access-Control-Allow-Origin', origin);
+          res.setHeader("Access-Control-Allow-Origin", origin);
         }
       } else if (Array.isArray(origin)) {
         if (requestOrigin && origin.includes(requestOrigin)) {
-          res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+          res.setHeader("Access-Control-Allow-Origin", requestOrigin);
         }
-      } else if (typeof origin === 'function') {
+      } else if (typeof origin === "function") {
         if (origin(requestOrigin)) {
-          res.setHeader('Access-Control-Allow-Origin', requestOrigin || '*');
+          res.setHeader("Access-Control-Allow-Origin", requestOrigin || "*");
         }
       }
 
       // Set other CORS headers
-      if (credentials && res.getHeader('Access-Control-Allow-Origin') !== '*') {
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      if (credentials && res.getHeader("Access-Control-Allow-Origin") !== "*") {
+        res.setHeader("Access-Control-Allow-Credentials", "true");
       }
 
-      res.setHeader('Access-Control-Allow-Methods', methods.join(', '));
-      res.setHeader('Access-Control-Allow-Headers', allowedHeaders.join(', '));
+      res.setHeader("Access-Control-Allow-Methods", methods.join(", "));
+      res.setHeader("Access-Control-Allow-Headers", allowedHeaders.join(", "));
 
       if (exposedHeaders.length > 0) {
-        res.setHeader('Access-Control-Expose-Headers', exposedHeaders.join(', '));
+        res.setHeader(
+          "Access-Control-Expose-Headers",
+          exposedHeaders.join(", ")
+        );
       }
 
-      res.setHeader('Access-Control-Max-Age', maxAge.toString());
+      res.setHeader("Access-Control-Max-Age", maxAge.toString());
 
       // Handle preflight requests
-      if (req.method === 'OPTIONS') {
+      if (req.method === "OPTIONS") {
         res.status(optionsSuccessStatus).end();
         return;
       }
@@ -152,11 +177,7 @@ export const IdempotentGuard = IdempotentGuardSecurity;
 // =========================================
 
 // Performance & Optimization
-export {
-  Memoization,
-  SmartCache,
-  ApiCache
-};
+export { Memoization, SmartCache, ApiCache };
 
 // Validation
 export {
@@ -164,16 +185,11 @@ export {
   ZodValidator,
   JoiValidator,
   YupValidator,
-  AjvValidator
+  AjvValidator,
 };
 
 // Error Handling
-export {
-  Catch,
-  CatchHttpErrors,
-  CatchValidationErrors,
-  CatchWithRetry
-};
+export { Catch, CatchHttpErrors, CatchValidationErrors, CatchWithRetry };
 
 // Dependency Injection
 export {
@@ -181,22 +197,14 @@ export {
   LazyInject,
   InjectMethod,
   registerDependency,
-  resolveDependency
+  resolveDependency,
 };
 
 // Observability (existentes)
-export {
-  Logs,
-  Metrics,
-  TraceSpan
-};
+export { Logs, Metrics, TraceSpan };
 
 // Resilience (existentes)
-export {
-  CircuitBreaker,
-  Timeout,
-  Failover
-};
+export { CircuitBreaker, Timeout, Failover };
 
 // Security (existentes + Helmet)
 export {
@@ -216,7 +224,7 @@ export {
   XPermittedCrossDomainPoliciesGuard,
   XPoweredByGuard,
   XXSSProtectionGuard,
-  helmet // Função helper para middleware
+  helmet, // Função helper para middleware
 };
 
 // =========================================
@@ -234,7 +242,7 @@ export const AutoescaleSentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Failover,
-  AuthExpressGuard
+  AuthExpressGuard,
 ]);
 
 /**
@@ -244,7 +252,7 @@ export const SecuritySentinel = PresetDecoratorFactory([
   CSRFGuard,
   AuthJwtGuard,
   IdempotentGuard,
-  XSSGuard
+  XSSGuard,
 ]);
 
 /**
@@ -255,7 +263,7 @@ export const PerformanceSentinel = PresetDecoratorFactory([
   SmartCache({ ttl: 300 }),
   CORSGuard,
   HSTSGuard,
-  XSSGuard
+  XSSGuard,
 ]);
 
 /**
@@ -269,7 +277,7 @@ export const ApifySentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Failover,
-  AuthExpressGuard
+  AuthExpressGuard,
 ]);
 
 /**
@@ -291,7 +299,7 @@ export const ApifyCompleteSentinel = PresetDecoratorFactory([
     enableAsyncChannel: true,
     enableTelemetry: true,
     enableRequestChunking: true,
-    globalBlocking: true
+    globalBlocking: true,
   }),
   Failover,
 
@@ -305,13 +313,13 @@ export const ApifyCompleteSentinel = PresetDecoratorFactory([
     strictTransportSecurity: true,
     xFrameOptions: true,
     xContentTypeOptions: true,
-    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
     xXssProtection: true,
-    xPoweredBy: true
+    xPoweredBy: true,
   }),
 
   // Performance
-  SmartCache({ ttl: 300 })
+  SmartCache({ ttl: 300 }),
 ]);
 
 /**
@@ -322,7 +330,7 @@ export const ApiSentinel = PresetDecoratorFactory([
   Metrics,
   ApiCache(300), // 5 minutos de cache
   CatchHttpErrors({ logError: true }),
-  AuthExpressGuard
+  AuthExpressGuard,
 ]);
 
 /**
@@ -333,7 +341,7 @@ export const DatabaseSentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Memoization({ ttl: 60 }), // Cache por 1 minuto
-  CatchWithRetry(3, 1000) // 3 tentativas com 1s de delay
+  CatchWithRetry(3, 1000), // 3 tentativas com 1s de delay
 ]);
 
 /**
@@ -344,7 +352,7 @@ export const ExternalApiSentinel = PresetDecoratorFactory([
   CircuitBreaker,
   Timeout,
   Memoization({ ttl: 300 }), // Cache por 5 minutos
-  CatchWithRetry(2, 2000) // 2 tentativas com 2s de delay
+  CatchWithRetry(2, 2000), // 2 tentativas com 2s de delay
 ]);
 
 // =========================================
@@ -365,8 +373,8 @@ class NoAuthManager {
     const noAuthEnv = process.env.NO_AUTH;
     if (noAuthEnv) {
       // Formato: "GET /health, POST /login, GET /status"
-      const routes = noAuthEnv.split(',').map(route => route.trim());
-      routes.forEach(route => {
+      const routes = noAuthEnv.split(",").map((route) => route.trim());
+      routes.forEach((route) => {
         if (route) {
           this.noAuthRoutes.add(route.toLowerCase());
         }
@@ -374,9 +382,9 @@ class NoAuthManager {
     }
 
     // Sempre excluir rotas padrão de health e login
-    this.noAuthRoutes.add('get /health');
-    this.noAuthRoutes.add('post /login');
-    this.noAuthRoutes.add('get /status');
+    this.noAuthRoutes.add("get /health");
+    this.noAuthRoutes.add("post /login");
+    this.noAuthRoutes.add("get /status");
   }
 
   shouldSkipAuth(method: string, path: string): boolean {
@@ -411,16 +419,19 @@ class WSRetryChannel {
     console.log(`🔗 WS Retry Channel registrado para ${routeKey}`);
 
     if (ws.on) {
-      ws.on('message', (data: any) => {
+      ws.on("message", (data: any) => {
         try {
           const message = JSON.parse(data.toString());
           this.handleWSMessage(routeKey, message);
         } catch (error) {
-          console.error(`❌ Erro ao processar mensagem WS para ${routeKey}:`, error);
+          console.error(
+            `❌ Erro ao processar mensagem WS para ${routeKey}:`,
+            error
+          );
         }
       });
 
-      ws.on('close', () => {
+      ws.on("close", () => {
         this.wsConnections.delete(routeKey);
         console.log(`🔌 WS Retry Channel desconectado para ${routeKey}`);
       });
@@ -434,13 +445,13 @@ class WSRetryChannel {
     const { type, requestId, data } = message;
 
     switch (type) {
-      case 'RETRY_REQUEST':
+      case "RETRY_REQUEST":
         this.queueRetryRequest(routeKey, requestId, data);
         break;
-      case 'PROCESS_PARALLEL':
+      case "PROCESS_PARALLEL":
         this.processParallelRequest(routeKey, requestId, data);
         break;
-      case 'CANCEL_RETRY':
+      case "CANCEL_RETRY":
         this.cancelRetryRequest(routeKey, requestId);
         break;
     }
@@ -483,29 +494,32 @@ class WSRetryChannel {
 
         try {
           // Processa em paralelo
-          await this.processParallelRequest(routeKey, request.requestId, request.data);
+          await this.processParallelRequest(
+            routeKey,
+            request.requestId,
+            request.data
+          );
 
           // Notifica via WS sobre sucesso
           this.notifyWSClients(routeKey, {
-            type: 'RETRY_SUCCESS',
+            type: "RETRY_SUCCESS",
             requestId: request.requestId,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-
         } catch (error) {
           console.error(`❌ Falha no retry ${request.requestId}:`, error);
 
           // Notifica via WS sobre falha
           this.notifyWSClients(routeKey, {
-            type: 'RETRY_FAILED',
+            type: "RETRY_FAILED",
             requestId: request.requestId,
-            error: error instanceof Error ? error.message : 'Erro desconhecido',
-            timestamp: Date.now()
+            error: error instanceof Error ? error.message : "Erro desconhecido",
+            timestamp: Date.now(),
           });
         }
 
         // Pequena pausa entre processamentos
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     } finally {
       this.processingChannels.set(routeKey, false);
@@ -515,13 +529,19 @@ class WSRetryChannel {
   /**
    * Processa uma requisição em paralelo
    */
-  private async processParallelRequest(routeKey: string, requestId: string, data: any): Promise<any> {
+  private async processParallelRequest(
+    routeKey: string,
+    requestId: string,
+    data: any
+  ): Promise<any> {
     // Simula processamento paralelo
     console.log(`⚡ Processando ${requestId} em paralelo para ${routeKey}`);
 
     // Aqui seria integrada com o sistema de processamento real
     // Por enquanto, apenas simula
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 1000));
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.random() * 2000 + 1000)
+    );
 
     return { success: true, processedAt: Date.now() };
   }
@@ -531,7 +551,7 @@ class WSRetryChannel {
    */
   private cancelRetryRequest(routeKey: string, requestId: string) {
     const queue = this.retryQueues.get(routeKey) || [];
-    const filteredQueue = queue.filter(req => req.requestId !== requestId);
+    const filteredQueue = queue.filter((req) => req.requestId !== requestId);
     this.retryQueues.set(routeKey, filteredQueue);
 
     console.log(`🚫 Retry ${requestId} cancelado para ${routeKey}`);
@@ -542,7 +562,8 @@ class WSRetryChannel {
    */
   private notifyWSClients(routeKey: string, message: any) {
     const ws = this.wsConnections.get(routeKey);
-    if (ws && ws.readyState === 1) { // OPEN state
+    if (ws && ws.readyState === 1) {
+      // OPEN state
       ws.send(JSON.stringify(message));
     }
   }
@@ -555,15 +576,16 @@ class WSRetryChannel {
       connections: this.wsConnections.size,
       queues: Array.from(this.retryQueues.entries()).map(([route, queue]) => ({
         route,
-        pendingRetries: queue.length
+        pendingRetries: queue.length,
       })),
-      processingChannels: Array.from(this.processingChannels.entries()).filter(([, processing]) => processing).length
+      processingChannels: Array.from(this.processingChannels.entries()).filter(
+        ([, processing]) => processing
+      ).length,
     };
   }
 }
 
 export const wsRetryChannel = new WSRetryChannel();
-
 
 /**
  * Auth Guard condicional que respeita NO_AUTH
@@ -572,8 +594,9 @@ export const ConditionalAuthGuard = (): MethodDecorator => {
   return createHandlerDecorator((handler) => {
     const execute = async (req: Request, res: Response, next: NextFunction) => {
       // Verifica se a rota deve ser excluída da autenticação
-      const routePath = (req as any).route?.path || req.originalUrl || req.url || '';
-      if (noAuthManager.shouldSkipAuth(req.method || '', routePath)) {
+      const routePath =
+        (req as any).route?.path || req.originalUrl || req.url || "";
+      if (noAuthManager.shouldSkipAuth(req.method || "", routePath)) {
         // Pula autenticação para rotas excluídas
         console.log(`🔓 Auth skipped for ${req.method} ${routePath} (NO_AUTH)`);
         return handler(req, res, next);
@@ -581,7 +604,7 @@ export const ConditionalAuthGuard = (): MethodDecorator => {
 
       // Aplica autenticação normal
       if (!(req as AuthRequest).user) {
-        res.status(401).json({ error: 'Usuário não autenticado' });
+        res.status(401).json({ error: "Usuário não autenticado" });
         return;
       }
       return handler(req, res, next);
@@ -590,7 +613,6 @@ export const ConditionalAuthGuard = (): MethodDecorator => {
     return execute;
   });
 };
-
 
 // =========================================
 // UTILITÁRIOS
@@ -601,23 +623,23 @@ export const ConditionalAuthGuard = (): MethodDecorator => {
  */
 export function setupCommonDependencies() {
   // Registrar logger
-  registerDependency('logger', {
+  registerDependency("logger", {
     info: (msg: string, ...args: any[]) => console.log(`ℹ️ ${msg}`, ...args),
     warn: (msg: string, ...args: any[]) => console.warn(`⚠️ ${msg}`, ...args),
-    error: (msg: string, ...args: any[]) => console.error(`❌ ${msg}`, ...args)
+    error: (msg: string, ...args: any[]) => console.error(`❌ ${msg}`, ...args),
   });
 
   // Registrar cache
-  registerDependency('cache', {
+  registerDependency("cache", {
     get: (key: string) => null,
     set: (key: string, value: any) => {},
-    clear: () => {}
+    clear: () => {},
   });
 
   // Registrar database
-  registerDependency('database', {
+  registerDependency("database", {
     connect: () => Promise.resolve(),
-    query: (sql: string) => Promise.resolve([])
+    query: (sql: string) => Promise.resolve([]),
   });
 }
 
@@ -625,40 +647,42 @@ export function setupCommonDependencies() {
  * Inicialização completa do sistema de decorators
  */
 export function initializeDecorators() {
-  console.log('🎨 Sistema de Decorators @purecore/apify inicializado');
+  console.log("🎨 Sistema de Decorators @purecore/apify inicializado");
 
   // Registrar dependências comuns
   setupCommonDependencies();
 
   // Inicializar sistemas especiais
-  console.log('🔧 Inicializando sistemas especiais...');
-  console.log(`🔓 NO_AUTH routes excluídas: ${noAuthManager.getExcludedRoutes().join(', ')}`);
-  console.log('🔗 WS Retry Channel: Ativado');
+  console.log("🔧 Inicializando sistemas especiais...");
+  console.log(
+    `🔓 NO_AUTH routes excluídas: ${noAuthManager
+      .getExcludedRoutes()
+      .join(", ")}`
+  );
+  console.log("🔗 WS Retry Channel: Ativado");
 
   // Log dos presets disponíveis
-  console.log('📦 Presets disponíveis:');
-  console.log('  • AutoescaleSentinel - Alta disponibilidade');
-  console.log('  • SecuritySentinel - Segurança máxima');
-  console.log('  • PerformanceSentinel - Performance otimizada');
-  console.log('  • ApifySentinel - Preset completo');
-  console.log('  • ApiSentinel - Para endpoints REST');
-  console.log('  • DatabaseSentinel - Para operações DB');
-  console.log('  • ExternalApiSentinel - Para APIs externas');
-  console.log('  • ApifyCompleteSentinel - ⭐ CONFIGURAÇÃO PADRÃO COMPLETA ⭐');
+  console.log("📦 Presets disponíveis:");
+  console.log("  • AutoescaleSentinel - Alta disponibilidade");
+  console.log("  • SecuritySentinel - Segurança máxima");
+  console.log("  • PerformanceSentinel - Performance otimizada");
+  console.log("  • ApifySentinel - Preset completo");
+  console.log("  • ApiSentinel - Para endpoints REST");
+  console.log("  • DatabaseSentinel - Para operações DB");
+  console.log("  • ExternalApiSentinel - Para APIs externas");
+  console.log("  • ApifyCompleteSentinel - ⭐ CONFIGURAÇÃO PADRÃO COMPLETA ⭐");
 
-  console.log('\n🚀 ApifyCompleteSentinel inclui:');
-  console.log('  • Circuit Breaker (5 falhas, reset 10s)');
-  console.log('  • Timeout (30s, max 60s, 3 retries)');
-  console.log('  • WS Retry Channel para processamento paralelo');
-  console.log('  • Logger, Metrics, TraceSpan');
-  console.log('  • JWT Auth (com suporte NO_AUTH)');
-  console.log('  • XSS Protection');
-  console.log('  • Smart Cache (5min TTL)');
+  console.log("\n🚀 ApifyCompleteSentinel inclui:");
+  console.log("  • Circuit Breaker (5 falhas, reset 10s)");
+  console.log("  • Timeout (30s, max 60s, 3 retries)");
+  console.log("  • WS Retry Channel para processamento paralelo");
+  console.log("  • Logger, Metrics, TraceSpan");
+  console.log("  • JWT Auth (com suporte NO_AUTH)");
+  console.log("  • XSS Protection");
+  console.log("  • Smart Cache (5min TTL)");
 
-  console.log('\n⚙️  Configurações via .env:');
-  console.log('  • NO_AUTH - Exclui rotas da autenticação');
-  console.log('  • JWT_SECRET - Segredo para tokens JWT');
+  console.log("\n⚙️  Configurações via .env:");
+  console.log("  • NO_AUTH - Exclui rotas da autenticação");
+  console.log("  • JWT_SECRET - Segredo para tokens JWT");
   console.log('  • Exemplo: NO_AUTH="GET /health, POST /login, GET /status"');
 }
-
-

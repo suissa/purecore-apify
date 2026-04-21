@@ -56,31 +56,37 @@ app.get('/api/io-wait', async (req: Request, res: Response) => {
 });
 
 // =============================================================================
-// Cenario 5: CPU Intensive (Bloqueio do Event Loop)
-// PERIGO: Isso bloqueia a thread principal. Use para ver o RPS cair drasticamente.
-// Calcula Fibonacci ou Hash complexo.
+// Cenario 5: CPU Intensive (Usando Worker Threads - Não bloqueia Event Loop)
+// MODERNO: Usa Worker Threads para não bloquear a thread principal
 // =============================================================================
-function fibonacci(n: number): number {
-  if (n <= 1) return n;
-  return fibonacci(n - 1) + fibonacci(n - 2);
-}
+import { executeCpuTask } from './workers/cpu-worker.js';
 
-app.get('/api/cpu-heavy/:level', (req: Request, res: Response) => {
+app.get('/api/cpu-heavy/:level', async (req: Request, res: Response) => {
   const level = parseInt(req.params.level) || 10;
   
   // Nível de segurança para não travar seu PC no benchmark
   const n = Math.min(level, 35); 
   
   const start = performance.now();
-  const result = fibonacci(n); // Operação Síncrona pesada
-  const end = performance.now();
+  
+  try {
+    // Executa Fibonacci em Worker Thread (não bloqueia Event Loop)
+    const result = await executeCpuTask('fibonacci', { n });
+    const end = performance.now();
 
-  res.json({
-    operation: 'fibonacci',
-    input: n,
-    result: result,
-    time_taken: `${(end - start).toFixed(4)}ms`
-  });
+    res.json({
+      operation: 'fibonacci',
+      input: n,
+      result: result,
+      time_taken: `${(end - start).toFixed(4)}ms`,
+      worker_thread: true
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'CPU task failed',
+      message: error instanceof Error ? error.message : String(error)
+    });
+  }
 });
 
 // =============================================================================

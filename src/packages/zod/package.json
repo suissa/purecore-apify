@@ -1,0 +1,5 @@
+{
+  "name": "zod",
+  "version": "3.24.1",
+  "main": "index.ts"
+}

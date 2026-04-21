@@ -1,14 +1,20 @@
-import { NextFunction, Request, RequestHandler, Response } from '../types';
-import { createHandlerDecorator } from './base';
+import { NextFunction, Request, RequestHandler, Response } from "../types";
+import { createHandlerDecorator } from "./base";
 
-type ResilientHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
+type ResilientHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void> | void;
 
 interface CircuitBreakerOptions {
   failureThreshold?: number;
   resetTimeoutMs?: number;
 }
 
-export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecorator => {
+export const CircuitBreaker = (
+  options: CircuitBreakerOptions = {}
+): MethodDecorator => {
   const config = {
     failureThreshold: options.failureThreshold ?? 5,
     resetTimeoutMs: options.resetTimeoutMs ?? 10000,
@@ -18,15 +24,20 @@ export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecor
     const routeKey = String(meta.propertyKey);
     let failures = 0;
     let nextAttempt = 0;
-    let state: 'closed' | 'open' | 'half-open' = 'closed';
+    let state: "closed" | "open" | "half-open" = "closed";
 
     const execute: ResilientHandler = async (req, res, next) => {
       const now = Date.now();
-      if (state === 'open') {
+      if (state === "open") {
         if (now >= nextAttempt) {
-          state = 'half-open';
+          state = "half-open";
         } else {
-          res.status(503).json({ error: 'Circuit breaker aberto, tente novamente mais tarde.', route: routeKey });
+          res
+            .status(503)
+            .json({
+              error: "Circuit breaker aberto, tente novamente mais tarde.",
+              route: routeKey,
+            });
           return;
         }
       }
@@ -34,16 +45,23 @@ export const CircuitBreaker = (options: CircuitBreakerOptions = {}): MethodDecor
       try {
         await handler(req, res, next);
         failures = 0;
-        state = 'closed';
+        state = "closed";
       } catch (error) {
         failures += 1;
         if (failures >= config.failureThreshold) {
-          state = 'open';
+          state = "open";
           nextAttempt = Date.now() + config.resetTimeoutMs;
-          res.status(503).json({ error: 'Circuit breaker aberto, tente novamente mais tarde.', route: routeKey });
+          res
+            .status(503)
+            .json({
+              error: "Circuit breaker aberto, tente novamente mais tarde.",
+              route: routeKey,
+            });
           return;
         }
-        res.status(500).json({ error: 'Erro interno do servidor.', route: routeKey });
+        res
+          .status(500)
+          .json({ error: "Erro interno do servidor.", route: routeKey });
         return;
       }
     };
@@ -85,13 +103,16 @@ interface AsyncChannel {
 }
 
 // Cache global para bloqueio de requisições problemáticas
-const globalRequestBlocklist = new Map<string, {
-  blocked: boolean;
-  reason: string;
-  expiresAt: number;
-  timeoutCount: number;
-  lastTimeout: number;
-}>();
+const globalRequestBlocklist = new Map<
+  string,
+  {
+    blocked: boolean;
+    reason: string;
+    expiresAt: number;
+    timeoutCount: number;
+    lastTimeout: number;
+  }
+>();
 
 // Cache para telemetria por rota (últimas 50 execuções)
 const telemetryCache = new Map<string, TelemetryData[]>();
@@ -111,18 +132,21 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
     const routeKey = String(meta.propertyKey);
 
     const execute: ResilientHandler = async (req, res, next) => {
-      const requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const requestId = `req-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
       const startTime = Date.now();
 
       // 1. Verificar bloqueio global
       const blockInfo = globalRequestBlocklist.get(routeKey);
       if (blockInfo?.blocked && Date.now() < blockInfo.expiresAt) {
-        return res.status(429).json({
-          error: 'Requisição bloqueada globalmente',
+        res.status(429).json({
+          error: "Requisição bloqueada globalmente",
           reason: blockInfo.reason,
           timeoutCount: blockInfo.timeoutCount,
           retryAfter: Math.ceil((blockInfo.expiresAt - Date.now()) / 1000),
         });
+        return;
       }
 
       const telemetry: TelemetryData = {
@@ -145,8 +169,9 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
             reject(new Error(`TIMEOUT_${timeoutMs}ms`));
           }, timeoutMs);
 
-          handler(req, res, next)
-            .then(resolve)
+          // Wrap handler result in Promise.resolve to handle both void and Promise<void>
+          Promise.resolve(handler(req, res, next))
+            .then(() => resolve())
             .catch(reject)
             .finally(() => clearTimeout(timer));
         });
@@ -160,7 +185,8 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
         telemetry,
       });
 
-      const sendAsyncResponse = (channel: AsyncChannel, data: any) => {
+      const sendAsyncResponse = (channel: AsyncChannel | null, data: any) => {
+        if (!channel) return;
         channel.response = data;
         channel.completed = true;
 
@@ -174,9 +200,8 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
       try {
         // Tentativa inicial com timeout padrão
         await executeWithTimeout(config.timeoutMs);
-
-      } catch (error) {
-        if (error instanceof Error && error.message.startsWith('TIMEOUT_')) {
+      } catch (error: any) {
+        if (error instanceof Error && error.message.startsWith("TIMEOUT_")) {
           telemetry.timeoutExceeded = true;
           attemptCount++;
 
@@ -186,7 +211,7 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
 
             // Retornar imediatamente com canal async aberto
             res.status(202).json({
-              message: 'Timeout - processamento continua em background',
+              message: "Timeout - processamento continua em background",
               asyncChannelId: asyncChannel.id,
               timeoutMs: config.timeoutMs,
               maxTimeoutMs: config.maxTimeoutMs,
@@ -197,7 +222,11 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
             process.nextTick(async () => {
               try {
                 // Tentar novamente com mais tempo (até 3x)
-                for (let attempt = 1; attempt <= config.retryAttempts; attempt++) {
+                for (
+                  let attempt = 1;
+                  attempt <= config.retryAttempts;
+                  attempt++
+                ) {
                   attemptCount++;
                   telemetry.retryAttempts = attempt;
 
@@ -207,17 +236,24 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
                     sendAsyncResponse(asyncChannel, {
                       success: true,
                       attempt,
-                      message: 'Processamento concluído após retry',
+                      message: "Processamento concluído após retry",
                       duration: Date.now() - startTime,
                     });
                     return;
-
-                  } catch (retryError) {
-                    if (retryError instanceof Error && retryError.message.startsWith('TIMEOUT_')) {
-                      telemetry.bottlenecks.push(`Retry ${attempt} falhou com ${config.maxTimeoutMs}ms`);
+                  } catch (retryError: any) {
+                    if (
+                      retryError instanceof Error &&
+                      retryError.message.startsWith("TIMEOUT_")
+                    ) {
+                      telemetry.bottlenecks.push(
+                        `Retry ${attempt} falhou com ${config.maxTimeoutMs}ms`
+                      );
 
                       // Se atingiu máximo de tentativas, tentar chunking
-                      if (attempt === config.retryAttempts && config.enableRequestChunking) {
+                      if (
+                        attempt === config.retryAttempts &&
+                        config.enableRequestChunking
+                      ) {
                         if (canChunkRequest(req)) {
                           try {
                             const chunks = await chunkRequest(req, 3); // Máximo 3 chunks
@@ -226,55 +262,70 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
                             const chunkResults = [];
                             for (let i = 0; i < chunks.length; i++) {
                               telemetry.chunksProcessed = i + 1;
-                              const result = await processChunk(chunks[i], handler, req, res, next);
+                              const result = await processChunk(
+                                chunks[i],
+                                handler,
+                                req,
+                                res,
+                                next
+                              );
                               chunkResults.push(result);
                             }
 
                             sendAsyncResponse(asyncChannel, {
                               success: true,
-                              method: 'chunking',
+                              method: "chunking",
                               chunksProcessed: chunkResults.length,
                               totalChunks: chunks.length,
-                              message: 'Requisição processada em partes menores',
-                              telemetry: config.enableTelemetry ? telemetry : undefined,
+                              message:
+                                "Requisição processada em partes menores",
+                              telemetry: config.enableTelemetry
+                                ? telemetry
+                                : undefined,
                             });
                             return;
-
                           } catch (chunkError) {
                             // Chunking falhou - explicar problema
-                            const explanation = generateTimeoutExplanation(req, telemetry);
+                            const explanation = generateTimeoutExplanation(
+                              req,
+                              telemetry
+                            );
 
                             sendAsyncResponse(asyncChannel, {
                               success: false,
-                              method: 'chunking_failed',
-                              error: 'Não foi possível processar em partes',
+                              method: "chunking_failed",
+                              error: "Não foi possível processar em partes",
                               explanation,
                               recommendations: [
-                                'Reveja a lógica de negócio',
-                                'Otimize consultas de banco',
-                                'Implemente cache',
-                                'Reduza complexidade computacional'
+                                "Reveja a lógica de negócio",
+                                "Otimize consultas de banco",
+                                "Implemente cache",
+                                "Reduza complexidade computacional",
                               ],
-                              telemetry: config.enableTelemetry ? telemetry : undefined,
+                              telemetry: config.enableTelemetry
+                                ? telemetry
+                                : undefined,
                               maxTimeoutMs: config.maxTimeoutMs,
                             });
 
                             // Bloquear globalmente após falha total
                             if (config.globalBlocking) {
-                              const currentBlock = globalRequestBlocklist.get(routeKey) || {
+                              const currentBlock = globalRequestBlocklist.get(
+                                routeKey
+                              ) || {
                                 blocked: false,
                                 timeoutCount: 0,
                                 lastTimeout: 0,
-                                reason: '',
+                                reason: "",
                                 expiresAt: 0,
                               };
 
                               globalRequestBlocklist.set(routeKey, {
                                 blocked: true,
-                                reason: 'Timeouts recorrentes após chunking',
+                                reason: "Timeouts recorrentes após chunking",
                                 timeoutCount: currentBlock.timeoutCount + 1,
                                 lastTimeout: Date.now(),
-                                expiresAt: Date.now() + (24 * 60 * 60 * 1000), // 24h
+                                expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24h
                               });
 
                               telemetry.blocked = true;
@@ -283,33 +334,40 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
                           }
                         } else {
                           // Não pode fazer chunking
-                          const explanation = generateTimeoutExplanation(req, telemetry);
+                          const explanation = generateTimeoutExplanation(
+                            req,
+                            telemetry
+                          );
 
                           sendAsyncResponse(asyncChannel, {
                             success: false,
-                            method: 'not_chunkable',
-                            error: 'Requisição não pode ser dividida',
+                            method: "not_chunkable",
+                            error: "Requisição não pode ser dividida",
                             explanation,
-                            telemetry: config.enableTelemetry ? telemetry : undefined,
+                            telemetry: config.enableTelemetry
+                              ? telemetry
+                              : undefined,
                             maxTimeoutMs: config.maxTimeoutMs,
                           });
 
                           // Bloquear mesmo assim após múltiplas tentativas
                           if (config.globalBlocking) {
-                            const currentBlock = globalRequestBlocklist.get(routeKey) || {
+                            const currentBlock = globalRequestBlocklist.get(
+                              routeKey
+                            ) || {
                               blocked: false,
                               timeoutCount: 0,
                               lastTimeout: 0,
-                              reason: '',
+                              reason: "",
                               expiresAt: 0,
                             };
 
                             globalRequestBlocklist.set(routeKey, {
                               blocked: true,
-                              reason: 'Timeouts recorrentes - não chunkável',
+                              reason: "Timeouts recorrentes - não chunkável",
                               timeoutCount: currentBlock.timeoutCount + 1,
                               lastTimeout: Date.now(),
-                              expiresAt: Date.now() + (24 * 60 * 60 * 1000),
+                              expiresAt: Date.now() + 24 * 60 * 60 * 1000,
                             });
 
                             telemetry.blocked = true;
@@ -321,18 +379,24 @@ export const Timeout = (options: TimeoutOptions = {}): MethodDecorator => {
                       // Erro não-timeout durante retry
                       sendAsyncResponse(asyncChannel, {
                         success: false,
-                        error: 'Erro durante processamento',
-                        details: retryError instanceof Error ? retryError.message : 'Erro desconhecido',
+                        error: "Erro durante processamento",
+                        details:
+                          retryError instanceof Error
+                            ? retryError.message
+                            : "Erro desconhecido",
                       });
                       return;
                     }
                   }
                 }
-              } catch (finalError) {
+              } catch (finalError: any) {
                 sendAsyncResponse(asyncChannel, {
                   success: false,
-                  error: 'Falha total após todas as tentativas',
-                  finalError: finalError instanceof Error ? finalError.message : 'Erro desconhecido',
+                  error: "Falha total após todas as tentativas",
+                  finalError:
+                    finalError instanceof Error
+                      ? finalError.message
+                      : "Erro desconhecido",
                 });
               }
             });
@@ -379,21 +443,31 @@ function canChunkRequest(req: Request): boolean {
   }
 
   // Objetos com propriedade items (ex: { items: [...] })
-  if (body && typeof body === 'object' && body.items && Array.isArray(body.items) && body.items.length > 5) {
+  if (
+    body &&
+    typeof body === "object" &&
+    body.items &&
+    Array.isArray(body.items) &&
+    body.items.length > 5
+  ) {
     return true;
   }
 
   // Payload muito grande
-  if (JSON.stringify(body).length > 500000) { // 500KB
+  if (JSON.stringify(body).length > 500000) {
+    // 500KB
     return true;
   }
 
   return false;
 }
 
-async function chunkRequest(req: Request, maxChunks: number = 3): Promise<any[]> {
+async function chunkRequest(
+  req: Request,
+  maxChunks: number = 3
+): Promise<any[]> {
   const body = req.body;
-  const chunks = [];
+  const chunks: any[] = [];
 
   if (Array.isArray(body)) {
     // Dividir array em chunks
@@ -411,18 +485,18 @@ async function chunkRequest(req: Request, maxChunks: number = 3): Promise<any[]>
         _chunkInfo: {
           index: chunks.length,
           total: Math.ceil(body.items.length / chunkSize),
-          originalSize: body.items.length
-        }
+          originalSize: body.items.length,
+        },
       });
     }
-  } else if (typeof body === 'object') {
+  } else if (typeof body === "object") {
     // Para objetos grandes, dividir por propriedades
     const keys = Object.keys(body);
     const chunkSize = Math.max(1, Math.ceil(keys.length / maxChunks));
 
     for (let i = 0; i < keys.length; i += chunkSize) {
       const chunkKeys = keys.slice(i, i + chunkSize);
-      const chunk = chunkKeys.reduce((acc, key) => {
+      const chunk = chunkKeys.reduce((acc: any, key: string) => {
         acc[key] = body[key];
         return acc;
       }, {} as any);
@@ -432,8 +506,8 @@ async function chunkRequest(req: Request, maxChunks: number = 3): Promise<any[]>
         _chunkInfo: {
           index: chunks.length,
           total: Math.ceil(keys.length / chunkSize),
-          originalKeys: keys.length
-        }
+          originalKeys: keys.length,
+        },
       });
     }
   }
@@ -458,10 +532,11 @@ async function processChunk(
     // Criar response mock para capturar resultado
     const mockRes = {
       ...res,
-      status: (code: number) => ({ json: (data: any) => ({ code, data }) } as any),
+      status: (code: number) =>
+        ({ json: (data: any) => ({ code, data }) } as any),
       json: (data: any) => ({ data }),
       send: (data: any) => ({ data }),
-    } as Response;
+    } as unknown as Response;
 
     const mockNext = (err?: any) => {
       if (err) reject(err);
@@ -470,64 +545,71 @@ async function processChunk(
 
     // Timeout para processamento do chunk (10s)
     const timeout = setTimeout(() => {
-      reject(new Error('Chunk processing timeout'));
+      reject(new Error("Chunk processing timeout"));
     }, 10000);
 
-    originalHandler(chunkReq, mockRes, mockNext)
-      .then(result => {
+    Promise.resolve(originalHandler(chunkReq, mockRes, mockNext))
+      .then((result: any) => {
         clearTimeout(timeout);
         resolve(result || { success: true, chunk });
       })
-      .catch(error => {
+      .catch((error: any) => {
         clearTimeout(timeout);
         reject(error);
       });
   });
 }
 
-function generateTimeoutExplanation(req: Request, telemetry: TelemetryData): string {
+function generateTimeoutExplanation(
+  req: Request,
+  telemetry: TelemetryData
+): string {
   const reasons = [];
 
   // Análise baseada na duração
   if (telemetry.duration && telemetry.duration > 20000) {
-    reasons.push('Processamento excessivamente longo');
+    reasons.push("Processamento excessivamente longo");
   } else if (telemetry.duration && telemetry.duration > 10000) {
-    reasons.push('Processamento demorado');
+    reasons.push("Processamento demorado");
   }
 
   // Análise do payload
   const bodySize = JSON.stringify(req.body || {}).length;
-  if (bodySize > 1000000) { // 1MB
-    reasons.push('Payload muito grande (>1MB)');
-  } else if (bodySize > 100000) { // 100KB
-    reasons.push('Payload grande (>100KB)');
+  if (bodySize > 1000000) {
+    // 1MB
+    reasons.push("Payload muito grande (>1MB)");
+  } else if (bodySize > 100000) {
+    // 100KB
+    reasons.push("Payload grande (>100KB)");
   }
 
   // Análise de tentativas
   if (telemetry.retryAttempts >= 3) {
-    reasons.push('Múltiplas tentativas de retry falharam');
+    reasons.push("Múltiplas tentativas de retry falharam");
   }
 
   // Análise de chunks
   if (telemetry.totalChunks && telemetry.totalChunks > 1) {
     if (telemetry.chunksProcessed === telemetry.totalChunks) {
-      reasons.push('Processamento em partes funcionou, mas lento');
+      reasons.push("Processamento em partes funcionou, mas lento");
     } else {
-      reasons.push('Falha no processamento em partes');
+      reasons.push("Falha no processamento em partes");
     }
   }
 
   // Análise de bottlenecks
   if (telemetry.bottlenecks.length > 0) {
-    reasons.push(`Gargalos identificados: ${telemetry.bottlenecks.join(', ')}`);
+    reasons.push(`Gargalos identificados: ${telemetry.bottlenecks.join(", ")}`);
   }
 
   // Fallback
   if (reasons.length === 0) {
-    reasons.push('Timeout devido a processamento complexo ou recursos insuficientes');
+    reasons.push(
+      "Timeout devido a processamento complexo ou recursos insuficientes"
+    );
   }
 
-  return reasons.join('. ');
+  return reasons.join(". ");
 }
 
 interface FailoverOptions {
@@ -538,7 +620,7 @@ export const Failover = (options: FailoverOptions = {}): MethodDecorator => {
   const fallbackResponse: RequestHandler =
     options.fallback ??
     ((_req, res) => {
-      res.status(503).json({ error: 'Serviço temporariamente indisponível' });
+      res.status(503).json({ error: "Serviço temporariamente indisponível" });
     });
 
   return createHandlerDecorator((handler) => {
@@ -546,7 +628,7 @@ export const Failover = (options: FailoverOptions = {}): MethodDecorator => {
       try {
         await handler(req, res, next);
       } catch (error) {
-        console.warn('[Failover] acionado, chamando fallback:', error);
+        console.warn("[Failover] acionado, chamando fallback:", error);
         try {
           await Promise.resolve(fallbackResponse(req, res, next));
         } catch (fallbackError) {
@@ -558,4 +640,3 @@ export const Failover = (options: FailoverOptions = {}): MethodDecorator => {
     return execute;
   });
 };
-

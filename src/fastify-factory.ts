@@ -10,11 +10,22 @@
  * - Sistema de hooks do Fastify
  */
 
-import { createServer, Server, IncomingMessage, ServerResponse } from 'node:http';
-import { Apify, Request, Response, NextFunction, RequestHandler } from './index.js';
-import { Router } from './router.js';
-import { errorHandler, jsonBodyParser } from './middlewares.js';
-import { NotFoundError } from './errors.js';
+import {
+  createServer,
+  Server,
+  IncomingMessage,
+  ServerResponse,
+} from "node:http";
+import {
+  Apify,
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "./index.js";
+import { Router } from "./router.js";
+import { errorHandler, jsonBodyParser } from "./middlewares.js";
+import { NotFoundError } from "./errors.js";
 
 // =========================================
 // TIPOS E INTERFACES
@@ -70,64 +81,61 @@ export class PureCoreFastify implements FastifyInstance {
     this.app = new Apify(options.resilientConfig);
 
     // Inicializa servidor HTTP
-    this.server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
-      try {
-        // Converte para tipos do Apify
-        const apifyReq = req as Request;
-        const apifyRes = res as Response;
+    this.server = createServer(
+      async (req: IncomingMessage, res: ServerResponse) => {
+        try {
+          // Converte para tipos do Apify
+          const apifyReq = req as Request;
+          const apifyRes = res as Response;
 
-        // Inicializa propriedades se não existirem
-        if (!apifyReq.params) apifyReq.params = {};
-        if (!apifyReq.query) apifyReq.query = {};
-        if (!apifyReq.body) apifyReq.body = {};
+          // Inicializa propriedades se não existirem
+          if (!apifyReq.params) apifyReq.params = {};
+          if (!apifyReq.query) apifyReq.query = {};
+          if (!apifyReq.body) apifyReq.body = {};
 
-        // Executa hooks 'onRequest'
-        await this.executeHooks('onRequest', apifyReq, apifyRes);
+          // Executa hooks 'onRequest'
+          await this.executeHooks("onRequest", apifyReq, apifyRes);
 
-        // Processa através do Apify
-        await this.app.handle(apifyReq, apifyRes, async (err?: any) => {
-          if (err) {
-            // Executa hooks 'onError'
-            await this.executeHooks('onError', apifyReq, apifyRes, err);
+          // Processa através do Apify
+          await this.app.handle(apifyReq, apifyRes, async (err?: any) => {
+            if (err) {
+              // Executa hooks 'onError'
+              await this.executeHooks("onError", apifyReq, apifyRes, err);
 
-            if (!res.headersSent) {
-              const errorResponse = errorHandler(err, apifyReq, apifyRes, () => {});
-              if (errorResponse) {
-                res.statusCode = errorResponse.status || 500;
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify(errorResponse));
+              if (!res.headersSent) {
+                await errorHandler(err, apifyReq, apifyRes, () => {});
               }
+              return;
             }
-            return;
-          }
 
-          // Executa hooks 'onResponse'
-          await this.executeHooks('onResponse', apifyReq, apifyRes);
+            // Executa hooks 'onResponse'
+            await this.executeHooks("onResponse", apifyReq, apifyRes);
 
-          // Se não houve resposta, retorna 404
+            // Se não houve resposta, retorna 404
+            if (!res.headersSent) {
+              await errorHandler(
+                new NotFoundError("Route not found"),
+                apifyReq,
+                apifyRes,
+                () => {}
+              );
+            }
+          });
+        } catch (error) {
+          console.error("❌ Erro no servidor:", error);
           if (!res.headersSent) {
-            const notFoundResponse = errorHandler(new NotFoundError('Route not found'), apifyReq, apifyRes, () => {});
-            if (notFoundResponse) {
-              res.statusCode = notFoundResponse.status || 404;
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify(notFoundResponse));
-            }
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ error: "Internal Server Error" }));
           }
-        });
-      } catch (error) {
-        console.error('❌ Erro no servidor:', error);
-        if (!res.headersSent) {
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ error: 'Internal Server Error' }));
         }
       }
-    });
+    );
 
     // Adiciona middleware básico
     this.app.use(jsonBodyParser);
 
-    console.log('🚀 PureCore Fastify inicializado');
+    console.log("🚀 PureCore Fastify inicializado");
   }
 
   // =========================================
@@ -164,7 +172,7 @@ export class PureCoreFastify implements FastifyInstance {
   // =========================================
 
   use(path?: string, handler?: RequestHandler): FastifyInstance {
-    if (typeof path === 'function') {
+    if (typeof path === "function") {
       // use(handler) - middleware global
       this.app.use(path);
     } else if (path && handler) {
@@ -174,17 +182,20 @@ export class PureCoreFastify implements FastifyInstance {
     return this;
   }
 
-  register(plugin: FastifyPlugin, options: FastifyPluginOptions = {}): FastifyInstance {
+  register(
+    plugin: FastifyPlugin,
+    options: FastifyPluginOptions = {}
+  ): FastifyInstance {
     try {
       // Executa o plugin do Fastify
       plugin(this, options, (err?: any) => {
         if (err) {
-          console.error('❌ Erro no plugin:', err);
+          console.error("❌ Erro no plugin:", err);
         }
       });
-      console.log('✅ Plugin registrado com sucesso');
+      console.log("✅ Plugin registrado com sucesso");
     } catch (error) {
-      console.error('❌ Erro ao registrar plugin:', error);
+      console.error("❌ Erro ao registrar plugin:", error);
     }
     return this;
   }
@@ -238,14 +249,14 @@ export class PureCoreFastify implements FastifyInstance {
           console.log(`🔥 PureCore Fastify rodando na porta ${port}`);
 
           // Executa hooks 'onReady'
-          this.executeHooks('onReady').then(() => {
+          this.executeHooks("onReady").then(() => {
             if (callback) callback();
             resolve();
           });
         });
 
-        this.server.on('error', (err) => {
-          console.error('❌ Erro no servidor:', err);
+        this.server.on("error", (err) => {
+          console.error("❌ Erro no servidor:", err);
           reject(err);
         });
       } catch (error) {
@@ -258,10 +269,10 @@ export class PureCoreFastify implements FastifyInstance {
     return new Promise((resolve, reject) => {
       this.server.close((err) => {
         if (err) {
-          console.error('❌ Erro ao fechar servidor:', err);
+          console.error("❌ Erro ao fechar servidor:", err);
           reject(err);
         } else {
-          console.log('🛑 Servidor fechado');
+          console.log("🛑 Servidor fechado");
           resolve();
         }
       });
@@ -281,7 +292,7 @@ export class PureCoreFastify implements FastifyInstance {
         // Executa handler original
         await originalHandler(req, res, next);
       } catch (error) {
-        console.error('❌ Erro no handler:', error);
+        console.error("❌ Erro no handler:", error);
         next(error as Error);
       }
     };
@@ -302,14 +313,16 @@ export interface PureCoreFastifyOptions {
 /**
  * Factory para criar instâncias Fastify-like do PureCore Apify
  */
-export function createPureCoreFastify(options: PureCoreFastifyOptions = {}): FastifyInstance {
-  console.log('🏭 Criando instância PureCore Fastify...');
+export function createPureCoreFastify(
+  options: PureCoreFastifyOptions = {}
+): FastifyInstance {
+  console.log("🏭 Criando instância PureCore Fastify...");
 
   const instance = new PureCoreFastify(options);
 
   // Adiciona configurações padrão
   if (options.logger !== false) {
-    instance.addHook('onRequest', (req: Request, res: Response) => {
+    instance.addHook("onRequest", (req: Request, res: Response) => {
       console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     });
   }
@@ -330,12 +343,18 @@ export default createPureCoreFastify;
  * Plugin para CORS (exemplo)
  */
 export const corsPlugin: FastifyPlugin = (fastify, options, done) => {
-  console.log('🌐 Plugin CORS carregado');
+  console.log("🌐 Plugin CORS carregado");
 
-  fastify.addHook('onRequest', (req: Request, res: Response) => {
-    res.setHeader('Access-Control-Allow-Origin', options.origin || '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  fastify.addHook("onRequest", (req: Request, res: Response) => {
+    res.setHeader("Access-Control-Allow-Origin", options.origin || "*");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, PATCH"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
   });
 
   done();
@@ -345,26 +364,29 @@ export const corsPlugin: FastifyPlugin = (fastify, options, done) => {
  * Plugin para autenticação JWT (exemplo)
  */
 export const jwtPlugin: FastifyPlugin = (fastify, options, done) => {
-  console.log('🔐 Plugin JWT carregado');
+  console.log("🔐 Plugin JWT carregado");
 
   // Adiciona decorator para verificar JWT
-  fastify.decorate('authenticate', (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      res.status(401).json({ error: 'Token não informado' });
-      return;
-    }
+  fastify.decorate(
+    "authenticate",
+    (req: Request, res: Response, next: NextFunction) => {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        res.status(401).json({ error: "Token não informado" });
+        return;
+      }
 
-    // Simulação de validação JWT
-    const [, token] = authHeader.split(' ');
-    if (token !== 'valid-token') {
-      res.status(403).json({ error: 'Token inválido' });
-      return;
-    }
+      // Simulação de validação JWT
+      const [, token] = authHeader.split(" ");
+      if (token !== "valid-token") {
+        res.status(403).json({ error: "Token inválido" });
+        return;
+      }
 
-    (req as any).user = { id: 1, name: 'User' };
-    next();
-  });
+      (req as any).user = { id: 1, name: "User" };
+      next();
+    }
+  );
 
   done();
 };
@@ -384,8 +406,8 @@ export function createValidatedHandler(schema: any, handler: Function) {
         const validation = schema.safeParse(req.body);
         if (!validation.success) {
           res.status(400).json({
-            error: 'Dados inválidos',
-            details: validation.error.issues
+            error: "Dados inválidos",
+            details: validation.error.issues,
           });
           return;
         }
@@ -403,11 +425,14 @@ export function createValidatedHandler(schema: any, handler: Function) {
 /**
  * Helper para integrar decorators do PureCore Apify
  */
-export function withDecorators(decorators: any[], handler: RequestHandler): RequestHandler {
+export function withDecorators(
+  decorators: any[],
+  handler: RequestHandler
+): RequestHandler {
   // Aqui seria integrada a lógica dos decorators
   // Por enquanto, apenas retorna o handler original
   console.log(`🎨 Aplicando ${decorators.length} decorators`);
   return handler;
 }
 
-console.log('✅ PureCore Fastify Factory carregado com sucesso!');
+console.log("✅ PureCore Fastify Factory carregado com sucesso!");

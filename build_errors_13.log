@@ -1,0 +1,128 @@
+$ tsc
+src/auto-routes.ts(151,30): error TS2532: Object is possibly 'undefined'.
+src/auto-routes.ts(184,30): error TS2532: Object is possibly 'undefined'.
+src/benchmark.api.ts(65,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/cache/native-cache.ts(216,15): error TS2488: Type '[K, number] | undefined' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/cli.ts(39,22): error TS18048: 'resourceArg' is possibly 'undefined'.
+src/cli.ts(59,36): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/decorators/helmet.ts(596,21): error TS2339: Property 'value' does not exist on type 'void | TypedPropertyDescriptor<(req: Request<ParamsDictionary, any, any, QueryDictionary>, res: Response<any>, next: NextFunction) => Promise<...>>'.
+  Property 'value' does not exist on type 'void'.
+src/decorators/memoization.ts(76,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/decorators/memoization.ts(92,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/healer.ts(132,28): error TS2532: Object is possibly 'undefined'.
+src/healer.ts(145,20): error TS2532: Object is possibly 'undefined'.
+src/healer.ts(205,42): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Url'.
+  Type 'string' is not assignable to type '{ __brand: "Url"; }'.
+src/index.ts(256,44): error TS7030: Not all code paths return a value.
+src/libs/intent-router.ts(25,11): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(25,26): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(27,11): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(28,13): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(29,22): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(29,45): error TS2532: Object is possibly 'undefined'.
+src/libs/intent-router.ts(88,23): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(27,11): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(27,26): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(29,11): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(30,13): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(31,22): error TS2532: Object is possibly 'undefined'.
+src/libs/semantic-healer.ts(31,45): error TS2532: Object is possibly 'undefined'.
+src/middlewares.ts(184,41): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares.ts(259,18): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares.ts(264,18): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares.ts(264,46): error TS2339: Property 'code' does not exist on type 'Error'.
+src/middlewares/get-intent.ts(13,41): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(14,41): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(18,9): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(19,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(20,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(21,11): error TS2532: Object is possibly 'undefined'.
+src/middlewares/get-intent.ts(25,12): error TS2532: Object is possibly 'undefined'.
+src/middlewares/native-multipart.ts(94,20): error TS2532: Object is possibly 'undefined'.
+src/middlewares/native-multipart.ts(133,64): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/native-multipart.ts(140,16): error TS2538: Type 'undefined' cannot be used as an index type.
+src/middlewares/native-multipart.ts(219,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/pipe-filter.ts(76,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/pipe-filter.ts(103,21): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/pipe-filter.ts(103,52): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/pipe-filter.ts(118,33): error TS2322: Type 'Record<string, any> | undefined' is not assignable to type 'Record<string, any>'.
+  Type 'undefined' is not assignable to type 'Record<string, any>'.
+src/middlewares/storage-engines.ts(97,26): error TS2345: Argument of type '(error?: Error | undefined) => void' is not assignable to parameter of type 'NoParamCallback'.
+  Types of parameters 'error' and 'err' are incompatible.
+    Type 'ErrnoException | null' is not assignable to type 'Error | undefined'.
+      Type 'null' is not assignable to type 'Error | undefined'.
+src/middlewares/symbolic-filter.ts(76,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/middlewares/symbolic-filter.ts(103,21): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/symbolic-filter.ts(103,52): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/middlewares/symbolic-filter.ts(118,33): error TS2322: Type 'Record<string, any> | undefined' is not assignable to type 'Record<string, any>'.
+  Type 'undefined' is not assignable to type 'Record<string, any>'.
+src/middlewares/uploadify/index.ts(221,21): error TS2322: Type 'string | undefined' is not assignable to type 'string | null'.
+  Type 'undefined' is not assignable to type 'string | null'.
+src/modules/patients/listPatients.ts(25,67): error TS2339: Property 'toLowerCase' does not exist on type 'string | string[]'.
+  Property 'toLowerCase' does not exist on type 'string[]'.
+src/modules/patients/listPatients.ts(32,24): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/modules/patients/listPatients.ts(33,25): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/packages/native-multer/src/multer.ts(219,13): error TS2532: Object is possibly 'undefined'.
+src/packages/native-multer/src/parser.ts(76,20): error TS2532: Object is possibly 'undefined'.
+src/packages/native-multer/src/parser.ts(112,11): error TS18048: 'fieldName' is possibly 'undefined'.
+src/packages/native-multer/src/parser.ts(133,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/packages/native-multer/src/parser.ts(134,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/packages/native-multer/src/parser.ts(151,11): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/packages/purecore-asyncify/src/index.ts(159,9): error TS18048: 'controller' is possibly 'undefined'.
+src/packages/purecore-asyncify/src/index.ts(247,7): error TS2531: Object is possibly 'null'.
+src/packages/purecore-asyncify/src/index.ts(326,7): error TS18048: 'callbacks' is possibly 'undefined'.
+src/packages/purecore-evidencify/evidencify-package/src/examples/evidencifyClient.ts(1,17): error TS2305: Module '"../core/trace"' has no exported member 'metrics'.
+src/packages/purecore-reqify/src/index.ts(172,45): error TS2532: Object is possibly 'undefined'.
+src/packages/purecore-syncify/src/utils/syncChannel.ts(146,30): error TS2345: Argument of type 'ChannelMessage<TReceive>' is not assignable to parameter of type 'ChannelMessage<TSend>'.
+  Type 'TReceive' is not assignable to type 'TSend'.
+    'TSend' could be instantiated with an arbitrary type which could be unrelated to 'TReceive'.
+src/packages/purecore-syncify/src/utils/syncChannel.ts(182,33): error TS2345: Argument of type 'ChannelMessage<TReceive>' is not assignable to parameter of type 'ChannelMessage<TSend>'.
+  Type 'TReceive' is not assignable to type 'TSend'.
+    'TSend' could be instantiated with an arbitrary type which could be unrelated to 'TReceive'.
+src/packages/purecore-syncify/src/utils/syncChannel.ts(217,36): error TS2345: Argument of type 'ChannelMessage<TReceive>' is not assignable to parameter of type 'ChannelMessage<TSend>'.
+  Type 'TReceive' is not assignable to type 'TSend'.
+    'TSend' could be instantiated with an arbitrary type which could be unrelated to 'TReceive'.
+src/packages/purecore-syncify/src/utils/syncChannel.ts(278,32): error TS2345: Argument of type 'ChannelMessage<TReceive>' is not assignable to parameter of type 'ChannelMessage<TSend>'.
+  Type 'TReceive' is not assignable to type 'TSend'.
+    'TSend' could be instantiated with an arbitrary type which could be unrelated to 'TReceive'.
+src/packages/purecore-syncify/src/utils/syncFlow.ts(110,49): error TS2345: Argument of type 'AsyncFn<unknown, unknown> | undefined' is not assignable to parameter of type 'AsyncFn<unknown, unknown>'.
+  Type 'undefined' is not assignable to type 'AsyncFn<unknown, unknown>'.
+src/packages/purecore-syncify/src/utils/syncFlow.ts(239,28): error TS2532: Object is possibly 'undefined'.
+src/packages/purecore-syncify/src/utils/syncFlow.ts(239,28): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+src/packages/purecore-syncify/src/utils/syncParallel.ts(133,39): error TS2345: Argument of type 'AsyncFnNoInput<T> | undefined' is not assignable to parameter of type 'AsyncFnNoInput<T>'.
+  Type 'undefined' is not assignable to type 'AsyncFnNoInput<T>'.
+src/packages/purecore-syncify/src/utils/syncRace.ts(39,22): error TS2532: Object is possibly 'undefined'.
+src/zod-analyzer.ts(77,20): error TS2532: Object is possibly 'undefined'.
+src/zod-interface-generator.ts(75,26): error TS18048: 'fieldName' is possibly 'undefined'.
+src/zod-interface-generator.ts(76,30): error TS18048: 'fieldName' is possibly 'undefined'.
+src/zod-interface-generator.ts(79,23): error TS18048: 'fieldType' is possibly 'undefined'.
+src/zod-interface-generator.ts(80,25): error TS18048: 'fieldType' is possibly 'undefined'.
+src/zod-interface-generator.ts(107,50): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(108,66): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(109,52): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(112,7): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/zod-interface-generator.ts(651,8): error TS2551: Property 'generateRelationshipDiagram' does not exist on type 'ZodSchemaGenerator'. Did you mean 'generateRelationshipsFile'?
+src/zod-schema-generator.ts(309,52): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/zod-schema-generator.ts(309,57): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/zod-schema-generator.ts(615,35): error TS2532: Object is possibly 'undefined'.
+src/zod-schema-generator.ts(616,42): error TS2532: Object is possibly 'undefined'.
+src/zod-schema-generator.ts(626,72): error TS2532: Object is possibly 'undefined'.
+error: script "build" exited with code 1

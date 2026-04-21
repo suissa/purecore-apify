@@ -1181,3 +1181,5 @@ curl -H "Accept: application/x-ndjson" \
 ```
 
 Para mais detalhes, consulte: [docs/Observability.modes.md](./docs/Observability.modes.md)
+
+by suissinha

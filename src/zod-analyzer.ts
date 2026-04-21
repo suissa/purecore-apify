@@ -3,7 +3,7 @@
  * Extrai metadados dos schemas Zod para gerar código automaticamente
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // =========================================
 // TIPOS E INTERFACES
@@ -46,7 +46,10 @@ export class ZodSchemaAnalyzer {
   /**
    * Analisa um schema Zod e extrai metadados completos
    */
-  static analyzeSchema(schema: z.ZodSchema, entityName: string): EntityMetadata {
+  static analyzeSchema(
+    schema: z.ZodSchema,
+    entityName: string
+  ): EntityMetadata {
     const fields: ZodFieldMetadata[] = [];
 
     // Tenta extrair campos de um schema de objeto
@@ -54,17 +57,22 @@ export class ZodSchemaAnalyzer {
       const shape = schema._def.shape();
 
       for (const [fieldName, fieldSchema] of Object.entries(shape)) {
-        const fieldMetadata = this.analyzeField(fieldName, fieldSchema as z.ZodTypeAny);
+        const fieldMetadata = this.analyzeField(
+          fieldName,
+          fieldSchema as z.ZodTypeAny
+        );
         fields.push(fieldMetadata);
       }
     }
 
     // Verifica se tem campos especiais
-    const hasId = fields.some(f => f.name === 'id');
-    const hasTimestamps = fields.some(f => ['createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(f.name));
+    const hasId = fields.some((f) => f.name === "id");
+    const hasTimestamps = fields.some((f) =>
+      ["createdAt", "updatedAt", "created_at", "updated_at"].includes(f.name)
+    );
 
     // Define chave primária
-    let primaryKey = 'id';
+    let primaryKey = "id";
     if (!hasId && fields.length > 0) {
       primaryKey = fields[0].name; // Primeiro campo como PK se não houver id
     }
@@ -75,14 +83,17 @@ export class ZodSchemaAnalyzer {
       schema,
       hasId,
       hasTimestamps,
-      primaryKey
+      primaryKey,
     };
   }
 
   /**
    * Analisa um campo individual do schema Zod
    */
-  private static analyzeField(fieldName: string, fieldSchema: z.ZodTypeAny): ZodFieldMetadata {
+  private static analyzeField(
+    fieldName: string,
+    fieldSchema: z.ZodTypeAny
+  ): ZodFieldMetadata {
     const metadata: ZodFieldMetadata = {
       name: fieldName,
       type: this.getTypeScriptType(fieldSchema),
@@ -91,7 +102,7 @@ export class ZodSchemaAnalyzer {
       isNullable: false,
       hasDefault: false,
       validations: [],
-      isArray: false
+      isArray: false,
     };
 
     // Verifica se é opcional
@@ -129,7 +140,10 @@ export class ZodSchemaAnalyzer {
       metadata.nestedFields = [];
 
       for (const [nestedName, nestedSchema] of Object.entries(shape)) {
-        const nestedField = this.analyzeField(nestedName, nestedSchema as z.ZodTypeAny);
+        const nestedField = this.analyzeField(
+          nestedName,
+          nestedSchema as z.ZodTypeAny
+        );
         metadata.nestedFields.push(nestedField);
       }
     }
@@ -141,34 +155,42 @@ export class ZodSchemaAnalyzer {
    * Converte tipo Zod para tipo TypeScript
    */
   private static getTypeScriptType(schema: z.ZodTypeAny): string {
-    if (schema instanceof z.ZodString) return 'string';
-    if (schema instanceof z.ZodNumber) return 'number';
-    if (schema instanceof z.ZodBoolean) return 'boolean';
-    if (schema instanceof z.ZodDate) return 'Date';
-    if (schema instanceof z.ZodArray) return `${this.getTypeScriptType(schema._def.type)}[]`;
-    if (schema instanceof z.ZodObject) return 'object';
-    if (schema instanceof z.ZodOptional) return this.getTypeScriptType(schema._def.innerType);
-    if (schema instanceof z.ZodNullable) return this.getTypeScriptType(schema._def.innerType);
-    if (schema instanceof z.ZodDefault) return this.getTypeScriptType(schema._def.innerType);
+    if (schema instanceof z.ZodString) return "string";
+    if (schema instanceof z.ZodNumber) return "number";
+    if (schema instanceof z.ZodBoolean) return "boolean";
+    if (schema instanceof z.ZodDate) return "Date";
+    if (schema instanceof z.ZodArray)
+      return `${this.getTypeScriptType(schema._def.type)}[]`;
+    if (schema instanceof z.ZodObject) return "object";
+    if (schema instanceof z.ZodOptional)
+      return this.getTypeScriptType(schema._def.innerType);
+    if (schema instanceof z.ZodNullable)
+      return this.getTypeScriptType(schema._def.innerType);
+    if (schema instanceof z.ZodDefault)
+      return this.getTypeScriptType(schema._def.innerType);
 
-    return 'any';
+    return "any";
   }
 
   /**
    * Obtém nome do tipo Zod
    */
   private static getZodTypeName(schema: z.ZodTypeAny): string {
-    if (schema instanceof z.ZodString) return 'z.string()';
-    if (schema instanceof z.ZodNumber) return 'z.number()';
-    if (schema instanceof z.ZodBoolean) return 'z.boolean()';
-    if (schema instanceof z.ZodDate) return 'z.date()';
-    if (schema instanceof z.ZodArray) return `z.array(${this.getZodTypeName(schema._def.type)})`;
-    if (schema instanceof z.ZodObject) return 'z.object({...})';
-    if (schema instanceof z.ZodOptional) return `${this.getZodTypeName(schema._def.innerType)}.optional()`;
-    if (schema instanceof z.ZodNullable) return `${this.getZodTypeName(schema._def.innerType)}.nullable()`;
-    if (schema instanceof z.ZodDefault) return `${this.getZodTypeName(schema._def.innerType)}.default(...)`;
+    if (schema instanceof z.ZodString) return "z.string()";
+    if (schema instanceof z.ZodNumber) return "z.number()";
+    if (schema instanceof z.ZodBoolean) return "z.boolean()";
+    if (schema instanceof z.ZodDate) return "z.date()";
+    if (schema instanceof z.ZodArray)
+      return `z.array(${this.getZodTypeName(schema._def.type)})`;
+    if (schema instanceof z.ZodObject) return "z.object({...})";
+    if (schema instanceof z.ZodOptional)
+      return `${this.getZodTypeName(schema._def.innerType)}.optional()`;
+    if (schema instanceof z.ZodNullable)
+      return `${this.getZodTypeName(schema._def.innerType)}.nullable()`;
+    if (schema instanceof z.ZodDefault)
+      return `${this.getZodTypeName(schema._def.innerType)}.default(...)`;
 
-    return 'z.any()';
+    return "z.any()";
   }
 
   /**
@@ -182,17 +204,17 @@ export class ZodSchemaAnalyzer {
       if (schema._def.checks) {
         for (const check of schema._def.checks) {
           switch (check.kind) {
-            case 'min':
-              validations.push({ type: 'min', value: check.value });
+            case "min":
+              validations.push({ type: "min", value: check.value });
               break;
-            case 'max':
-              validations.push({ type: 'max', value: check.value });
+            case "max":
+              validations.push({ type: "max", value: check.value });
               break;
-            case 'email':
-              validations.push({ type: 'email' });
+            case "email":
+              validations.push({ type: "email" });
               break;
-            case 'regex':
-              validations.push({ type: 'regex', value: check.regex.source });
+            case "regex":
+              validations.push({ type: "regex", value: check.regex.source });
               break;
           }
         }
@@ -204,11 +226,11 @@ export class ZodSchemaAnalyzer {
       if (schema._def.checks) {
         for (const check of schema._def.checks) {
           switch (check.kind) {
-            case 'min':
-              validations.push({ type: 'min', value: check.value });
+            case "min":
+              validations.push({ type: "min", value: check.value });
               break;
-            case 'max':
-              validations.push({ type: 'max', value: check.value });
+            case "max":
+              validations.push({ type: "max", value: check.value });
               break;
           }
         }
@@ -236,7 +258,7 @@ export class ZodSchemaAnalyzer {
    * Converte para kebab-case
    */
   static toKebabCase(str: string): string {
-    return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
   }
 
   /**
@@ -244,7 +266,7 @@ export class ZodSchemaAnalyzer {
    */
   static extractEntityName(fileName: string): string {
     // Remove extensões e converte
-    const baseName = fileName.replace(/\.(ts|js)$/, '');
+    const baseName = fileName.replace(/\.(ts|js)$/, "");
     return this.toPascalCase(baseName);
   }
 }
@@ -261,20 +283,22 @@ export class CodeGenerator {
     const { name, fields } = metadata;
     const interfaceName = `I${name}`;
 
-    const fieldDeclarations = fields.map(field => {
-      let typeStr = field.type;
-      if (field.isArray) {
-        typeStr = `${field.arrayElementType || 'any'}[]`;
-      }
-      if (field.nestedFields && field.nestedFields.length > 0) {
-        // Gera interface aninhada
-        const nestedInterface = this.generateNestedInterface(field);
-        typeStr = field.name.charAt(0).toUpperCase() + field.name.slice(1);
-      }
+    const fieldDeclarations = fields
+      .map((field) => {
+        let typeStr = field.type;
+        if (field.isArray) {
+          typeStr = `${field.arrayElementType || "any"}[]`;
+        }
+        if (field.nestedFields && field.nestedFields.length > 0) {
+          // Gera interface aninhada
+          const nestedInterface = this.generateNestedInterface(field);
+          typeStr = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        }
 
-      const optional = field.isOptional || field.hasDefault ? '?' : '';
-      return `  ${field.name}${optional}: ${typeStr};`;
-    }).join('\n');
+        const optional = field.isOptional || field.hasDefault ? "?" : "";
+        return `  ${field.name}${optional}: ${typeStr};`;
+      })
+      .join("\n");
 
     return `export interface ${interfaceName} {
 ${fieldDeclarations}
@@ -285,14 +309,18 @@ ${fieldDeclarations}
    * Gera interface aninhada para objetos complexos
    */
   private static generateNestedInterface(field: ZodFieldMetadata): string {
-    if (!field.nestedFields) return '';
+    if (!field.nestedFields) return "";
 
-    const interfaceName = field.name.charAt(0).toUpperCase() + field.name.slice(1);
-    const fieldDeclarations = field.nestedFields.map(nestedField => {
-      let typeStr = nestedField.type;
-      const optional = nestedField.isOptional || nestedField.hasDefault ? '?' : '';
-      return `  ${nestedField.name}${optional}: ${typeStr};`;
-    }).join('\n');
+    const interfaceName =
+      field.name.charAt(0).toUpperCase() + field.name.slice(1);
+    const fieldDeclarations = field.nestedFields
+      .map((nestedField) => {
+        let typeStr = nestedField.type;
+        const optional =
+          nestedField.isOptional || nestedField.hasDefault ? "?" : "";
+        return `  ${nestedField.name}${optional}: ${typeStr};`;
+      })
+      .join("\n");
 
     return `export interface ${interfaceName} {
 ${fieldDeclarations}
@@ -306,18 +334,20 @@ ${fieldDeclarations}
     const { name, fields } = metadata;
     const dtoName = `${name}DTO`;
 
-    const fieldDeclarations = fields.map(field => {
-      let typeStr = field.type;
-      if (field.isArray) {
-        typeStr = `${field.arrayElementType || 'any'}[]`;
-      }
-      if (field.nestedFields && field.nestedFields.length > 0) {
-        typeStr = field.name.charAt(0).toUpperCase() + field.name.slice(1);
-      }
+    const fieldDeclarations = fields
+      .map((field) => {
+        let typeStr = field.type;
+        if (field.isArray) {
+          typeStr = `${field.arrayElementType || "any"}[]`;
+        }
+        if (field.nestedFields && field.nestedFields.length > 0) {
+          typeStr = field.name.charAt(0).toUpperCase() + field.name.slice(1);
+        }
 
-      const optional = field.isOptional || field.hasDefault ? '?' : '';
-      return `  ${field.name}${optional}: ${typeStr};`;
-    }).join('\n');
+        const optional = field.isOptional || field.hasDefault ? "?" : "";
+        return `  ${field.name}${optional}: ${typeStr};`;
+      })
+      .join("\n");
 
     return `export class ${dtoName} {
 ${fieldDeclarations}
@@ -349,15 +379,19 @@ ${fieldDeclarations}
     const interfaceName = `I${name}`;
 
     // Campos para queries
-    const searchableFields = fields.filter(f =>
-      f.type === 'string' && !['id', 'createdAt', 'updatedAt', 'created_at', 'updated_at'].includes(f.name)
+    const searchableFields = fields.filter(
+      (f) =>
+        f.type === "string" &&
+        !["id", "createdAt", "updatedAt", "created_at", "updated_at"].includes(
+          f.name
+        )
     );
 
     return `import { ${interfaceName} } from '../types/interface';
 import { ${name}DTO } from '../types/dto';
 
 export interface ${repositoryName}Query {
-  ${searchableFields.map(f => `${f.name}?: string;`).join('\n  ')}
+  ${searchableFields.map((f) => `${f.name}?: string;`).join("\n  ")}
   limit?: number;
   offset?: number;
   sortBy?: string;
@@ -377,13 +411,15 @@ export class ${repositoryName} {
   /**
    * Cria uma nova entidade
    */
-  async create(data: Omit<${interfaceName}, '${primaryKey || 'id'}'>): Promise<${interfaceName}> {
+  async create(data: Omit<${interfaceName}, '${
+      primaryKey || "id"
+    }'>): Promise<${interfaceName}> {
     const id = Date.now().toString();
     const entity: ${interfaceName} = {
-      ${primaryKey || 'id'}: id,
+      ${primaryKey || "id"}: id,
       ...data,
-      ${metadata.hasTimestamps ? 'createdAt: new Date().toISOString(),' : ''}
-      ${metadata.hasTimestamps ? 'updatedAt: new Date().toISOString(),' : ''}
+      ${metadata.hasTimestamps ? "createdAt: new Date().toISOString()," : ""}
+      ${metadata.hasTimestamps ? "updatedAt: new Date().toISOString()," : ""}
     } as ${interfaceName};
 
     this.storage.set(id, entity);
@@ -404,12 +440,16 @@ export class ${repositoryName} {
     let results = Array.from(this.storage.values());
 
     // Aplicar filtros de busca
-    ${searchableFields.map(f => `
+    ${searchableFields
+      .map(
+        (f) => `
     if (query.${f.name}) {
       results = results.filter(entity =>
         entity.${f.name}?.toLowerCase().includes(query.${f.name}!.toLowerCase())
       );
-    }`).join('')}
+    }`
+      )
+      .join("")}
 
     // Ordenação
     if (query.sortBy) {
@@ -446,7 +486,7 @@ export class ${repositoryName} {
     const updatedEntity = {
       ...entity,
       ...data,
-      ${metadata.hasTimestamps ? 'updatedAt: new Date().toISOString(),' : ''}
+      ${metadata.hasTimestamps ? "updatedAt: new Date().toISOString()," : ""}
     };
 
     this.storage.set(id, updatedEntity);
@@ -480,12 +520,16 @@ export class ${repositoryName} {
     const dtoName = `${name}DTO`;
 
     return `import { Request, Response } from '../../types';
-import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(name)}.service';
+import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.service';
 import { ${dtoName} } from '../types/dto';
 import { ApifyCompleteSentinel } from '../../decorators';
 
 export class ${controllerName} {
-  constructor(private ${ZodSchemaAnalyzer.toCamelCase(serviceName)}: ${serviceName}) {}
+  constructor(private ${ZodSchemaAnalyzer.toCamelCase(
+    serviceName
+  )}: ${serviceName}) {}
 
   /**
    * Lista entidades com paginação
@@ -501,7 +545,9 @@ export class ${controllerName} {
         sortOrder = 'asc'
       } = req.query;
 
-      const result = await this.${ZodSchemaAnalyzer.toCamelCase(serviceName)}.list({
+      const result = await this.${ZodSchemaAnalyzer.toCamelCase(
+        serviceName
+      )}.list({
         page: parseInt(page as string),
         limit: parseInt(limit as string),
         search: search as string,
@@ -535,7 +581,9 @@ export class ${controllerName} {
     try {
       const { id } = req.params;
 
-      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(serviceName)}.getById(id);
+      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(
+        serviceName
+      )}.getById(id);
 
       res.json({
         success: true,
@@ -556,7 +604,9 @@ export class ${controllerName} {
   @ApifyCompleteSentinel
   async create(req: Request, res: Response) {
     try {
-      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(serviceName)}.create(req.body);
+      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(
+        serviceName
+      )}.create(req.body);
 
       res.status(201).json({
         success: true,
@@ -579,7 +629,9 @@ export class ${controllerName} {
     try {
       const { id } = req.params;
 
-      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(serviceName)}.update(id, req.body);
+      const entity = await this.${ZodSchemaAnalyzer.toCamelCase(
+        serviceName
+      )}.update(id, req.body);
 
       res.json({
         success: true,
@@ -627,24 +679,44 @@ export class ${controllerName} {
     const repositoryName = `${name}Repository`;
 
     return `import { Router } from '../../router';
-import { ${controllerName} } from '../controllers/${ZodSchemaAnalyzer.toCamelCase(name)}.controller';
-import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(name)}.service';
+import { ${controllerName} } from '../controllers/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.controller';
+import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.service';
 import { ${repositoryName} } from '../database/repository';
 
 // Instâncias dos serviços
-const ${ZodSchemaAnalyzer.toCamelCase(repositoryName)} = new ${repositoryName}();
-const ${ZodSchemaAnalyzer.toCamelCase(serviceName)} = new ${serviceName}(${ZodSchemaAnalyzer.toCamelCase(repositoryName)});
-const ${ZodSchemaAnalyzer.toCamelCase(controllerName)} = new ${controllerName}(${ZodSchemaAnalyzer.toCamelCase(serviceName)});
+const ${ZodSchemaAnalyzer.toCamelCase(
+      repositoryName
+    )} = new ${repositoryName}();
+const ${ZodSchemaAnalyzer.toCamelCase(
+      serviceName
+    )} = new ${serviceName}(${ZodSchemaAnalyzer.toCamelCase(repositoryName)});
+const ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )} = new ${controllerName}(${ZodSchemaAnalyzer.toCamelCase(serviceName)});
 
 // Criação do router
 const router = new Router();
 
 // Rotas CRUD
-router.get('/', ${ZodSchemaAnalyzer.toCamelCase(controllerName)}.list.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
-router.post('/', ${ZodSchemaAnalyzer.toCamelCase(controllerName)}.create.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
-router.get('/:id', ${ZodSchemaAnalyzer.toCamelCase(controllerName)}.getById.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
-router.put('/:id', ${ZodSchemaAnalyzer.toCamelCase(controllerName)}.update.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
-router.delete('/:id', ${ZodSchemaAnalyzer.toCamelCase(controllerName)}.delete.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
+router.get('/', ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )}.list.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
+router.post('/', ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )}.create.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
+router.get('/:id', ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )}.getById.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
+router.put('/:id', ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )}.update.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
+router.delete('/:id', ${ZodSchemaAnalyzer.toCamelCase(
+      controllerName
+    )}.delete.bind(${ZodSchemaAnalyzer.toCamelCase(controllerName)}));
 
 export { router as ${ZodSchemaAnalyzer.toCamelCase(name)}Router };
 export default router;`;
@@ -702,12 +774,18 @@ export default ${name}Config;`;
 
 // Exportações principais
 export { ${ZodSchemaAnalyzer.toCamelCase(name)}Router } from './routes';
-export { ${name}Controller } from './controllers/${ZodSchemaAnalyzer.toCamelCase(name)}.controller';
-export { ${name}Service } from './services/${ZodSchemaAnalyzer.toCamelCase(name)}.service';
+export { ${name}Controller } from './controllers/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.controller';
+export { ${name}Service } from './services/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.service';
 export { ${name}Repository } from './database/repository';
 export { ${name}DTO } from './types/dto';
 export { I${name} } from './types/interface';
-export { default as ${ZodSchemaAnalyzer.toCamelCase(name)}Config } from './config';
+export { default as ${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}Config } from './config';
 
 // Re-export do schema Zod original
 export { schema } from './database/schema';`;
@@ -722,34 +800,41 @@ export { schema } from './database/schema';`;
     // Mapeamento de tipos Zod para tipos de banco
     const getDatabaseType = (type: string): string => {
       switch (type) {
-        case 'string': return 'VARCHAR(255)';
-        case 'number': return 'DECIMAL(10,2)';
-        case 'boolean': return 'BOOLEAN';
-        case 'Date': return 'TIMESTAMP';
-        default: return 'TEXT';
+        case "string":
+          return "VARCHAR(255)";
+        case "number":
+          return "DECIMAL(10,2)";
+        case "boolean":
+          return "BOOLEAN";
+        case "Date":
+          return "TIMESTAMP";
+        default:
+          return "TEXT";
       }
     };
 
-    const tableName = ZodSchemaAnalyzer.toCamelCase(name) + 's';
-    const columns = fields.map(field => {
-      let columnDef = `  \`${field.name}\` ${getDatabaseType(field.type)}`;
+    const tableName = ZodSchemaAnalyzer.toCamelCase(name) + "s";
+    const columns = fields
+      .map((field) => {
+        let columnDef = `  \`${field.name}\` ${getDatabaseType(field.type)}`;
 
-      if (field.name === 'id') {
-        columnDef += ' PRIMARY KEY AUTO_INCREMENT';
-      } else if (!field.isOptional && !field.hasDefault) {
-        columnDef += ' NOT NULL';
-      }
-
-      if (field.hasDefault && field.defaultValue !== undefined) {
-        if (typeof field.defaultValue === 'string') {
-          columnDef += ` DEFAULT '${field.defaultValue}'`;
-        } else {
-          columnDef += ` DEFAULT ${field.defaultValue}`;
+        if (field.name === "id") {
+          columnDef += " PRIMARY KEY AUTO_INCREMENT";
+        } else if (!field.isOptional && !field.hasDefault) {
+          columnDef += " NOT NULL";
         }
-      }
 
-      return columnDef;
-    }).join(',\n');
+        if (field.hasDefault && field.defaultValue !== undefined) {
+          if (typeof field.defaultValue === "string") {
+            columnDef += ` DEFAULT '${field.defaultValue}'`;
+          } else {
+            columnDef += ` DEFAULT ${field.defaultValue}`;
+          }
+        }
+
+        return columnDef;
+      })
+      .join(",\n");
 
     return `/**
  * Schema de banco de dados para ${name}
@@ -766,9 +851,16 @@ ${columns},
 
 // Índices recomendados
 export const ${ZodSchemaAnalyzer.toCamelCase(name)}IndexesSQL = [
-${fields.filter(f => f.type === 'string' && !['id', 'createdAt', 'updatedAt'].includes(f.name)).map(f =>
-  `  \`CREATE INDEX idx_${tableName}_${f.name} ON \`${tableName}\` (\`${f.name}\`);\``
-).join(',\n')}
+${fields
+  .filter(
+    (f) =>
+      f.type === "string" && !["id", "createdAt", "updatedAt"].includes(f.name)
+  )
+  .map(
+    (f) =>
+      `  \`CREATE INDEX idx_${tableName}_${f.name} ON \`${tableName}\` (\`${f.name}\`);\``
+  )
+  .join(",\n")}
 ].filter(Boolean);
 
 // Re-export do schema Zod
@@ -788,8 +880,12 @@ export { schema } from '../${ZodSchemaAnalyzer.toCamelCase(name)}';`;
  * Testes para ${name}
  */
 
-import { ${controllerName} } from '../controllers/${ZodSchemaAnalyzer.toCamelCase(name)}.controller';
-import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(name)}.service';
+import { ${controllerName} } from '../controllers/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.controller';
+import { ${serviceName} } from '../services/${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}.service';
 import { ${repositoryName} } from '../../database/repository';
 
 describe('${name} Module', () => {
@@ -804,7 +900,9 @@ describe('${name} Module', () => {
   });
 
   describe('${serviceName}', () => {
-    it('should create a new ${ZodSchemaAnalyzer.toCamelCase(name)}', async () => {
+    it('should create a new ${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}', async () => {
       const testData = {
         // Adicionar dados de teste baseados nos campos do schema
       };
@@ -826,7 +924,9 @@ describe('${name} Module', () => {
       expect(found?.id).toBe(created.id);
     });
 
-    it('should list ${ZodSchemaAnalyzer.toCamelCase(name)}s with pagination', async () => {
+    it('should list ${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}s with pagination', async () => {
       // Criar alguns registros de teste
       for (let i = 0; i < 5; i++) {
         await service.create({
@@ -871,7 +971,9 @@ describe('${name} Module', () => {
   });
 
   describe('${controllerName}', () => {
-    it('should handle GET / - list ${ZodSchemaAnalyzer.toCamelCase(name)}s', async () => {
+    it('should handle GET / - list ${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}s', async () => {
       const mockReq = {
         query: {}
       } as any;
@@ -892,7 +994,9 @@ describe('${name} Module', () => {
       );
     });
 
-    it('should handle POST / - create ${ZodSchemaAnalyzer.toCamelCase(name)}', async () => {
+    it('should handle POST / - create ${ZodSchemaAnalyzer.toCamelCase(
+      name
+    )}', async () => {
       const mockReq = {
         body: {
           // Adicionar dados de teste
@@ -933,16 +1037,22 @@ import { ${interfaceName} } from '../types/interface';
 import { ${dtoName} } from '../types/dto';
 
 export interface ${serviceName}CreateInput {
-${fields.filter(f => f.name !== (primaryKey || 'id')).map(f => {
-  const optional = f.isOptional || f.hasDefault ? '?' : '';
-  return `  ${f.name}${optional}: ${f.type}${f.isArray ? '[]' : ''};`;
-}).join('\n')}
+${fields
+  .filter((f) => f.name !== (primaryKey || "id"))
+  .map((f) => {
+    const optional = f.isOptional || f.hasDefault ? "?" : "";
+    return `  ${f.name}${optional}: ${f.type}${f.isArray ? "[]" : ""};`;
+  })
+  .join("\n")}
 }
 
 export interface ${serviceName}UpdateInput {
-${fields.filter(f => f.name !== (primaryKey || 'id')).map(f => {
-  return `  ${f.name}?: ${f.type}${f.isArray ? '[]' : ''};`;
-}).join('\n')}
+${fields
+  .filter((f) => f.name !== (primaryKey || "id"))
+  .map((f) => {
+    return `  ${f.name}?: ${f.type}${f.isArray ? "[]" : ""};`;
+  })
+  .join("\n")}
 }
 
 export class ${serviceName} {
@@ -1070,22 +1180,34 @@ export class ${serviceName} {
     }
 
     // Validações específicas podem ser adicionadas aqui
-    ${fields.filter(f => !f.isOptional && !f.hasDefault && f.name !== (primaryKey || 'id')).map(f => {
-      if (f.validations.some(v => v.type === 'min' && typeof v.value === 'number')) {
-        const min = f.validations.find(v => v.type === 'min')?.value;
-        return `if (input.${f.name} && input.${f.name}.length < ${min}) {
+    ${fields
+      .filter(
+        (f) => !f.isOptional && !f.hasDefault && f.name !== (primaryKey || "id")
+      )
+      .map((f) => {
+        if (
+          f.validations.some(
+            (v) => v.type === "min" && typeof v.value === "number"
+          )
+        ) {
+          const min = f.validations.find((v) => v.type === "min")?.value;
+          return `if (input.${f.name} && input.${f.name}.length < ${min}) {
       throw new Error('${f.name} deve ter pelo menos ${min} caracteres');
     }`;
-      }
-      return '';
-    }).filter(Boolean).join('\n    ')}
+        }
+        return "";
+      })
+      .filter(Boolean)
+      .join("\n    ")}
   }
 
   private validateUpdateInput(input: ${serviceName}UpdateInput): void {
     // Validações para update podem ser menos rigorosas
   }
 
-  private async processCreateInput(input: ${serviceName}CreateInput): Promise<Omit<${interfaceName}, '${primaryKey || 'id'}'>> {
+  private async processCreateInput(input: ${serviceName}CreateInput): Promise<Omit<${interfaceName}, '${
+      primaryKey || "id"
+    }'>> {
     // Processamentos específicos antes da criação
     return input;
   }

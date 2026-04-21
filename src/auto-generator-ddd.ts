@@ -28,9 +28,19 @@
  *     └── views/
  */
 
-import { readdirSync, statSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { ZodSchemaAnalyzer, CodeGenerator, EntityMetadata } from './zod-analyzer';
+import {
+  readdirSync,
+  statSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+} from "node:fs";
+import { join, resolve } from "node:path";
+import {
+  ZodSchemaAnalyzer,
+  CodeGenerator,
+  EntityMetadata,
+} from "./zod-analyzer";
 
 export interface DDDGenerationOptions {
   modulesPath?: string;
@@ -46,12 +56,12 @@ export class AutoGeneratorDDD {
 
   constructor(options: DDDGenerationOptions = {}) {
     this.options = {
-      modulesPath: options.modulesPath || 'src/modules',
-      domainPath: options.domainPath || 'src/domain',
+      modulesPath: options.modulesPath || "src/modules",
+      domainPath: options.domainPath || "src/domain",
       force: options.force || false,
       verbose: options.verbose || true,
       dryRun: options.dryRun || false,
-      boundedContext: options.boundedContext || 'default'
+      boundedContext: options.boundedContext || "default",
     };
   }
 
@@ -59,8 +69,8 @@ export class AutoGeneratorDDD {
    * Executa a geração automática DDD para todos os módulos detectados
    */
   async generate(): Promise<void> {
-    console.log('\n🚀 ========== AUTOGENERATOR DDD INICIADO ==========');
-    console.log('🏗️  Iniciando auto-geração DDD baseada em schemas Zod...');
+    console.log("\n🚀 ========== AUTOGENERATOR DDD INICIADO ==========");
+    console.log("🏗️  Iniciando auto-geração DDD baseada em schemas Zod...");
     console.log(`📂 Bounded Context: ${this.options.boundedContext}`);
     console.log(`🏛️  Domain Path: ${this.options.domainPath}`);
     console.log(`📁 Modules Path: ${this.options.modulesPath}`);
@@ -74,7 +84,9 @@ export class AutoGeneratorDDD {
     // Verifica se a pasta modules existe
     if (!existsSync(modulesPath)) {
       console.log(`❌ ERRO: Pasta ${modulesPath} não encontrada.`);
-      console.log(`🔧 Verifique se o caminho está correto e se a pasta existe.`);
+      console.log(
+        `🔧 Verifique se o caminho está correto e se a pasta existe.`
+      );
       return;
     }
 
@@ -86,7 +98,9 @@ export class AutoGeneratorDDD {
 
     if (items.length === 0) {
       console.log(`⚠️  AVISO: Nenhum item encontrado em ${modulesPath}`);
-      console.log(`💡 Dica: Coloque seus arquivos .schema.ts na pasta especificada`);
+      console.log(
+        `💡 Dica: Coloque seus arquivos .schema.ts na pasta especificada`
+      );
       return;
     }
 
@@ -100,29 +114,44 @@ export class AutoGeneratorDDD {
       if (stat.isDirectory()) {
         console.log(`   📁 Tipo: Diretório`);
         await this.processExistingModule(item, itemPath);
-      } else if (item.endsWith('.schema.ts')) {
+      } else if (item.endsWith(".schema.ts")) {
         console.log(`   📄 Tipo: Schema Zod (.schema.ts)`);
         await this.generateFromStandaloneFile(item, itemPath, modulesPath);
-      } else if (item.endsWith('.ts')) {
-        console.log(`   🚫 Tipo: Arquivo TypeScript (não é .schema.ts) - Ignorado`);
+      } else if (item.endsWith(".ts")) {
+        console.log(
+          `   🚫 Tipo: Arquivo TypeScript (não é .schema.ts) - Ignorado`
+        );
       } else {
-        console.log(`   🚫 Tipo: ${stat.isFile() ? 'Arquivo' : 'Outro'} - Ignorado`);
+        console.log(
+          `   🚫 Tipo: ${stat.isFile() ? "Arquivo" : "Outro"} - Ignorado`
+        );
       }
     }
 
-    console.log('\n🎉 ========== AUTOGENERATOR DDD CONCLUÍDO ==========');
-    console.log('✅ Auto-geração DDD concluída com sucesso!');
-    console.log(`📂 Bounded Context processado: ${this.options.boundedContext}`);
+    console.log("\n🎉 ========== AUTOGENERATOR DDD CONCLUÍDO ==========");
+    console.log("✅ Auto-geração DDD concluída com sucesso!");
+    console.log(
+      `📂 Bounded Context processado: ${this.options.boundedContext}`
+    );
     console.log(`📁 Caminho dos módulos: ${this.options.modulesPath}`);
     console.log(`🏛️  Caminho do domínio: ${this.options.domainPath}`);
-    console.log(`🔧 Modo: ${this.options.dryRun ? 'DRY RUN (simulação)' : 'PRODUCTION (arquivos criados)'}`);
-    console.log('================================================\n');
+    console.log(
+      `🔧 Modo: ${
+        this.options.dryRun
+          ? "DRY RUN (simulação)"
+          : "PRODUCTION (arquivos criados)"
+      }`
+    );
+    console.log("================================================\n");
   }
 
   /**
    * Processa módulo que já existe como pasta
    */
-  private async processExistingModule(moduleName: string, modulePath: string): Promise<void> {
+  private async processExistingModule(
+    moduleName: string,
+    modulePath: string
+  ): Promise<void> {
     if (this.options.verbose) {
       console.log(`📂 Verificando módulo existente: ${moduleName}`);
     }
@@ -147,7 +176,11 @@ export class AutoGeneratorDDD {
   /**
    * Gera estrutura completa DDD a partir de arquivo .ts solto
    */
-  private async generateFromStandaloneFile(fileName: string, filePath: string, modulesPath: string): Promise<void> {
+  private async generateFromStandaloneFile(
+    fileName: string,
+    filePath: string,
+    modulesPath: string
+  ): Promise<void> {
     const entityName = ZodSchemaAnalyzer.extractEntityName(fileName);
     const moduleName = entityName.toLowerCase();
     const modulePath = join(modulesPath, moduleName);
@@ -157,7 +190,9 @@ export class AutoGeneratorDDD {
     console.log(`   🗂️  Pasta do módulo: ${modulePath}`);
 
     if (this.options.verbose) {
-      console.log(`📄 Arquivo standalone detectado: ${fileName} -> Gerando módulo DDD ${moduleName}`);
+      console.log(
+        `📄 Arquivo standalone detectado: ${fileName} -> Gerando módulo DDD ${moduleName}`
+      );
     }
 
     try {
@@ -172,31 +207,43 @@ export class AutoGeneratorDDD {
         console.log(`   🔍 Analisando schema...`);
 
         try {
-          const metadata = ZodSchemaAnalyzer.analyzeSchema(importedModule.schema, entityName);
+          const metadata = ZodSchemaAnalyzer.analyzeSchema(
+            importedModule.schema,
+            entityName
+          );
 
           console.log(`   📊 Schema analisado com sucesso:`);
           console.log(`      • Nome da entidade: ${metadata.name}`);
           console.log(`      • Campos detectados: ${metadata.fields.length}`);
-          console.log(`      • Tipos de campos: ${metadata.fields.map(f => f.type).join(', ')}`);
+          console.log(
+            `      • Tipos de campos: ${metadata.fields
+              .map((f) => f.type)
+              .join(", ")}`
+          );
 
           if (this.options.verbose) {
-            console.log(`📊 Schema analisado: ${metadata.fields.length} campos detectados`);
+            console.log(
+              `📊 Schema analisado: ${metadata.fields.length} campos detectados`
+            );
           }
 
           console.log(`   🏗️  Iniciando geração da estrutura DDD...`);
           await this.generateDDDStructure(metadata, modulePath, filePath);
 
           console.log(`   ✅ Estrutura DDD gerada para ${entityName}!`);
-
-        } catch (schemaError) {
-          console.warn(`   ⚠️  Erro ao analisar schema em ${fileName}:`, schemaError.message);
+        } catch (schemaError: any) {
+          console.warn(
+            `   ⚠️  Erro ao analisar schema em ${fileName}:`,
+            schemaError.message
+          );
           console.warn(`   🚫 Pulando arquivo - não é um schema Zod válido`);
         }
-
       } else {
-        console.log(`   ℹ️  Arquivo ${fileName} não contém schema Zod (ignorando)`);
+        console.log(
+          `   ℹ️  Arquivo ${fileName} não contém schema Zod (ignorando)`
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`   ❌ ERRO ao processar ${fileName}:`, error);
       console.error(`   📋 Detalhes do erro:`, error.message);
     }
@@ -205,14 +252,21 @@ export class AutoGeneratorDDD {
   /**
    * Gera estrutura completa DDD a partir de arquivo de schema existente
    */
-  private async generateFromSchemaFile(schemaPath: string, moduleName: string, modulePath: string): Promise<void> {
+  private async generateFromSchemaFile(
+    schemaPath: string,
+    moduleName: string,
+    modulePath: string
+  ): Promise<void> {
     try {
       const moduleUrl = `file://${resolve(schemaPath)}`;
       const importedModule = await import(moduleUrl);
 
       if (importedModule.schema) {
         const entityName = ZodSchemaAnalyzer.extractEntityName(moduleName);
-        const metadata = ZodSchemaAnalyzer.analyzeSchema(importedModule.schema, entityName);
+        const metadata = ZodSchemaAnalyzer.analyzeSchema(
+          importedModule.schema,
+          entityName
+        );
 
         await this.generateDDDStructure(metadata, modulePath);
       }
@@ -255,35 +309,119 @@ export class AutoGeneratorDDD {
 
     const dddDirs = [
       // Domain Layer
-      { path: join(modulePath, 'domain', 'entities'), layer: 'Domain', type: 'Entities' },
-      { path: join(modulePath, 'domain', 'value-objects'), layer: 'Domain', type: 'Value Objects' },
-      { path: join(modulePath, 'domain', 'services'), layer: 'Domain', type: 'Services' },
-      { path: join(modulePath, 'domain', 'events'), layer: 'Domain', type: 'Events' },
-      { path: join(modulePath, 'domain', 'aggregates'), layer: 'Domain', type: 'Aggregates' },
-      { path: join(modulePath, 'domain', 'repositories'), layer: 'Domain', type: 'Repositories' },
+      {
+        path: join(modulePath, "domain", "entities"),
+        layer: "Domain",
+        type: "Entities",
+      },
+      {
+        path: join(modulePath, "domain", "value-objects"),
+        layer: "Domain",
+        type: "Value Objects",
+      },
+      {
+        path: join(modulePath, "domain", "services"),
+        layer: "Domain",
+        type: "Services",
+      },
+      {
+        path: join(modulePath, "domain", "events"),
+        layer: "Domain",
+        type: "Events",
+      },
+      {
+        path: join(modulePath, "domain", "aggregates"),
+        layer: "Domain",
+        type: "Aggregates",
+      },
+      {
+        path: join(modulePath, "domain", "repositories"),
+        layer: "Domain",
+        type: "Repositories",
+      },
 
       // Application Layer
-      { path: join(modulePath, 'application', 'commands'), layer: 'Application', type: 'Commands' },
-      { path: join(modulePath, 'application', 'queries'), layer: 'Application', type: 'Queries' },
-      { path: join(modulePath, 'application', 'handlers'), layer: 'Application', type: 'Handlers' },
-      { path: join(modulePath, 'application', 'dtos'), layer: 'Application', type: 'DTOs' },
-      { path: join(modulePath, 'application', 'services'), layer: 'Application', type: 'Services' },
+      {
+        path: join(modulePath, "application", "commands"),
+        layer: "Application",
+        type: "Commands",
+      },
+      {
+        path: join(modulePath, "application", "queries"),
+        layer: "Application",
+        type: "Queries",
+      },
+      {
+        path: join(modulePath, "application", "handlers"),
+        layer: "Application",
+        type: "Handlers",
+      },
+      {
+        path: join(modulePath, "application", "dtos"),
+        layer: "Application",
+        type: "DTOs",
+      },
+      {
+        path: join(modulePath, "application", "services"),
+        layer: "Application",
+        type: "Services",
+      },
 
       // Infrastructure Layer
-      { path: join(modulePath, 'infrastructure', 'repositories'), layer: 'Infrastructure', type: 'Repositories' },
-      { path: join(modulePath, 'infrastructure', 'database'), layer: 'Infrastructure', type: 'Database' },
-      { path: join(modulePath, 'infrastructure', 'external-services'), layer: 'Infrastructure', type: 'External Services' },
-      { path: join(modulePath, 'infrastructure', 'config'), layer: 'Infrastructure', type: 'Config' },
+      {
+        path: join(modulePath, "infrastructure", "repositories"),
+        layer: "Infrastructure",
+        type: "Repositories",
+      },
+      {
+        path: join(modulePath, "infrastructure", "database"),
+        layer: "Infrastructure",
+        type: "Database",
+      },
+      {
+        path: join(modulePath, "infrastructure", "external-services"),
+        layer: "Infrastructure",
+        type: "External Services",
+      },
+      {
+        path: join(modulePath, "infrastructure", "config"),
+        layer: "Infrastructure",
+        type: "Config",
+      },
 
       // Presentation Layer
-      { path: join(modulePath, 'presentation', 'controllers'), layer: 'Presentation', type: 'Controllers' },
-      { path: join(modulePath, 'presentation', 'routes'), layer: 'Presentation', type: 'Routes' },
-      { path: join(modulePath, 'presentation', 'middlewares'), layer: 'Presentation', type: 'Middlewares' },
-      { path: join(modulePath, 'presentation', 'views'), layer: 'Presentation', type: 'Views' },
+      {
+        path: join(modulePath, "presentation", "controllers"),
+        layer: "Presentation",
+        type: "Controllers",
+      },
+      {
+        path: join(modulePath, "presentation", "routes"),
+        layer: "Presentation",
+        type: "Routes",
+      },
+      {
+        path: join(modulePath, "presentation", "middlewares"),
+        layer: "Presentation",
+        type: "Middlewares",
+      },
+      {
+        path: join(modulePath, "presentation", "views"),
+        layer: "Presentation",
+        type: "Views",
+      },
 
       // Cross-cutting
-      { path: join(modulePath, 'tests'), layer: 'Cross-cutting', type: 'Tests' },
-      { path: join(modulePath, 'shared'), layer: 'Cross-cutting', type: 'Shared' }
+      {
+        path: join(modulePath, "tests"),
+        layer: "Cross-cutting",
+        type: "Tests",
+      },
+      {
+        path: join(modulePath, "shared"),
+        layer: "Cross-cutting",
+        type: "Shared",
+      },
     ];
 
     let dirsCreated = 0;
@@ -297,11 +435,18 @@ export class AutoGeneratorDDD {
       }
     }
 
-    console.log(`\n📊 Total de diretórios criados: ${dirsCreated}/${dddDirs.length}`);
+    console.log(
+      `\n📊 Total de diretórios criados: ${dirsCreated}/${dddDirs.length}`
+    );
 
     // Gera arquivos DDD completos
     console.log(`\n📝 GERANDO ARQUIVOS DDD:`);
-    const files = this.generateDDDFileStructure(metadata, modulePath, entityName, aggregateName);
+    const files = this.generateDDDFileStructure(
+      metadata,
+      modulePath,
+      entityName,
+      aggregateName
+    );
 
     console.log(`📊 Total de arquivos a serem gerados: ${files.length}`);
     console.log(`🔧 Iniciando escrita de arquivos...\n`);
@@ -316,14 +461,22 @@ export class AutoGeneratorDDD {
         const willOverwrite = fileExists && this.options.force;
 
         if (fileExists && !this.options.force) {
-          console.log(`  ⏭️  PULADO (já existe): ${file.path.replace(modulePath, '.').replace(/\\/g, '/')}`);
+          console.log(
+            `  ⏭️  PULADO (já existe): ${file.path
+              .replace(modulePath, ".")
+              .replace(/\\/g, "/")}`
+          );
           filesSkipped++;
           continue;
         }
 
-        writeFileSync(file.path, file.content, 'utf-8');
-        const action = willOverwrite ? '🔄 SOBRESCRITO' : '✅ CRIADO';
-        console.log(`  ${action} ${file.path.replace(modulePath, '.').replace(/\\/g, '/')}`);
+        writeFileSync(file.path, file.content, "utf-8");
+        const action = willOverwrite ? "🔄 SOBRESCRITO" : "✅ CRIADO";
+        console.log(
+          `  ${action} ${file.path
+            .replace(modulePath, ".")
+            .replace(/\\/g, "/")}`
+        );
 
         if (this.options.verbose) {
           console.log(`     📏 Tamanho: ${file.content.length} caracteres`);
@@ -331,9 +484,12 @@ export class AutoGeneratorDDD {
         }
 
         filesWritten++;
-
       } catch (error) {
-        console.error(`  ❌ ERRO ao criar: ${file.path.replace(modulePath, '.').replace(/\\/g, '/')}`);
+        console.error(
+          `  ❌ ERRO ao criar: ${file.path
+            .replace(modulePath, ".")
+            .replace(/\\/g, "/")}`
+        );
         console.error(`     Detalhes: ${error}`);
       }
     }
@@ -343,15 +499,27 @@ export class AutoGeneratorDDD {
     console.log(`  • 📁 Diretórios criados: ${dirsCreated}/${dddDirs.length}`);
     console.log(`  • 📝 Arquivos criados: ${filesWritten}`);
     console.log(`  • ⏭️  Arquivos pulados: ${filesSkipped}`);
-    console.log(`  • 🎯 Camada Domain: ✅ Entidades, Aggregates, Events, Repositories`);
-    console.log(`  • 📱 Camada Application: ✅ Commands, Queries, Handlers, DTOs`);
-    console.log(`  • 🔧 Camada Infrastructure: ✅ Repositories, Database, External Services`);
-    console.log(`  • 🌐 Camada Presentation: ✅ Controllers, Routes, Middlewares`);
+    console.log(
+      `  • 🎯 Camada Domain: ✅ Entidades, Aggregates, Events, Repositories`
+    );
+    console.log(
+      `  • 📱 Camada Application: ✅ Commands, Queries, Handlers, DTOs`
+    );
+    console.log(
+      `  • 🔧 Camada Infrastructure: ✅ Repositories, Database, External Services`
+    );
+    console.log(
+      `  • 🌐 Camada Presentation: ✅ Controllers, Routes, Middlewares`
+    );
     console.log(`  • 🧪 Cross-cutting: ✅ Tests, Shared utilities`);
-    console.log(`  • 📦 Total de arquivos gerados: ${filesWritten}/${files.length}`);
+    console.log(
+      `  • 📦 Total de arquivos gerados: ${filesWritten}/${files.length}`
+    );
 
     console.log(`\n🎉 MÓDULO DDD "${name.toUpperCase()}" GERADO COM SUCESSO!`);
-    console.log(`🏛️  Arquitetura Domain-Driven Design implementada completamente`);
+    console.log(
+      `🏛️  Arquitetura Domain-Driven Design implementada completamente`
+    );
     console.log(`📍 Localização: ${modulePath}`);
   }
 
@@ -370,151 +538,226 @@ export class AutoGeneratorDDD {
 
     // Entity
     files.push({
-      path: join(modulePath, 'domain', 'entities', `${entityName}.entity.ts`),
-      content: this.generateDomainEntity(metadata, entityName)
+      path: join(modulePath, "domain", "entities", `${entityName}.entity.ts`),
+      content: this.generateDomainEntity(metadata, entityName),
     });
 
     // Value Objects
     const valueObjects = this.extractValueObjects(metadata);
-    valueObjects.forEach(vo => {
+    valueObjects.forEach((vo) => {
       files.push({
-        path: join(modulePath, 'domain', 'value-objects', `${vo.name.toLowerCase()}.vo.ts`),
-        content: this.generateValueObject(vo)
+        path: join(
+          modulePath,
+          "domain",
+          "value-objects",
+          `${vo.name.toLowerCase()}.vo.ts`
+        ),
+        content: this.generateValueObject(vo),
       });
     });
 
     // Aggregate
     files.push({
-      path: join(modulePath, 'domain', 'aggregates', `${aggregateName}.aggregate.ts`),
-      content: this.generateAggregate(metadata, entityName, aggregateName)
+      path: join(
+        modulePath,
+        "domain",
+        "aggregates",
+        `${aggregateName}.aggregate.ts`
+      ),
+      content: this.generateAggregate(metadata, entityName, aggregateName),
     });
 
     // Domain Events
     files.push({
-      path: join(modulePath, 'domain', 'events', `${entityName}.events.ts`),
-      content: this.generateDomainEvents(metadata, entityName)
+      path: join(modulePath, "domain", "events", `${entityName}.events.ts`),
+      content: this.generateDomainEvents(metadata, entityName),
     });
 
     // Domain Repository Interface
     files.push({
-      path: join(modulePath, 'domain', 'repositories', `i${entityName}.repository.ts`),
-      content: this.generateDomainRepositoryInterface(metadata, entityName)
+      path: join(
+        modulePath,
+        "domain",
+        "repositories",
+        `i${entityName}.repository.ts`
+      ),
+      content: this.generateDomainRepositoryInterface(metadata, entityName),
     });
 
     // Domain Service
     files.push({
-      path: join(modulePath, 'domain', 'services', `${entityName}.domain-service.ts`),
-      content: this.generateDomainService(metadata, entityName)
+      path: join(
+        modulePath,
+        "domain",
+        "services",
+        `${entityName}.domain-service.ts`
+      ),
+      content: this.generateDomainService(metadata, entityName),
     });
 
     // 2. APPLICATION LAYER
 
     // Commands
     files.push({
-      path: join(modulePath, 'application', 'commands', `${entityName}.commands.ts`),
-      content: this.generateCommands(metadata, entityName)
+      path: join(
+        modulePath,
+        "application",
+        "commands",
+        `${entityName}.commands.ts`
+      ),
+      content: this.generateCommands(metadata, entityName),
     });
 
     // Queries
     files.push({
-      path: join(modulePath, 'application', 'queries', `${entityName}.queries.ts`),
-      content: this.generateQueries(metadata, entityName)
+      path: join(
+        modulePath,
+        "application",
+        "queries",
+        `${entityName}.queries.ts`
+      ),
+      content: this.generateQueries(metadata, entityName),
     });
 
     // Command Handlers
     files.push({
-      path: join(modulePath, 'application', 'handlers', `${entityName}.command-handlers.ts`),
-      content: this.generateCommandHandlers(metadata, entityName)
+      path: join(
+        modulePath,
+        "application",
+        "handlers",
+        `${entityName}.command-handlers.ts`
+      ),
+      content: this.generateCommandHandlers(metadata, entityName),
     });
 
     // Query Handlers
     files.push({
-      path: join(modulePath, 'application', 'handlers', `${entityName}.query-handlers.ts`),
-      content: this.generateQueryHandlers(metadata, entityName)
+      path: join(
+        modulePath,
+        "application",
+        "handlers",
+        `${entityName}.query-handlers.ts`
+      ),
+      content: this.generateQueryHandlers(metadata, entityName),
     });
 
     // DTOs
     files.push({
-      path: join(modulePath, 'application', 'dtos', `${entityName}.dto.ts`),
-      content: this.generateApplicationDTOs(metadata, entityName)
+      path: join(modulePath, "application", "dtos", `${entityName}.dto.ts`),
+      content: this.generateApplicationDTOs(metadata, entityName),
     });
 
     // Application Service
     files.push({
-      path: join(modulePath, 'application', 'services', `${entityName}.app-service.ts`),
-      content: this.generateApplicationService(metadata, entityName)
+      path: join(
+        modulePath,
+        "application",
+        "services",
+        `${entityName}.app-service.ts`
+      ),
+      content: this.generateApplicationService(metadata, entityName),
     });
 
     // 3. INFRASTRUCTURE LAYER
 
     // Repository Implementation
     files.push({
-      path: join(modulePath, 'infrastructure', 'repositories', `${entityName}.repository.ts`),
-      content: this.generateInfrastructureRepository(metadata, entityName)
+      path: join(
+        modulePath,
+        "infrastructure",
+        "repositories",
+        `${entityName}.repository.ts`
+      ),
+      content: this.generateInfrastructureRepository(metadata, entityName),
     });
 
     // Database Schema
     files.push({
-      path: join(modulePath, 'infrastructure', 'database', `${entityName}.schema.ts`),
-      content: this.generateDatabaseSchema(metadata, entityName)
+      path: join(
+        modulePath,
+        "infrastructure",
+        "database",
+        `${entityName}.schema.ts`
+      ),
+      content: this.generateDatabaseSchema(metadata, entityName),
     });
 
     // Database Context
     files.push({
-      path: join(modulePath, 'infrastructure', 'database', 'context.ts'),
-      content: this.generateDatabaseContext(metadata)
+      path: join(modulePath, "infrastructure", "database", "context.ts"),
+      content: this.generateDatabaseContext(metadata),
     });
 
     // External Services
     files.push({
-      path: join(modulePath, 'infrastructure', 'external-services', `${entityName}.external-service.ts`),
-      content: this.generateExternalService(metadata, entityName)
+      path: join(
+        modulePath,
+        "infrastructure",
+        "external-services",
+        `${entityName}.external-service.ts`
+      ),
+      content: this.generateExternalService(metadata, entityName),
     });
 
     // Infrastructure Config
     files.push({
-      path: join(modulePath, 'infrastructure', 'config', 'database.config.ts'),
-      content: this.generateInfrastructureConfig(metadata)
+      path: join(modulePath, "infrastructure", "config", "database.config.ts"),
+      content: this.generateInfrastructureConfig(metadata),
     });
 
     // 4. PRESENTATION LAYER
 
     // Controller
     files.push({
-      path: join(modulePath, 'presentation', 'controllers', `${entityName}.controller.ts`),
-      content: this.generatePresentationController(metadata, entityName)
+      path: join(
+        modulePath,
+        "presentation",
+        "controllers",
+        `${entityName}.controller.ts`
+      ),
+      content: this.generatePresentationController(metadata, entityName),
     });
 
     // Routes
     files.push({
-      path: join(modulePath, 'presentation', 'routes', `${entityName}.routes.ts`),
-      content: this.generatePresentationRoutes(metadata, entityName)
+      path: join(
+        modulePath,
+        "presentation",
+        "routes",
+        `${entityName}.routes.ts`
+      ),
+      content: this.generatePresentationRoutes(metadata, entityName),
     });
 
     // Middlewares
     files.push({
-      path: join(modulePath, 'presentation', 'middlewares', `${entityName}.middleware.ts`),
-      content: this.generatePresentationMiddleware(metadata, entityName)
+      path: join(
+        modulePath,
+        "presentation",
+        "middlewares",
+        `${entityName}.middleware.ts`
+      ),
+      content: this.generatePresentationMiddleware(metadata, entityName),
     });
 
     // 5. CROSS-CUTTING CONCERNS
 
     // Tests
     files.push({
-      path: join(modulePath, 'tests', `${entityName}.test.ts`),
-      content: this.generateDDDTests(metadata, entityName)
+      path: join(modulePath, "tests", `${entityName}.test.ts`),
+      content: this.generateDDDTests(metadata, entityName),
     });
 
     // Shared utilities
     files.push({
-      path: join(modulePath, 'shared', 'constants.ts'),
-      content: this.generateSharedConstants(metadata, entityName)
+      path: join(modulePath, "shared", "constants.ts"),
+      content: this.generateSharedConstants(metadata, entityName),
     });
 
     // Module index
     files.push({
-      path: join(modulePath, 'index.ts'),
-      content: this.generateDDDIndex(metadata, entityName, aggregateName)
+      path: join(modulePath, "index.ts"),
+      content: this.generateDDDIndex(metadata, entityName, aggregateName),
     });
 
     return files;
@@ -525,16 +768,16 @@ export class AutoGeneratorDDD {
    */
   private checkDDDStructure(modulePath: string): boolean {
     const requiredDirs = [
-      'domain/entities',
-      'domain/repositories',
-      'application/commands',
-      'application/handlers',
-      'infrastructure/repositories',
-      'presentation/controllers',
-      'presentation/routes'
+      "domain/entities",
+      "domain/repositories",
+      "application/commands",
+      "application/handlers",
+      "infrastructure/repositories",
+      "presentation/controllers",
+      "presentation/routes",
     ];
 
-    return requiredDirs.every(dir => existsSync(join(modulePath, dir)));
+    return requiredDirs.every((dir) => existsSync(join(modulePath, dir)));
   }
 
   /**
@@ -542,10 +785,10 @@ export class AutoGeneratorDDD {
    */
   private async findSchemaFile(modulePath: string): Promise<string | null> {
     const possiblePaths = [
-      join(modulePath, 'domain', 'entities', 'schema.ts'),
-      join(modulePath, 'infrastructure', 'database', 'schema.ts'),
-      join(modulePath, 'schema.ts'),
-      join(modulePath, `${this.getModuleName(modulePath)}.ts`)
+      join(modulePath, "domain", "entities", "schema.ts"),
+      join(modulePath, "infrastructure", "database", "schema.ts"),
+      join(modulePath, "schema.ts"),
+      join(modulePath, `${this.getModuleName(modulePath)}.ts`),
     ];
 
     for (const path of possiblePaths) {
@@ -568,7 +811,7 @@ export class AutoGeneratorDDD {
    * Extrai nome do módulo do caminho
    */
   private getModuleName(modulePath: string): string {
-    return modulePath.split('/').pop() || 'Unknown';
+    return modulePath.split("/").pop() || "Unknown";
   }
 
   /**
@@ -581,7 +824,9 @@ export class AutoGeneratorDDD {
   /**
    * Extrai value objects do metadata
    */
-  private extractValueObjects(metadata: EntityMetadata): Array<{ name: string; fields: any[] }> {
+  private extractValueObjects(
+    metadata: EntityMetadata
+  ): Array<{ name: string; fields: any[] }> {
     // Lógica simplificada - em produção seria mais sofisticada
     return [];
   }
@@ -590,27 +835,33 @@ export class AutoGeneratorDDD {
   // GERADORES DE CÓDIGO DDD
   // =========================================
 
-  private generateDomainEntity(metadata: EntityMetadata, entityName: string): string {
+  private generateDomainEntity(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name, fields } = metadata;
     const className = this.toPascalCase(name);
 
-    const fieldDeclarations = fields.map(field =>
-      `  private ${field.name}: ${field.type};`
-    ).join('\n');
+    const fieldDeclarations = fields
+      .map((field) => `  private ${field.name}: ${field.type};`)
+      .join("\n");
 
-    const constructorParams = fields.map(field =>
-      `    ${field.name}: ${field.type}`
-    ).join(',\n');
+    const constructorParams = fields
+      .map((field) => `    ${field.name}: ${field.type}`)
+      .join(",\n");
 
-    const constructorAssignments = fields.map(field =>
-      `    this.${field.name} = ${field.name};`
-    ).join('\n');
+    const constructorAssignments = fields
+      .map((field) => `    this.${field.name} = ${field.name};`)
+      .join("\n");
 
-    const getters = fields.map(field =>
-      `  get ${field.name}(): ${field.type} {
+    const getters = fields
+      .map(
+        (field) =>
+          `  get ${field.name}(): ${field.type} {
     return this.${field.name};
   }`
-    ).join('\n\n');
+      )
+      .join("\n\n");
 
     return `/**
  * Domain Entity: ${className}
@@ -644,7 +895,11 @@ ${getters}
 }`;
   }
 
-  private generateAggregate(metadata: EntityMetadata, entityName: string, aggregateName: string): string {
+  private generateAggregate(
+    metadata: EntityMetadata,
+    entityName: string,
+    aggregateName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -702,7 +957,10 @@ import { DomainEvent } from './events/${entityName}.events';
 import { ${className}BusinessOperationPerformedEvent } from './events/${entityName}.events';`;
   }
 
-  private generateDomainEvents(metadata: EntityMetadata, entityName: string): string {
+  private generateDomainEvents(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -762,7 +1020,10 @@ export class ${className}BusinessOperationPerformedEvent extends DomainEvent {
 }`;
   }
 
-  private generateDomainRepositoryInterface(metadata: EntityMetadata, entityName: string): string {
+  private generateDomainRepositoryInterface(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -806,7 +1067,10 @@ export interface I${className}Repository {
 import { ${className} } from '../entities/${entityName}.entity';`;
   }
 
-  private generateDomainService(metadata: EntityMetadata, entityName: string): string {
+  private generateDomainService(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -850,17 +1114,21 @@ import { ${className} } from '../entities/${entityName}.entity';
 import { I${className}Repository } from '../repositories/i${entityName}.repository';`;
   }
 
-  private generateCommands(metadata: EntityMetadata, entityName: string): string {
+  private generateCommands(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name, fields } = metadata;
     const className = this.toPascalCase(name);
 
-    const createCommandFields = fields.map(field =>
-      `  public readonly ${field.name}: ${field.type};`
-    ).join('\n');
+    const createCommandFields = fields
+      .map((field) => `  public readonly ${field.name}: ${field.type};`)
+      .join("\n");
 
-    const updateCommandFields = fields.filter(field => field.name !== 'id').map(field =>
-      `  public readonly ${field.name}?: ${field.type};`
-    ).join('\n');
+    const updateCommandFields = fields
+      .filter((field) => field.name !== "id")
+      .map((field) => `  public readonly ${field.name}?: ${field.type};`)
+      .join("\n");
 
     return `/**
  * Commands para ${className}
@@ -881,10 +1149,10 @@ ${createCommandFields}
 
   constructor(
     id: string,
-${fields.map(field => `    ${field.name}: ${field.type}`).join(',\n')}
+${fields.map((field) => `    ${field.name}: ${field.type}`).join(",\n")}
   ) {
     super(id);
-${fields.map(field => `    this.${field.name} = ${field.name};`).join('\n')}
+${fields.map((field) => `    this.${field.name} = ${field.name};`).join("\n")}
   }
 }
 
@@ -895,11 +1163,17 @@ ${updateCommandFields}
   constructor(
     id: string,
     ${entityName}Id: string,
-${fields.filter(field => field.name !== 'id').map(field => `    ${field.name}?: ${field.type}`).join(',\n')}
+${fields
+  .filter((field) => field.name !== "id")
+  .map((field) => `    ${field.name}?: ${field.type}`)
+  .join(",\n")}
   ) {
     super(id);
     this.${entityName}Id = ${entityName}Id;
-${fields.filter(field => field.name !== 'id').map(field => `    this.${field.name} = ${field.name};`).join('\n')}
+${fields
+  .filter((field) => field.name !== "id")
+  .map((field) => `    this.${field.name} = ${field.name};`)
+  .join("\n")}
   }
 }
 
@@ -913,7 +1187,10 @@ export class Delete${className}Command extends Command {
 }`;
   }
 
-  private generateQueries(metadata: EntityMetadata, entityName: string): string {
+  private generateQueries(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -965,7 +1242,10 @@ export class Search${className}sQuery extends Query {
 }`;
   }
 
-  private generateCommandHandlers(metadata: EntityMetadata, entityName: string): string {
+  private generateCommandHandlers(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -986,7 +1266,7 @@ export class ${className}CommandHandlers {
   ): Promise<string> {
     // Criar entidade através do domínio
     const ${entityName} = new ${className}(
-${metadata.fields.map(field => `      command.${field.name}`).join(',\n')}
+${metadata.fields.map((field) => `      command.${field.name}`).join(",\n")}
     );
 
     // Validar regras de negócio
@@ -1039,7 +1319,10 @@ import { ${className}DomainService } from '../../domain/services/${entityName}.d
 import { Create${className}Command, Update${className}Command, Delete${className}Command } from '../commands/${entityName}.commands';`;
   }
 
-  private generateQueryHandlers(metadata: EntityMetadata, entityName: string): string {
+  private generateQueryHandlers(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1108,17 +1391,21 @@ import { ${className} } from '../../domain/entities/${entityName}.entity';
 import { Get${className}ByIdQuery, GetAll${className}sQuery, Search${className}sQuery } from '../queries/${entityName}.queries';`;
   }
 
-  private generateApplicationDTOs(metadata: EntityMetadata, entityName: string): string {
+  private generateApplicationDTOs(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name, fields } = metadata;
     const className = this.toPascalCase(name);
 
-    const inputFields = fields.filter(field => field.name !== 'id').map(field =>
-      `  ${field.name}: ${field.type};`
-    ).join('\n');
+    const inputFields = fields
+      .filter((field) => field.name !== "id")
+      .map((field) => `  ${field.name}: ${field.type};`)
+      .join("\n");
 
-    const outputFields = fields.map(field =>
-      `  ${field.name}: ${field.type};`
-    ).join('\n');
+    const outputFields = fields
+      .map((field) => `  ${field.name}: ${field.type};`)
+      .join("\n");
 
     return `/**
  * Data Transfer Objects para ${className}
@@ -1153,7 +1440,10 @@ export class ${className}ListOutput {
 }`;
   }
 
-  private generateApplicationService(metadata: EntityMetadata, entityName: string): string {
+  private generateApplicationService(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1173,7 +1463,10 @@ export class ${className}AppService {
   public async create${className}(input: Create${className}Input): Promise<string> {
     const command = new Create${className}Command(
       this.generateId(),
-${Object.keys(input).map(key => `      input.${key}`).join(',\n')}
+${metadata.fields
+  .filter((f) => f.name !== "id")
+  .map((field) => `      input.${field.name}`)
+  .join(",\n")}
     );
 
     return await this.commandHandlers.handleCreate${className}(command);
@@ -1186,7 +1479,10 @@ ${Object.keys(input).map(key => `      input.${key}`).join(',\n')}
     const command = new Update${className}Command(
       this.generateId(),
       id,
-${Object.keys(input).map(key => `      input.${key}`).join(',\n')}
+${metadata.fields
+  .filter((f) => f.name !== "id")
+  .map((field) => `      input.${field.name}`)
+  .join(",\n")}
     );
 
     await this.commandHandlers.handleUpdate${className}(command);
@@ -1249,7 +1545,9 @@ ${Object.keys(input).map(key => `      input.${key}`).join(',\n')}
    */
   private mapToOutput(entity: ${className}): ${className}Output {
     return {
-${metadata.fields.map(field => `      ${field.name}: entity.${field.name}`).join(',\n')}
+${metadata.fields
+  .map((field) => `      ${field.name}: entity.${field.name}`)
+  .join(",\n")}
     };
   }
 
@@ -1270,7 +1568,10 @@ import { Get${className}ByIdQuery, GetAll${className}sQuery, Search${className}s
 import { Create${className}Input, Update${className}Input, ${className}Output, ${className}ListOutput } from './dtos/${entityName}.dto';`;
   }
 
-  private generateInfrastructureRepository(metadata: EntityMetadata, entityName: string): string {
+  private generateInfrastructureRepository(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1335,7 +1636,7 @@ export class ${className}Repository implements I${className}Repository {
    */
   private mapToEntity(data: any): ${className} {
     return new ${className}(
-${metadata.fields.map(field => `      data.${field.name}`).join(',\n')}
+${metadata.fields.map((field) => `      data.${field.name}`).join(",\n")}
     );
   }
 
@@ -1344,7 +1645,9 @@ ${metadata.fields.map(field => `      data.${field.name}`).join(',\n')}
    */
   private mapToDatabase(entity: ${className}): any {
     return {
-${metadata.fields.map(field => `      ${field.name}: entity.${field.name}`).join(',\n')}
+${metadata.fields
+  .map((field) => `      ${field.name}: entity.${field.name}`)
+  .join(",\n")}
     };
   }
 }
@@ -1355,24 +1658,31 @@ import { ${className} } from '../../domain/entities/${entityName}.entity';
 import { DatabaseContext } from './context';`;
   }
 
-  private generateDatabaseSchema(metadata: EntityMetadata, entityName: string): string {
+  private generateDatabaseSchema(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name, fields } = metadata;
 
-    const schemaFields = fields.map(field => {
-      let fieldType = 'String';
-      if (field.type === 'number') fieldType = 'Int';
-      if (field.type === 'boolean') fieldType = 'Boolean';
-      if (field.type === 'Date') fieldType = 'DateTime';
+    const schemaFields = fields
+      .map((field) => {
+        let fieldType = "String";
+        if (field.type === "number") fieldType = "Int";
+        if (field.type === "boolean") fieldType = "Boolean";
+        if (field.type === "Date") fieldType = "DateTime";
 
-      const modifiers = [];
-      if (field.name === 'id') modifiers.push('@id', '@default(cuid())');
-      if (field.name === 'createdAt' || field.name === 'updatedAt') {
-        modifiers.push('@default(now())');
-        fieldType = 'DateTime';
-      }
+        const modifiers = [];
+        if (field.name === "id") modifiers.push("@id", "@default(cuid())");
+        if (field.name === "createdAt" || field.name === "updatedAt") {
+          modifiers.push("@default(now())");
+          fieldType = "DateTime";
+        }
 
-      return `  ${field.name} ${fieldType}${modifiers.length > 0 ? ' ' + modifiers.join(' ') : ''}`;
-    }).join('\n');
+        return `  ${field.name} ${fieldType}${
+          modifiers.length > 0 ? " " + modifiers.join(" ") : ""
+        }`;
+      })
+      .join("\n");
 
     return `/**
  * Database Schema para ${name}
@@ -1417,7 +1727,10 @@ export class DatabaseContext {
 }`;
   }
 
-  private generateExternalService(metadata: EntityMetadata, entityName: string): string {
+  private generateExternalService(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1501,7 +1814,10 @@ export const cacheConfig = {
 };`;
   }
 
-  private generatePresentationController(metadata: EntityMetadata, entityName: string): string {
+  private generatePresentationController(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1623,7 +1939,10 @@ import { ${className}AppService } from '../../application/services/${entityName}
 import { Create${className}Input, Update${className}Input } from '../../application/dtos/${entityName}.dto';`;
   }
 
-  private generatePresentationRoutes(metadata: EntityMetadata, entityName: string): string {
+  private generatePresentationRoutes(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1668,7 +1987,10 @@ export function register${className}Routes(
 }`;
   }
 
-  private generatePresentationMiddleware(metadata: EntityMetadata, entityName: string): string {
+  private generatePresentationMiddleware(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1728,7 +2050,10 @@ export class ${className}Middleware {
 }`;
   }
 
-  private generateDDDTests(metadata: EntityMetadata, entityName: string): string {
+  private generateDDDTests(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1748,7 +2073,7 @@ describe('${className} Domain', () => {
   beforeEach(() => {
     // Criar entidade de teste
     entity = new ${className}(
-${metadata.fields.map(field => `      'test-${field.name}'`).join(',\n')}
+${metadata.fields.map((field) => `      'test-${field.name}'`).join(",\n")}
     );
   });
 
@@ -1784,7 +2109,10 @@ describe('${className} Application Service', () => {
 
   it('should create entity', async () => {
     const input = {
-${metadata.fields.filter(field => field.name !== 'id').map(field => `      ${field.name}: 'test-${field.name}'`).join(',\n')}
+${metadata.fields
+  .filter((field) => field.name !== "id")
+  .map((field) => `      ${field.name}: 'test-${field.name}'`)
+  .join(",\n")}
     };
 
     mockRepository.save.mockResolvedValue(undefined);
@@ -1829,7 +2157,10 @@ describe('${className} Controller', () => {
 });`;
   }
 
-  private generateSharedConstants(metadata: EntityMetadata, entityName: string): string {
+  private generateSharedConstants(
+    metadata: EntityMetadata,
+    entityName: string
+  ): string {
     const { name } = metadata;
 
     return `/**
@@ -1868,7 +2199,11 @@ export const ${name.toUpperCase()}_ERROR_CODES = {
 } as const;`;
   }
 
-  private generateDDDIndex(metadata: EntityMetadata, entityName: string, aggregateName: string): string {
+  private generateDDDIndex(
+    metadata: EntityMetadata,
+    entityName: string,
+    aggregateName: string
+  ): string {
     const { name } = metadata;
     const className = this.toPascalCase(name);
 
@@ -1940,7 +2275,9 @@ export function configure${className}Module() {
 
   // Utility methods
   private toPascalCase(str: string): string {
-    return str.replace(/(^\w|_\w)/g, match => match.replace('_', '').toUpperCase());
+    return str.replace(/(^\w|_\w)/g, (match) =>
+      match.replace("_", "").toUpperCase()
+    );
   }
 
   private generateValueObject(vo: { name: string; fields: any[] }): string {
@@ -1949,7 +2286,9 @@ export function configure${className}Module() {
  */
 export class ${vo.name} {
   constructor(
-${vo.fields.map(field => `    public readonly ${field.name}: ${field.type}`).join(',\n')}
+${vo.fields
+  .map((field) => `    public readonly ${field.name}: ${field.type}`)
+  .join(",\n")}
   ) {}
 
   public equals(other: ${vo.name}): boolean {
@@ -1962,44 +2301,52 @@ ${vo.fields.map(field => `    public readonly ${field.name}: ${field.type}`).joi
   /**
    * Lista todos os módulos DDD gerados automaticamente
    */
-  static listGeneratedDDDModules(modulesPath: string = 'src/modules'): string[] {
+  static listGeneratedDDDModules(
+    modulesPath: string = "src/modules"
+  ): string[] {
     const fullPath = resolve(modulesPath);
 
     if (!existsSync(fullPath)) {
       return [];
     }
 
-    return readdirSync(fullPath)
-      .filter(item => {
-        const itemPath = join(fullPath, item);
-        return statSync(itemPath).isDirectory() &&
-               existsSync(join(itemPath, 'domain', 'entities'));
-      });
+    return readdirSync(fullPath).filter((item) => {
+      const itemPath = join(fullPath, item);
+      return (
+        statSync(itemPath).isDirectory() &&
+        existsSync(join(itemPath, "domain", "entities"))
+      );
+    });
   }
 
   /**
    * Limpa módulos DDD gerados automaticamente
    */
-  static cleanGeneratedDDDModules(modulesPath: string = 'src/modules', dryRun: boolean = true): void {
+  static cleanGeneratedDDDModules(
+    modulesPath: string = "src/modules",
+    dryRun: boolean = true
+  ): void {
     const modules = this.listGeneratedDDDModules(modulesPath);
 
     console.log(`🧹 Limpando ${modules.length} módulos DDD gerados...`);
 
     if (dryRun) {
-      console.log('🔍 [DRY RUN] Os seguintes módulos DDD seriam removidos:');
-      modules.forEach(module => console.log(`  - ${module}`));
+      console.log("🔍 [DRY RUN] Os seguintes módulos DDD seriam removidos:");
+      modules.forEach((module) => console.log(`  - ${module}`));
       return;
     }
 
     // Implementar remoção se necessário
-    console.log('⚠️  Funcionalidade de limpeza não implementada ainda');
+    console.log("⚠️  Funcionalidade de limpeza não implementada ainda");
   }
 }
 
 /**
  * Função utilitária para executar geração DDD automática
  */
-export async function autoGenerateDDDFromZodSchemas(options?: DDDGenerationOptions): Promise<void> {
+export async function autoGenerateDDDFromZodSchemas(
+  options?: DDDGenerationOptions
+): Promise<void> {
   const generator = new AutoGeneratorDDD(options);
   await generator.generate();
 }
@@ -2007,7 +2354,10 @@ export async function autoGenerateDDDFromZodSchemas(options?: DDDGenerationOptio
 /**
  * Função para desenvolvimento - limpar módulos DDD gerados
  */
-export function cleanGeneratedDDDModules(modulesPath?: string, dryRun?: boolean): void {
+export function cleanGeneratedDDDModules(
+  modulesPath?: string,
+  dryRun?: boolean
+): void {
   AutoGeneratorDDD.cleanGeneratedDDDModules(modulesPath, dryRun);
 }
 
