@@ -39,9 +39,10 @@
     "demo:aon-simple": "node examples/simple-aon-demo.cjs",
     "demo:crystalbox": "tsx examples/crystalbox-example.ts",
     "benchmark": "node dist/benchmark.api.js",
-    "test": "node --test test/*.test.js",
-    "test:native": "tsx test/native-multipart.test.ts",
-    "test:performance": "node --test test/performance.test.js",
+    "test": "tsx --test test/*.test.ts",
+    "test:bun": "bun test test/*.test.ts",
+    "test:native": "tsx --test test/native-multipart.test.ts",
+    "test:performance": "tsx --test test/performance.test.ts",
     "monitor": "node --inspect dist/index.js"
   },
   "workspaces": [

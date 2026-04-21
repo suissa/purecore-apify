@@ -178,7 +178,7 @@ app.delete('/products/:id', async (req: any, res: any) => {
 });
 
 // =========================================
-// ROTAS COM DECORATORS DO PURECORE FOURPI
+// ROTAS COM DECORATORS DO PURECORE API
 // =========================================
 
 // POST /secure/products - Rota com decorators de segurança
