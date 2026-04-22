@@ -32,6 +32,14 @@ pnpm add @purecore-br/4pi
 
 Confira todas as mudanças e atualizações: [CHANGELOG.md](./CHANGELOG.md)
 
+## Documentacao e Governanca
+
+- Mapa da documentacao tecnica: [docs/README.md](./docs/README.md)
+- Guia de contribuicao: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Politica de seguranca: [SECURITY.md](./SECURITY.md)
+- Codigo de conduta: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- Licenca: [LICENSE](./LICENSE)
+
 <pre><code>import { Api, jsonBodyParser } from '@purecore-br/4pi';
 
 const app = new Api();
