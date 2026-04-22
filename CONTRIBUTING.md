@@ -11,8 +11,8 @@ Obrigado por contribuir.
 ## Setup local
 
 ```bash
-wsl bun install
-wsl bun run build
+bun install
+bun run build
 ```
 
 ## Fluxo de contribuicao
@@ -33,14 +33,14 @@ wsl bun run build
 ## Testes
 
 ```bash
-wsl bun test
-wsl bun run test:bun
+bun test
+bun run test:bun
 ```
 
 Se voce alterou multipart nativo, execute tambem:
 
 ```bash
-wsl bun run test:native
+bun run test:native
 ```
 
 ## Pull Request
