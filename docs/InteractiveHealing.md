@@ -142,6 +142,10 @@ Business Actions:
 • LIMIT:crystal_456:50000 - Approve with limit
 ```
 
+## Human-in-the-Healing-Loop
+
+> É a união desses 2 conceitos (Human-User-in-the-loop e Human-Dev-in-the-loop)
+
 ## 🔄 Fluxo de Interactive Healing
 
 ```mermaid
