@@ -78,7 +78,7 @@ Ação: O roteador interpreta valores semânticos positivos em pt-BR/en-US como 
 
 O roteador atua como um proxy reverso inteligente para si mesmo, corrigindo falhas na camada de transporte e sessão.
 
-4.1. Auth Session Recovery (401)
+4.1. Auth Session Recovery (401) - utilização do token DPoP
 
 Gatilho: Falha de autenticação por token expirado.
 
